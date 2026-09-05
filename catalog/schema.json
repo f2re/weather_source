@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/f2re/weather_source/catalog/schema.json",
+  "title": "Weather Source catalogue record file",
+  "type": "object",
+  "required": ["sources"],
+  "additionalProperties": false,
+  "properties": {
+    "sources": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/source"}
+    }
+  },
+  "$defs": {
+    "localized": {
+      "type": "object",
+      "required": ["en", "ru"],
+      "additionalProperties": false,
+      "properties": {
+        "en": {"type": "string", "minLength": 1},
+        "ru": {"type": "string", "minLength": 1}
+      }
+    },
+    "endpoint": {
+      "type": "object",
+      "required": ["name", "url", "protocol", "role", "healthcheck"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "url": {"type": "string", "minLength": 1},
+        "protocol": {"type": "string", "enum": ["https", "http", "rest", "wfs", "wms", "wcs", "opendap", "s3", "ftp", "amqp", "mqtt", "wis2", "ogc-api", "api"]},
+        "role": {"type": "string", "minLength": 1},
+        "healthcheck": {"type": "boolean"}
+      }
+    },
+    "software": {
+      "type": "object",
+      "required": ["name", "role", "url"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "role": {"type": "string", "minLength": 1},
+        "url": {"type": "string", "pattern": "^https?://"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["id", "provider", "name", "summary", "official", "tier", "categories", "coverage", "operational", "update_cadence", "typical_latency", "archive", "access", "protocols", "formats", "endpoints", "software", "documentation", "reliability", "automation", "last_verified", "notes"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "provider": {"type": "string", "minLength": 1},
+        "name": {"$ref": "#/$defs/localized"},
+        "summary": {"$ref": "#/$defs/localized"},
+        "official": {"type": "boolean"},
+        "tier": {"type": "string", "enum": ["primary", "secondary", "specialized", "aggregator"]},
+        "categories": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "coverage": {"type": "string", "minLength": 1},
+        "operational": {"type": "boolean"},
+        "update_cadence": {"type": "string", "minLength": 1},
+        "typical_latency": {"type": "string", "minLength": 1},
+        "archive": {"type": "string", "minLength": 1},
+        "access": {
+          "type": "object",
+          "required": ["level", "auth", "terms"],
+          "additionalProperties": false,
+          "properties": {
+            "level": {"type": "string", "enum": ["open", "registration", "free-tier", "restricted"]},
+            "auth": {"type": "string", "minLength": 1},
+            "terms": {"type": "string", "minLength": 1}
+          }
+        },
+        "protocols": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "formats": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "endpoints": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/endpoint"}},
+        "software": {"type": "array", "items": {"$ref": "#/$defs/software"}},
+        "documentation": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^https?://"}},
+        "reliability": {"type": "string", "enum": ["high", "medium", "low"]},
+        "automation": {"type": "string", "enum": ["high", "medium", "low"]},
+        "last_verified": {"type": "string", "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}$"},
+        "notes": {"$ref": "#/$defs/localized"}
+      }
+    }
+  }
+}

@@ -1,0 +1,301 @@
+sources:
+  - id: ru-aviamettelecom-wis2-temp
+    provider: Aviamettelecom of Roshydromet / WMO
+    name:
+      en: Russian upper-air TEMP via WIS2
+      ru: Российская аэрология TEMP через WIS2
+    summary:
+      en: Russian radiosonde/TEMP observations published in the WIS2 ecosystem.
+      ru: Российские радиозондовые наблюдения TEMP, публикуемые в экосистеме WIS2.
+    official: true
+    tier: primary
+    categories: [upper-air]
+    coverage: Russia
+    operational: true
+    update_cadence: typically 00/12 UTC; station dependent
+    typical_latency: minutes after publication
+    archive: WIS2 cache retention; long-term archive via other services
+    access:
+      level: open
+      auth: anonymous WIS2 core access where published
+      terms: WMO Unified Data Policy and publisher terms
+    protocols: [mqtt, https, wis2]
+    formats: [BUFR]
+    endpoints:
+      - name: WIS2 topic
+        url: wis2://cache/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp
+        protocol: wis2
+        role: subscription topic
+        healthcheck: false
+      - name: WIS2 guide
+        url: https://wmo-im.github.io/wis2-guide/
+        protocol: https
+        role: documentation
+        healthcheck: true
+    software:
+      - name: wis2downloader
+        role: receive notifications and payloads
+        url: https://github.com/World-Meteorological-Organization/wis2downloader
+      - name: ecCodes
+        role: BUFR decoding
+        url: https://github.com/ecmwf/eccodes
+    documentation:
+      - https://wmo-im.github.io/wis2-guide/
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes:
+      en: Use WIS2 as the primary machine path; keep IGRA/Wyoming as independent fallback and archive paths.
+      ru: Для машинного приёма использовать WIS2 как основной путь; IGRA/Wyoming держать как независимый резерв и архив.
+
+  - id: noaa-ncei-igra
+    provider: NOAA/NCEI
+    name:
+      en: Integrated Global Radiosonde Archive (IGRA) 2
+      ru: NOAA IGRA 2 — глобальная аэрология
+    summary:
+      en: Global radiosonde and pilot-balloon archive with near-real-time updates for many active stations.
+      ru: Глобальный архив радиозондов и шар-пилотов с близким к оперативному обновлением для многих действующих станций.
+    official: true
+    tier: secondary
+    categories: [upper-air, archive, climate]
+    coverage: global
+    operational: true
+    update_cadence: daily ingest; sounding schedules are station dependent
+    typical_latency: near-real-time to daily
+    archive: 1905-present across the network; station dependent
+    access:
+      level: open
+      auth: none
+      terms: NOAA/NCEI terms
+    protocols: [https]
+    formats: [fixed-width text, CSV-derived, BUFR-source]
+    endpoints:
+      - name: IGRA product page
+        url: https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive
+        protocol: https
+        role: documentation and download
+        healthcheck: true
+    software:
+      - name: Siphon IGRAUpperAir
+        role: Python retrieval client
+        url: https://unidata.github.io/siphon/latest/api/simplewebservice.html
+    documentation:
+      - https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes:
+      en: Strong independent fallback and archive for radiosondes; not a substitute for event-driven WIS2 reception.
+      ru: Сильный независимый резерв и архив аэрологии; не заменяет событийный оперативный приём через WIS2.
+
+  - id: wyoming-upperair
+    provider: University of Wyoming
+    name:
+      en: Upper Air Soundings
+      ru: University of Wyoming — аэрологические зондирования
+    summary:
+      en: Convenient global radiosonde sounding service widely used for viewing and programmatic fallback.
+      ru: Удобный глобальный сервис радиозондовых профилей для просмотра и программного резервного получения.
+    official: false
+    tier: aggregator
+    categories: [upper-air]
+    coverage: global
+    operational: true
+    update_cadence: standard sounding times; station dependent
+    typical_latency: near-real-time, provider dependent
+    archive: large historical archive
+    access:
+      level: open
+      auth: none; avoid abusive scraping
+      terms: University service terms
+    protocols: [https]
+    formats: [text, HTML-derived tabular]
+    endpoints:
+      - name: Upper Air
+        url: https://weather.uwyo.edu/upperair/sounding.html
+        protocol: https
+        role: query and view
+        healthcheck: true
+    software:
+      - name: Siphon WyomingUpperAir
+        role: Python client
+        url: https://unidata.github.io/siphon/latest/api/simplewebservice.html
+    documentation:
+      - https://weather.uwyo.edu/upperair/sounding.html
+    reliability: medium
+    automation: medium
+    last_verified: '2026-09-05'
+    notes:
+      en: Useful fallback and convenience service; do not make it the sole critical ingest path.
+      ru: Полезный резерв и удобный интерфейс; не использовать как единственный критический канал приёма.
+
+  - id: gruan
+    provider: GRUAN / WMO
+    name:
+      en: GCOS Reference Upper-Air Network
+      ru: GRUAN — эталонная аэрология
+    summary:
+      en: Reference-quality upper-air observations with documented corrections and uncertainties.
+      ru: Эталонные верхнеаэрологические наблюдения с документированными поправками и неопределённостями.
+    official: true
+    tier: specialized
+    categories: [upper-air, climate, reference]
+    coverage: global sparse network
+    operational: false
+    update_cadence: site and campaign dependent
+    typical_latency: not designed for synoptic real-time use
+    archive: long-term reference archive
+    access:
+      level: registration
+      auth: data access may require registration
+      terms: GRUAN data policy
+    protocols: [https]
+    formats: [NetCDF]
+    endpoints:
+      - name: GRUAN
+        url: https://www.gruan.org/
+        protocol: https
+        role: documentation and data access
+        healthcheck: true
+    software:
+      - name: xarray
+        role: NetCDF analysis
+        url: https://github.com/pydata/xarray
+    documentation:
+      - https://www.gruan.org/
+    reliability: high
+    automation: medium
+    last_verified: '2026-09-05'
+    notes:
+      en: Best suited to reference validation, homogenization and uncertainty-aware research.
+      ru: Лучше всего подходит для эталонной верификации, гомогенизации и исследований с учётом неопределённостей.
+
+  - id: ucar-cdaac
+    provider: UCAR/COSMIC
+    name:
+      en: CDAAC GNSS Radio Occultation
+      ru: UCAR CDAAC — GNSS radio occultation
+    summary:
+      en: GNSS radio-occultation profiles from COSMIC and other missions with refractivity and derived atmospheric profiles.
+      ru: "Профили GNSS radio occultation с COSMIC и других миссий: рефрактивность и производные профили атмосферы."
+    official: true
+    tier: specialized
+    categories: [upper-air, satellite]
+    coverage: global
+    operational: true
+    update_cadence: mission dependent
+    typical_latency: near-real-time for operational streams; public latency varies
+    archive: large multi-mission archive
+    access:
+      level: open
+      auth: many products are anonymous; service requirements may vary
+      terms: UCAR/COSMIC data terms
+    protocols: [https]
+    formats: [NetCDF, BUFR, native]
+    endpoints:
+      - name: CDAAC
+        url: https://cdaac-www.cosmic.ucar.edu/cdaac/
+        protocol: https
+        role: catalog and download
+        healthcheck: true
+    software:
+      - name: xarray
+        role: NetCDF processing
+        url: https://github.com/pydata/xarray
+      - name: ecCodes
+        role: BUFR decoding
+        url: https://github.com/ecmwf/eccodes
+    documentation:
+      - https://cdaac-www.cosmic.ucar.edu/cdaac/
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes:
+      en: Complements radiosondes with global satellite-derived vertical information; do not mix retrievals with direct in-situ soundings.
+      ru: Дополняет радиозонды глобальной спутниковой вертикальной информацией; не смешивать retrieval-профили с прямыми in-situ зондированиями.
+
+  - id: eumetnet-eprofile
+    provider: EUMETNET
+    name:
+      en: E-PROFILE
+      ru: EUMETNET E-PROFILE
+    summary:
+      en: European network of radar wind profilers, weather-radar vertical wind profiles, Doppler lidars and ceilometer profiling products.
+      ru: Европейская сеть профайлеров ветра, VWP по метеорадарам, доплеровских лидаров и ceilometer-продуктов.
+    official: true
+    tier: specialized
+    categories: [upper-air, profiler, radar]
+    coverage: Europe
+    operational: true
+    update_cadence: minutes to hourly depending on instrument
+    typical_latency: near-real-time
+    archive: archives through partner services
+    access:
+      level: open
+      auth: WIS2 core/open subsets where published; some products may have separate rules
+      terms: EUMETNET and WMO terms
+    protocols: [mqtt, https, wis2]
+    formats: [BUFR, NetCDF, provider-dependent]
+    endpoints:
+      - name: E-PROFILE
+        url: https://e-profile.eu/
+        protocol: https
+        role: documentation
+        healthcheck: true
+    software:
+      - name: wis2downloader
+        role: WIS2 receiving where available
+        url: https://github.com/World-Meteorological-Organization/wis2downloader
+      - name: ecCodes
+        role: BUFR decoding
+        url: https://github.com/ecmwf/eccodes
+    documentation:
+      - https://e-profile.eu/
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes:
+      en: Valuable for filling temporal gaps between radiosonde launches with frequent wind/profile observations.
+      ru: Полезен для заполнения временных промежутков между радиозондами частыми профилями ветра и другими вертикальными наблюдениями.
+
+  - id: eumetnet-amdar
+    provider: EUMETNET / WMO
+    name:
+      en: AMDAR aircraft observations
+      ru: AMDAR — самолётные наблюдения
+    summary:
+      en: Aircraft-based temperature, wind and selected humidity observations, including ascent/descent profiles near airports.
+      ru: Самолётные наблюдения температуры, ветра и части влажностных параметров, включая профили набора и снижения около аэропортов.
+    official: true
+    tier: specialized
+    categories: [aircraft, upper-air]
+    coverage: global routes; strong European coverage through EUMETNET
+    operational: true
+    update_cadence: continuous with flights
+    typical_latency: minutes to hours
+    archive: availability and rights vary
+    access:
+      level: restricted
+      auth: some WIS2/core subsets may be open; many aircraft feeds have access restrictions
+      terms: WMO, EUMETNET and aircraft-operator terms
+    protocols: [mqtt, https, wis2]
+    formats: [BUFR]
+    endpoints:
+      - name: WMO aircraft-based observations
+        url: https://community.wmo.int/en/activity-areas/aircraft-based-observations
+        protocol: https
+        role: documentation
+        healthcheck: true
+    software:
+      - name: ecCodes
+        role: BUFR decoding
+        url: https://github.com/ecmwf/eccodes
+    documentation:
+      - https://community.wmo.int/en/activity-areas/aircraft-based-observations
+    reliability: high
+    automation: medium
+    last_verified: '2026-09-05'
+    notes:
+      en: Operationally valuable high-frequency profiles, but access rights must be checked before automated use.
+      ru: Очень ценные частые оперативные профили, но перед автоматическим использованием необходимо проверить права доступа.

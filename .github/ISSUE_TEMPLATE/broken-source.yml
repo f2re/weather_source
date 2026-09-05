@@ -1,0 +1,56 @@
+name: Broken or changed source / Сломанный или изменившийся источник
+about: Report an unavailable endpoint, changed API, stale feed or incorrect catalogue metadata
+labels: [bug, source-health]
+body:
+  - type: input
+    id: source_id
+    attributes:
+      label: Catalogue source ID / ID источника
+      placeholder: wmo-wis2, dwd-open-data, noaa-nomads...
+    validations:
+      required: true
+  - type: dropdown
+    id: problem
+    attributes:
+      label: Problem type / Тип проблемы
+      options:
+        - Endpoint unavailable / Endpoint недоступен
+        - Endpoint moved / Endpoint переехал
+        - Authentication changed / Изменилась авторизация
+        - Format or schema changed / Изменился формат или схема
+        - Feed is stale / Данные не обновляются
+        - Update cadence or latency is incorrect / Неверная периодичность или задержка
+        - Licence or terms changed / Изменились лицензия или условия
+        - Decoder/client no longer works / Не работает декодер или клиент
+        - Other / Другое
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior / Что наблюдается
+      description: Include HTTP status/error, timestamps and commands where useful. Remove credentials and private tokens.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior / Что ожидалось
+    validations:
+      required: true
+  - type: input
+    id: official_update
+    attributes:
+      label: Provider documentation or change notice / Документация или сообщение поставщика
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction / Минимальное воспроизведение
+      placeholder: curl command, API request, WIS2 topic, file path, decoder command...
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety / Безопасность
+      options:
+        - label: I removed API keys, passwords, cookies, signed URLs and other secrets. / Я удалил ключи, пароли, cookie, подписанные URL и другие секреты.
+          required: true

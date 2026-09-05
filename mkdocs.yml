@@ -1,0 +1,40 @@
+site_name: Weather Source
+site_description: Bilingual knowledge base of operational meteorological data sources, protocols, formats and decoders
+site_url: https://f2re.github.io/weather_source/
+repo_url: https://github.com/f2re/weather_source
+repo_name: f2re/weather_source
+edit_uri: edit/main/docs/
+
+strict: true
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - pymdownx.details
+  - pymdownx.superfences
+
+nav:
+  - Home: index.md
+  - Русский: index.ru.md
+  - Source catalogue: sources/index.md
+  - Guides:
+      - WMO WIS2: sources/wmo-wis2.md
+      - Aerology: sources/aerology.md
+      - Protocols: protocols.md
+      - Formats: formats.md
+      - Software: software.md
+      - Operational architecture: operations.md

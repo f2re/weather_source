@@ -1,0 +1,392 @@
+sources:
+  - id: wmo-wis2
+    provider: WMO
+    name: {en: WMO WIS 2.0 Global Services, ru: WMO WIS 2.0 — глобальные сервисы}
+    summary:
+      en: Global event-driven exchange for WMO core and recommended meteorological data; MQTT notifications point to HTTPS payloads.
+      ru: Глобальный событийный обмен основными и рекомендуемыми данными WMO; MQTT-уведомления указывают на HTTPS-файлы.
+    official: true
+    tier: primary
+    categories: [surface, upper-air, aircraft, satellite, radar, nwp, metadata]
+    coverage: global
+    operational: true
+    update_cadence: continuous / event driven
+    typical_latency: seconds to minutes depending on publisher
+    archive: provider dependent; Global Cache is not a long-term archive
+    access: {level: open, auth: anonymous for core data; some datasets may require rights, terms: WMO Unified Data Policy and publisher terms}
+    protocols: [mqtt, https]
+    formats: [BUFR, GRIB2, NetCDF, JSON, XML, provider-dependent]
+    endpoints:
+      - {name: WIS2 guide, url: 'https://wmo-im.github.io/wis2-guide/', protocol: https, role: documentation, healthcheck: true}
+      - {name: wis2box documentation, url: 'https://docs.wis2box.wis.wmo.int/', protocol: https, role: reference implementation, healthcheck: true}
+    software:
+      - {name: wis2downloader, role: WIS2 MQTT consumer/downloader, url: 'https://github.com/World-Meteorological-Organization/wis2downloader'}
+      - {name: pywis-pubsub, role: WIS2 pub/sub utilities, url: 'https://github.com/World-Meteorological-Organization/pywis-pubsub'}
+      - {name: ecCodes, role: BUFR/GRIB decoding, url: 'https://github.com/ecmwf/eccodes'}
+    documentation: ['https://wmo-im.github.io/wis2-guide/', 'https://docs.wis2box.wis.wmo.int/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Preferred global transport for operational WMO observations when published as core data., ru: Предпочтительный глобальный транспорт оперативных наблюдений WMO при публикации как core data.}
+
+  - id: noaa-nodd
+    provider: NOAA
+    name: {en: NOAA Open Data Dissemination (NODD), ru: NOAA Open Data Dissemination (NODD)}
+    summary: {en: Cloud object-storage dissemination for large operational NOAA model radar satellite and observation datasets., ru: Облачная объектная раздача крупных оперативных наборов NOAA — модели радары спутники и наблюдения.}
+    official: true
+    tier: primary
+    categories: [nwp, radar, satellite, surface]
+    coverage: global / USA depending on dataset
+    operational: true
+    update_cadence: continuous / product dependent
+    typical_latency: close to operational publication
+    archive: dataset dependent
+    access: {level: open, auth: no cloud account required for many public buckets, terms: NOAA and cloud-provider dataset terms}
+    protocols: [s3, https]
+    formats: [GRIB2, NetCDF, HDF5, Level-II, Level-III, provider-dependent]
+    endpoints:
+      - {name: NODD program, url: 'https://www.noaa.gov/information-technology/open-data-dissemination', protocol: https, role: documentation, healthcheck: true}
+    software:
+      - {name: AWS CLI, role: S3-compatible listing and download, url: 'https://aws.amazon.com/cli/'}
+      - {name: boto3, role: Python S3 client, url: 'https://github.com/boto/boto3'}
+    documentation: ['https://www.noaa.gov/information-technology/open-data-dissemination']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Prefer object storage over scraping NOAA web viewers., ru: Для автоматизации предпочитать object storage а не парсинг веб-визуализаций NOAA.}
+
+  - id: dwd-open-data
+    provider: DWD
+    name: {en: DWD Open Data, ru: Открытые данные DWD}
+    summary: {en: German Weather Service open operational observations radar NWP and climate files., ru: Открытые оперативные наблюдения радиолокация модели и климатические файлы Немецкой метеослужбы.}
+    official: true
+    tier: primary
+    categories: [surface, upper-air, radar, nwp, climate]
+    coverage: Germany / Europe / global depending on product
+    operational: true
+    update_cadence: minutes to model-cycle cadence
+    typical_latency: low for operational products
+    archive: recent and historical directory trees
+    access: {level: open, auth: none, terms: DWD Open Data terms}
+    protocols: [https]
+    formats: [BUFR, GRIB2, NetCDF, ODIM HDF5, text, CSV]
+    endpoints:
+      - {name: DWD Open Data, url: 'https://opendata.dwd.de/', protocol: https, role: file tree, healthcheck: true}
+    software:
+      - {name: ecCodes, role: BUFR/GRIB decoder, url: 'https://github.com/ecmwf/eccodes'}
+      - {name: wradlib, role: weather-radar processing, url: 'https://github.com/wradlib/wradlib'}
+    documentation: ['https://opendata.dwd.de/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: One of the simplest high-value European file services for unattended ingest., ru: Один из самых удобных европейских файловых сервисов для постоянного автоматического приёма.}
+
+  - id: meteofrance-open-data
+    provider: Météo-France
+    name: {en: Météo-France Open Data, ru: Открытые данные Météo-France}
+    summary: {en: Open observations radiosondes radar and model products through French open-data services., ru: Открытые наблюдения аэрология радиолокация и модельные продукты через французские сервисы.}
+    official: true
+    tier: primary
+    categories: [surface, upper-air, radar, nwp, climate]
+    coverage: France and overseas territories; selected global products
+    operational: true
+    update_cadence: product dependent
+    typical_latency: minutes to hours
+    archive: dataset dependent
+    access: {level: open, auth: some products may require account or token, terms: Etalab/Open Licence or dataset-specific terms}
+    protocols: [https, api]
+    formats: [BUFR, GRIB2, CSV, JSON, GeoTIFF, provider-dependent]
+    endpoints:
+      - {name: Météo-France data portal, url: 'https://meteo.data.gouv.fr/', protocol: https, role: catalog, healthcheck: true}
+    software:
+      - {name: ecCodes, role: BUFR/GRIB decoding, url: 'https://github.com/ecmwf/eccodes'}
+      - {name: pandas, role: CSV/tabular processing, url: 'https://pandas.pydata.org/'}
+    documentation: ['https://meteo.data.gouv.fr/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Check authentication per product because the portal contains multiple access patterns., ru: Для каждого продукта отдельно проверять авторизацию — портал объединяет несколько схем доступа.}
+
+  - id: metoffice-datahub
+    provider: UK Met Office
+    name: {en: Met Office Weather DataHub, ru: UK Met Office Weather DataHub}
+    summary: {en: API access to selected Met Office observations and forecast products., ru: API-доступ к выбранным наблюдениям и прогнозным продуктам UK Met Office.}
+    official: true
+    tier: secondary
+    categories: [surface, nwp, upper-air]
+    coverage: UK and selected global products
+    operational: true
+    update_cadence: product dependent
+    typical_latency: minutes to hours
+    archive: product dependent
+    access: {level: free-tier, auth: account and API key; quotas depend on product or plan, terms: Met Office DataHub terms}
+    protocols: [https, rest]
+    formats: [JSON, GeoJSON, GRIB2, provider-dependent]
+    endpoints:
+      - {name: Weather DataHub, url: 'https://datahub.metoffice.gov.uk/', protocol: https, role: portal/API, healthcheck: true}
+    software:
+      - {name: requests, role: REST client, url: 'https://requests.readthedocs.io/'}
+    documentation: ['https://datahub.metoffice.gov.uk/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Free access is useful but quota and product entitlement must be checked., ru: Бесплатный доступ полезен но необходимо проверять квоты и доступность конкретного продукта.}
+
+  - id: eccc-datamart
+    provider: Environment and Climate Change Canada
+    name: {en: MSC Datamart, ru: ECCC MSC Datamart}
+    summary: {en: Operational Canadian and international files including observations model output and BUFR bulletins with AMQP notifications., ru: Оперативные канадские и международные файлы наблюдений моделей и BUFR-бюллетеней с уведомлениями AMQP.}
+    official: true
+    tier: primary
+    categories: [surface, upper-air, radar, nwp, marine]
+    coverage: Canada plus international exchange and global model products
+    operational: true
+    update_cadence: minutes to model-cycle cadence
+    typical_latency: low
+    archive: rolling operational archive
+    access: {level: open, auth: none for public Datamart, terms: Government of Canada open-data terms}
+    protocols: [https, amqp]
+    formats: [BUFR, GRIB2, XML, CSV, GeoTIFF, provider-dependent]
+    endpoints:
+      - {name: MSC Datamart, url: 'https://dd.weather.gc.ca/', protocol: https, role: file tree, healthcheck: true}
+      - {name: MSC Open Data docs, url: 'https://eccc-msc.github.io/open-data/msc-data/readme_en/', protocol: https, role: documentation, healthcheck: true}
+    software:
+      - {name: pika, role: AMQP notification consumer, url: 'https://pika.readthedocs.io/'}
+      - {name: ecCodes, role: BUFR/GRIB decoding, url: 'https://github.com/ecmwf/eccodes'}
+    documentation: ['https://eccc-msc.github.io/open-data/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: AMQP makes Datamart particularly suitable for event-driven operational reception., ru: AMQP делает Datamart особенно удобным для событийного оперативного приёма.}
+
+  - id: eccc-geomet
+    provider: Environment and Climate Change Canada
+    name: {en: MSC GeoMet, ru: ECCC MSC GeoMet}
+    summary: {en: OGC web services for Canadian meteorological and environmental layers., ru: OGC-сервисы канадских метеорологических и экологических слоёв.}
+    official: true
+    tier: primary
+    categories: [surface, radar, nwp, climate]
+    coverage: Canada
+    operational: true
+    update_cadence: dataset dependent
+    typical_latency: minutes to hours
+    archive: dataset dependent
+    access: {level: open, auth: none, terms: Government of Canada open-data terms}
+    protocols: [wms, wcs, ogc-api, https]
+    formats: [GeoTIFF, PNG, JSON, GML, coverage-formats]
+    endpoints:
+      - {name: GeoMet API, url: 'https://api.weather.gc.ca/', protocol: https, role: OGC API, healthcheck: true}
+    software:
+      - {name: OWSLib, role: OGC client, url: 'https://github.com/geopython/OWSLib'}
+      - {name: GDAL, role: raster/vector decoding, url: 'https://gdal.org/'}
+    documentation: ['https://eccc-msc.github.io/open-data/msc-geomet/readme_en/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Use WCS or OGC API for data values; WMS is primarily presentation., ru: Для численных данных использовать WCS или OGC API; WMS прежде всего предназначен для визуализации.}
+
+  - id: fmi-open-data
+    provider: Finnish Meteorological Institute
+    name: {en: FMI Open Data, ru: Открытые данные FMI}
+    summary: {en: WFS/API access to Finnish observations soundings radar and model datasets., ru: WFS/API-доступ к наблюдениям аэрологии радиолокации и моделям Финляндии.}
+    official: true
+    tier: primary
+    categories: [surface, upper-air, radar, nwp]
+    coverage: Finland and selected surrounding or global products
+    operational: true
+    update_cadence: minutes to hours
+    typical_latency: low
+    archive: dataset dependent; long archives for some observations
+    access: {level: open, auth: no API key for standard open-data service; rate limits apply, terms: FMI open data licence}
+    protocols: [wfs, https]
+    formats: [GML, XML, coverage-formats, GRIB2, provider-dependent]
+    endpoints:
+      - {name: FMI Open Data, url: 'https://en.ilmatieteenlaitos.fi/open-data', protocol: https, role: documentation, healthcheck: true}
+      - {name: FMI WFS, url: 'https://opendata.fmi.fi/wfs', protocol: wfs, role: API, healthcheck: true}
+    software:
+      - {name: OWSLib, role: WFS client, url: 'https://github.com/geopython/OWSLib'}
+      - {name: requests, role: HTTP client, url: 'https://requests.readthedocs.io/'}
+    documentation: ['https://en.ilmatieteenlaitos.fi/open-data']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Strong machine-readable regional source including upper-air stored queries., ru: Сильный машиночитаемый региональный источник включая stored queries аэрологии.}
+
+  - id: meteoswiss-open-data
+    provider: MeteoSwiss
+    name: {en: MeteoSwiss Open Government Data, ru: MeteoSwiss Open Government Data}
+    summary: {en: Swiss open weather and climate datasets including observations and radiosonde products., ru: Швейцарские открытые метеорологические и климатические данные включая наблюдения и радиозонды.}
+    official: true
+    tier: primary
+    categories: [surface, upper-air, climate]
+    coverage: Switzerland
+    operational: true
+    update_cadence: minutes to 12-hourly depending on dataset
+    typical_latency: low
+    archive: dataset dependent
+    access: {level: open, auth: none for published OGD files, terms: Swiss OGD terms}
+    protocols: [https]
+    formats: [CSV, NetCDF, provider-dependent]
+    endpoints:
+      - {name: MeteoSwiss Open Data, url: 'https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html', protocol: https, role: documentation, healthcheck: true}
+    software:
+      - {name: pandas, role: CSV processing, url: 'https://pandas.pydata.org/'}
+      - {name: xarray, role: NetCDF processing, url: 'https://github.com/pydata/xarray'}
+    documentation: ['https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Particularly convenient for simple file-based radiosonde and station ingestion., ru: Особенно удобен для простого файлового приёма радиозондов и станционных данных.}
+
+  - id: jma-data
+    provider: Japan Meteorological Agency
+    name: {en: JMA public meteorological data, ru: Открытые данные JMA}
+    summary: {en: Public observations warnings radar satellite and NWP products through several JMA services., ru: Публичные наблюдения предупреждения радиолокационные спутниковые и модельные продукты JMA.}
+    official: true
+    tier: secondary
+    categories: [surface, upper-air, radar, satellite, nwp]
+    coverage: Japan / western Pacific / global depending on product
+    operational: true
+    update_cadence: minutes to model cycles
+    typical_latency: low to hours
+    archive: dataset dependent
+    access: {level: open, auth: generally anonymous public access; bulk services may differ, terms: JMA terms}
+    protocols: [https]
+    formats: [BUFR, GRIB2, NetCDF, image, XML, provider-dependent]
+    endpoints:
+      - {name: JMA data portal, url: 'https://www.data.jma.go.jp/', protocol: https, role: portal, healthcheck: true}
+    software:
+      - {name: ecCodes, role: BUFR/GRIB decoding, url: 'https://github.com/ecmwf/eccodes'}
+    documentation: ['https://www.jma.go.jp/jma/indexe.html', 'https://www.data.jma.go.jp/']
+    reliability: high
+    automation: medium
+    last_verified: '2026-09-05'
+    notes: {en: Machine access is product-specific; validate the exact feed before deployment., ru: Машинный доступ зависит от продукта; перед внедрением проверять конкретный поток.}
+
+  - id: bom-open-data
+    provider: Australian Bureau of Meteorology
+    name: {en: BOM data feeds, ru: BOM — открытые потоки данных}
+    summary: {en: Australian public observations warnings model and radar-related data feeds., ru: Австралийские публичные потоки наблюдений предупреждений моделей и радиолокационных данных.}
+    official: true
+    tier: secondary
+    categories: [surface, radar, nwp, marine]
+    coverage: Australia and surrounding oceans
+    operational: true
+    update_cadence: minutes to hours
+    typical_latency: low
+    archive: dataset dependent
+    access: {level: open, auth: many public feeds anonymous; product rules vary, terms: Bureau of Meteorology terms}
+    protocols: [https, ftp]
+    formats: [XML, JSON, text, GRIB2, image, provider-dependent]
+    endpoints:
+      - {name: BOM data feeds, url: 'https://www.bom.gov.au/catalogue/data-feeds.shtml', protocol: https, role: documentation, healthcheck: true}
+    software:
+      - {name: requests, role: HTTP client, url: 'https://requests.readthedocs.io/'}
+      - {name: ecCodes, role: GRIB decoding, url: 'https://github.com/ecmwf/eccodes'}
+    documentation: ['https://www.bom.gov.au/catalogue/data-feeds.shtml']
+    reliability: high
+    automation: medium
+    last_verified: '2026-09-05'
+    notes: {en: Service migration and product-specific machine access should be rechecked periodically., ru: Переезды сервисов и машинный доступ к конкретным продуктам следует периодически перепроверять.}
+
+  - id: knmi-open-data
+    provider: KNMI
+    name: {en: KNMI Data Platform, ru: KNMI Data Platform}
+    summary: {en: Dutch open radar observations satellite-derived and model datasets., ru: Открытая платформа KNMI с радарами наблюдениями спутниковыми и модельными данными.}
+    official: true
+    tier: secondary
+    categories: [surface, radar, satellite, nwp]
+    coverage: Netherlands / Europe / product dependent
+    operational: true
+    update_cadence: minutes to hours
+    typical_latency: low
+    archive: dataset dependent
+    access: {level: registration, auth: API key required for Open Data API, terms: KNMI Data Platform terms}
+    protocols: [https, rest]
+    formats: [NetCDF, HDF5, GeoTIFF, GRIB2, provider-dependent]
+    endpoints:
+      - {name: KNMI Data Platform, url: 'https://developer.dataplatform.knmi.nl/', protocol: https, role: API documentation, healthcheck: true}
+    software:
+      - {name: requests, role: REST client, url: 'https://requests.readthedocs.io/'}
+    documentation: ['https://developer.dataplatform.knmi.nl/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: API key is free but must be provisioned before unattended access., ru: API-ключ бесплатный но его необходимо получить до запуска автоматического приёма.}
+
+  - id: met-norway-api
+    provider: MET Norway
+    name: {en: MET Norway open APIs, ru: MET Norway — открытые API}
+    summary: {en: Open APIs for observations forecasts and metadata; Frost provides historical observations., ru: Открытые API наблюдений прогнозов и метаданных; Frost предоставляет исторические наблюдения.}
+    official: true
+    tier: secondary
+    categories: [surface, nwp, climate]
+    coverage: Norway / Nordic / selected global forecast services
+    operational: true
+    update_cadence: minutes to hours
+    typical_latency: low
+    archive: historical observations through Frost
+    access: {level: registration, auth: some APIs anonymous with User-Agent policy; Frost uses client credentials, terms: MET Norway licence and terms}
+    protocols: [https, rest]
+    formats: [JSON, GeoJSON, NetCDF, provider-dependent]
+    endpoints:
+      - {name: MET APIs, url: 'https://api.met.no/', protocol: https, role: API index, healthcheck: true}
+      - {name: Frost API, url: 'https://frost.met.no/', protocol: https, role: observations API, healthcheck: true}
+    software:
+      - {name: requests, role: REST client, url: 'https://requests.readthedocs.io/'}
+    documentation: ['https://api.met.no/', 'https://frost.met.no/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Respect the required identifying User-Agent and documented request policy., ru: Соблюдать требование идентифицирующего User-Agent и опубликованную политику запросов.}
+
+  - id: smhi-open-data
+    provider: SMHI
+    name: {en: SMHI Open Data, ru: SMHI — открытые данные}
+    summary: {en: Swedish observations analyses radar and model products through APIs and files., ru: Шведские наблюдения анализы радиолокационные и модельные продукты через API и файлы.}
+    official: true
+    tier: secondary
+    categories: [surface, radar, nwp, hydrology]
+    coverage: Sweden / Nordic region
+    operational: true
+    update_cadence: minutes to hours
+    typical_latency: low
+    archive: dataset dependent
+    access: {level: open, auth: none for standard open-data endpoints, terms: SMHI open data terms}
+    protocols: [https, rest]
+    formats: [JSON, CSV, GRIB2, NetCDF, provider-dependent]
+    endpoints:
+      - {name: SMHI Open Data, url: 'https://opendata.smhi.se/', protocol: https, role: portal/API, healthcheck: true}
+    software:
+      - {name: requests, role: HTTP/API client, url: 'https://requests.readthedocs.io/'}
+      - {name: ecCodes, role: GRIB decoding, url: 'https://github.com/ecmwf/eccodes'}
+    documentation: ['https://opendata.smhi.se/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Good Nordic regional fallback alongside FMI and MET Norway., ru: Хороший региональный резерв для Скандинавии вместе с FMI и MET Norway.}
+
+  - id: aemet-opendata
+    provider: AEMET
+    name: {en: AEMET OpenData, ru: AEMET OpenData}
+    summary: {en: Spanish State Meteorological Agency API for observations forecasts climatology and selected products., ru: API испанской AEMET для наблюдений прогнозов климатологии и выбранных продуктов.}
+    official: true
+    tier: secondary
+    categories: [surface, nwp, climate]
+    coverage: Spain and territories
+    operational: true
+    update_cadence: minutes to hours
+    typical_latency: low
+    archive: dataset dependent
+    access: {level: registration, auth: free API key required, terms: AEMET OpenData terms}
+    protocols: [https, rest]
+    formats: [JSON, CSV, text, provider-dependent]
+    endpoints:
+      - {name: AEMET OpenData, url: 'https://opendata.aemet.es/centrodedescargas/inicio', protocol: https, role: portal/API, healthcheck: true}
+    software:
+      - {name: requests, role: REST client, url: 'https://requests.readthedocs.io/'}
+    documentation: ['https://opendata.aemet.es/centrodedescargas/inicio']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Free key makes the service automatable but credentials must be managed securely., ru: Бесплатный ключ позволяет автоматизацию но учётные данные необходимо хранить безопасно.}

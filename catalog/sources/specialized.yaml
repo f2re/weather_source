@@ -1,0 +1,253 @@
+sources:
+  - id: noaa-madis
+    provider: NOAA/NCEP MADIS
+    name:
+      en: Meteorological Assimilation Data Ingest System (MADIS)
+      ru: NOAA MADIS — система приёма метеорологических наблюдений
+    summary:
+      en: NOAA observational database and delivery system with radiosondes, profiler networks, aircraft observations, satellite soundings and other in-situ datasets.
+      ru: База и система доставки наблюдений NOAA, включающая радиозонды, профайлеры, самолётные наблюдения, спутниковые зондирования и другие in-situ наборы.
+    official: true
+    tier: specialized
+    categories: [upper-air, profiler, aircraft, surface]
+    coverage: global database with highest density over North America
+    operational: true
+    update_cadence: dataset dependent; continuous, minutes or hourly depending on feed
+    typical_latency: near-real-time for operational datasets; exact latency is dataset dependent
+    archive: archives exist for many datasets; start dates vary by dataset
+    access:
+      level: registration
+      auth: free MADIS data application/account for machine access; unrestricted and restricted dataset classes coexist
+      terms: NOAA MADIS data policy; radiosonde, Multi-Agency Profiler, satellite sounding and several other datasets are unrestricted, while aircraft and some mesonet data have restrictions
+    protocols: [https, ftp, opendap, ldm]
+    formats: [NetCDF, XML, text]
+    endpoints:
+      - name: MADIS home
+        url: https://madis.ncep.noaa.gov/
+        protocol: https
+        role: documentation and service entry point
+        healthcheck: true
+      - name: MADIS data application
+        url: https://madis.ncep.noaa.gov/data_application.shtml
+        protocol: https
+        role: account and access request
+        healthcheck: true
+    software:
+      - name: xarray
+        role: NetCDF processing
+        url: https://github.com/pydata/xarray
+      - name: netCDF4
+        role: NetCDF processing
+        url: https://github.com/Unidata/netcdf4-python
+    documentation:
+      - https://madis.ncep.noaa.gov/madis_datasets.shtml
+      - https://madis.ncep.noaa.gov/madis_restrictions.shtml
+      - https://madis.ncep.noaa.gov/data_application.shtml
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes:
+      en: Strong supplement for upper-air and profiler data. Check per-dataset rights before redistributing data, especially aircraft observations.
+      ru: Сильный дополнительный источник аэрологии и профайлеров. Перед распространением данных проверять права конкретного набора, особенно для самолётных наблюдений.
+
+  - id: noaa-ncei-upperair-bufr
+    provider: NOAA/NCEI
+    name:
+      en: Global Upper-Air BUFR Data Stream
+      ru: NOAA/NCEI — глобальный поток аэрологии BUFR
+    summary:
+      en: Raw radiosonde and pilot-balloon observations received through the NWS Telecommunications Gateway from the global WMO exchange and archived by NCEI.
+      ru: Сырые радиозондовые и шар-пилотные наблюдения глобального обмена WMO, получаемые через NWS Telecommunications Gateway и архивируемые NCEI.
+    official: true
+    tier: secondary
+    categories: [upper-air, archive]
+    coverage: global, approximately 90S to 83N for the NWSTG collection
+    operational: true
+    update_cadence: NCEI NWSTG collection updated daily; observations are typically synoptic sounding reports
+    typical_latency: archive-oriented daily update rather than event-driven real-time delivery
+    archive: NWSTG global BUFR from 2017-present; related ECMWF and NWS-managed raw upper-air streams are also archived
+    access:
+      level: open
+      auth: none for standard electronic download
+      terms: NOAA/NCEI data terms; dataset citation requested
+    protocols: [https]
+    formats: [BUFR]
+    endpoints:
+      - name: Global BUFR upper-air dataset
+        url: https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc%3AC01500
+        protocol: https
+        role: metadata and direct-download entry
+        healthcheck: true
+      - name: IGRA raw BUFR overview
+        url: https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive
+        protocol: https
+        role: raw BUFR stream documentation
+        healthcheck: true
+    software:
+      - name: ecCodes
+        role: BUFR decoding
+        url: https://github.com/ecmwf/eccodes
+      - name: pybufrkit
+        role: alternative Python BUFR toolkit
+        url: https://github.com/ywangd/pybufrkit
+    documentation:
+      - https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc%3AC01500
+      - https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes:
+      en: Preserve these raw BUFR messages when high vertical resolution or original metadata are important. For real-time reception, prefer WIS2 where available.
+      ru: Сохранять исходные BUFR, если важны высокое вертикальное разрешение и оригинальные метаданные. Для реального времени при наличии предпочитать WIS2.
+
+  - id: noaa-nucaps
+    provider: NOAA/NESDIS/STAR and OSPO
+    name:
+      en: NUCAPS / HEAP atmospheric sounding products
+      ru: NOAA NUCAPS / HEAP — спутниковые профили атмосферы
+    summary:
+      en: Operational satellite retrievals from CrIS and ATMS providing vertical temperature and moisture profiles, cloud properties and trace-gas products.
+      ru: Оперативные спутниковые retrieval-продукты CrIS и ATMS с вертикальными профилями температуры и влажности, облачными параметрами и малыми газовыми составляющими.
+    official: true
+    tier: specialized
+    categories: [satellite, upper-air]
+    coverage: global polar-orbiting coverage
+    operational: true
+    update_cadence: orbital overpasses; production cadence follows JPSS observations and processing
+    typical_latency: operational product stream; public archive latency and access path depend on OSPO/NDE/CLASS distribution
+    archive: long-term Environmental Data Record archive through NOAA CLASS
+    access:
+      level: registration
+      auth: archived and operational distribution paths differ; NOAA CLASS/NDE access requirements apply
+      terms: NOAA/NESDIS product and CLASS terms
+    protocols: [https]
+    formats: [NetCDF, BUFR]
+    endpoints:
+      - name: NUCAPS product page
+        url: https://www.star.nesdis.noaa.gov/jpss/soundings.php
+        protocol: https
+        role: product description and data-access links
+        healthcheck: true
+      - name: OSPO HEAP NUCAPS
+        url: https://www.ospo.noaa.gov/products/atmosphere/soundings/heap/nucaps/index.html
+        protocol: https
+        role: operational product documentation
+        healthcheck: true
+    software:
+      - name: xarray
+        role: NetCDF profile processing
+        url: https://github.com/pydata/xarray
+      - name: ecCodes
+        role: BUFR radiance/profile decoding where applicable
+        url: https://github.com/ecmwf/eccodes
+    documentation:
+      - https://www.star.nesdis.noaa.gov/jpss/soundings.php
+      - https://www.ospo.noaa.gov/products/atmosphere/soundings/heap/nucaps/index.html
+    reliability: high
+    automation: medium
+    last_verified: '2026-09-05'
+    notes:
+      en: NUCAPS standard NetCDF products contain retrieved profiles on 100 vertical points from roughly 1100 hPa to 0.016 hPa. Treat them as satellite retrievals, not radiosonde observations.
+      ru: Стандартные NetCDF-продукты NUCAPS содержат retrieval-профили на 100 вертикальных точках примерно от 1100 до 0.016 гПа. Это спутниковые retrieval-профили, а не радиозонды.
+
+  - id: doe-arm-sonde
+    provider: U.S. Department of Energy Atmospheric Radiation Measurement (ARM) User Facility
+    name:
+      en: ARM Balloon-Borne Sounding System (SONDE)
+      ru: DOE ARM SONDE — радиозондовые наблюдения
+    summary:
+      en: Research-quality radiosonde observations from ARM observatories and field campaigns measuring pressure, temperature, moisture and horizontal wind.
+      ru: Научные радиозондовые наблюдения обсерваторий и полевых кампаний ARM с давлением, температурой, влажностью и горизонтальным ветром.
+    official: true
+    tier: specialized
+    categories: [upper-air, reference, research]
+    coverage: ARM observatories and field campaigns across multiple continents and oceans
+    operational: false
+    update_cadence: launch schedule depends on observatory or campaign; many soundings are separated by 6-12 hours
+    typical_latency: ARM datastreams are generally available for download within 48 hours
+    archive: more than 30 years of ARM atmospheric observations; site and campaign dependent
+    access:
+      level: registration
+      auth: free ARM user account required for data download
+      terms: ARM data policy and citation requirements
+    protocols: [https]
+    formats: [NetCDF, ASCII, MWX]
+    endpoints:
+      - name: ARM SONDE
+        url: https://arm.gov/data/vaps/sonde/
+        protocol: https
+        role: instrument/product documentation
+        healthcheck: true
+      - name: ARM Data Discovery
+        url: https://adc.arm.gov/discovery/
+        protocol: https
+        role: search and download
+        healthcheck: true
+    software:
+      - name: xarray
+        role: NetCDF sounding processing
+        url: https://github.com/pydata/xarray
+      - name: netCDF4
+        role: NetCDF access
+        url: https://github.com/Unidata/netcdf4-python
+    documentation:
+      - https://arm.gov/data/vaps/sonde/
+      - https://www.arm.gov/publications/tech_reports/handbooks/sonde_handbook.pdf
+      - https://armgov.svcs.arm.gov/data/
+    reliability: high
+    automation: medium
+    last_verified: '2026-09-05'
+    notes:
+      en: Valuable validation/research dataset with standardized NetCDF sounding files. It is not intended to replace synoptic real-time WIS2 TEMP reception.
+      ru: Ценный набор для верификации и исследований со стандартизованными NetCDF-зондированиями. Не предназначен для замены синоптического realtime-приёма TEMP через WIS2.
+
+  - id: woudc-ozonesonde
+    provider: WMO Global Atmosphere Watch / WOUDC / Environment and Climate Change Canada
+    name:
+      en: WOUDC Ozonesonde archive and API
+      ru: WOUDC — озонозондовые профили и API
+    summary:
+      en: Global World Ozone and Ultraviolet Radiation Data Centre collection of ozonesonde profiles and related ozone/UV observations.
+      ru: Глобальная коллекция World Ozone and Ultraviolet Radiation Data Centre с озонозондовыми профилями и связанными наблюдениями озона и УФ-излучения.
+    official: true
+    tier: specialized
+    categories: [upper-air, ozone, archive]
+    coverage: global specialized station network
+    operational: false
+    update_cadence: station submissions are asynchronous; full dataset archive snapshots are updated weekly
+    typical_latency: archive/submission oriented rather than synoptic real-time
+    archive: long-term global ozone and UV archive
+    access:
+      level: open
+      auth: anonymous public API and web-accessible archive for published data
+      terms: WOUDC Data Policy and attribution/citation requirements
+    protocols: [https, api]
+    formats: [CSV, ZIP, JSON, provider-dependent]
+    endpoints:
+      - name: WOUDC API
+        url: https://api.woudc.org/?f=html
+        protocol: api
+        role: API and OpenAPI documentation
+        healthcheck: true
+      - name: Dataset snapshots
+        url: https://woudc.org/archive/Summaries/dataset-snapshots/
+        protocol: https
+        role: weekly full-dataset archives
+        healthcheck: true
+    software:
+      - name: requests
+        role: API and file retrieval
+        url: https://requests.readthedocs.io/
+      - name: pandas
+        role: extCSV and tabular processing
+        url: https://pandas.pydata.org/
+    documentation:
+      - https://api.woudc.org/?f=html
+      - https://woudc.org/en/data/data-use-policy
+      - https://woudc.org/archive/Documentation/PDF_files/WOUDC_Guidebooks/o3_guidev2.pdf
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes:
+      en: Whole-dataset ozonesonde snapshots are distributed as compressed CSV archives and are updated weekly; station-level files are also available in the archive.
+      ru: Полные snapshots озонозондового набора распространяются как сжатые CSV-архивы и обновляются еженедельно; в архиве доступны и отдельные станционные файлы.

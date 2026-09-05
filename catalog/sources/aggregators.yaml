@@ -1,0 +1,125 @@
+sources:
+  - id: iowa-mesonet
+    provider: Iowa Environmental Mesonet / Iowa State University
+    name: {en: Iowa Environmental Mesonet, ru: Iowa Environmental Mesonet}
+    summary: {en: High-value academic aggregation and APIs for METAR radar warnings radiosondes and other weather datasets., ru: Академический агрегатор и API для METAR радаров предупреждений аэрологии и других метеоданных.}
+    official: false
+    tier: aggregator
+    categories: [surface, radar, upper-air, archive]
+    coverage: primarily United States; selected global aviation and upper-air data
+    operational: true
+    update_cadence: minutes to hours depending on dataset
+    typical_latency: near-real-time for many feeds
+    archive: extensive archives for many US datasets
+    access: {level: open, auth: generally none; respect service policies and request limits, terms: Iowa State/IEM usage policy and upstream provider terms}
+    protocols: [https, rest]
+    formats: [JSON, CSV, text, GeoJSON, provider-dependent]
+    endpoints:
+      - {name: IEM, url: 'https://mesonet.agron.iastate.edu/', protocol: https, role: portal and API documentation, healthcheck: true}
+    software:
+      - {name: Siphon IAStateUpperAir, role: Python upper-air client, url: 'https://unidata.github.io/siphon/latest/api/simplewebservice.html'}
+      - {name: requests, role: REST and file client, url: 'https://requests.readthedocs.io/'}
+    documentation: ['https://mesonet.agron.iastate.edu/info/api.phtml']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Excellent convenience and fallback source but upstream official feeds should remain primary in critical systems., ru: Очень удобный резервный источник но в критических системах первичными должны оставаться официальные каналы.}
+
+  - id: open-meteo
+    provider: Open-Meteo
+    name: {en: Open-Meteo APIs, ru: Open-Meteo API}
+    summary: {en: Convenient APIs that aggregate weather models observations and climate-oriented products behind a unified interface., ru: Удобные API объединяющие модели погоды наблюдения и климатические продукты через единый интерфейс.}
+    official: false
+    tier: aggregator
+    categories: [nwp, surface, archive]
+    coverage: global
+    operational: true
+    update_cadence: upstream-model dependent
+    typical_latency: upstream dependent
+    archive: historical and archive APIs available for selected datasets
+    access: {level: free-tier, auth: free non-commercial/open access patterns plus paid/commercial plans; check current limits, terms: Open-Meteo licence and API terms plus upstream licences}
+    protocols: [https, rest]
+    formats: [JSON, CSV]
+    endpoints:
+      - {name: Open-Meteo documentation, url: 'https://open-meteo.com/en/docs', protocol: https, role: API documentation, healthcheck: true}
+    software:
+      - {name: requests, role: REST client, url: 'https://requests.readthedocs.io/'}
+    documentation: ['https://open-meteo.com/en/docs']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Useful normalization layer and prototype source; verify upstream model identity and licensing before scientific or operational use., ru: Полезный унифицированный слой для прототипов; перед научным или оперативным использованием проверять исходную модель и её лицензию.}
+
+  - id: meteostat
+    provider: Meteostat
+    name: {en: Meteostat weather and climate data, ru: Meteostat — погода и климат}
+    summary: {en: Community/open-source interface to historical and recent station-based weather data assembled from multiple providers., ru: Open-source интерфейс к историческим и недавним станционным данным собранным из нескольких источников.}
+    official: false
+    tier: aggregator
+    categories: [surface, climate, archive]
+    coverage: global station network
+    operational: false
+    update_cadence: periodic; not intended as a primary real-time feed
+    typical_latency: provider dependent and unsuitable for strict real-time SLAs
+    archive: extensive historical station archive
+    access: {level: open, auth: library and bulk access patterns vary, terms: Meteostat licence and upstream data terms}
+    protocols: [https, api]
+    formats: [CSV, JSON, tabular]
+    endpoints:
+      - {name: Meteostat developers, url: 'https://dev.meteostat.net/', protocol: https, role: documentation, healthcheck: true}
+    software:
+      - {name: meteostat-python, role: Python data client, url: 'https://github.com/meteostat/meteostat-python'}
+      - {name: pandas, role: tabular processing, url: 'https://pandas.pydata.org/'}
+    documentation: ['https://dev.meteostat.net/']
+    reliability: medium
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Good historical convenience layer; use national or WMO sources when provenance and operational latency matter., ru: Удобен для истории; когда важны происхождение и оперативная задержка использовать национальные или WMO-источники.}
+
+  - id: ogimet
+    provider: OGIMET
+    name: {en: OGIMET professional meteorological information, ru: OGIMET — метеорологическая информация}
+    summary: {en: Long-running convenience service exposing SYNOP METAR and other observation products derived from international exchange., ru: Давно работающий удобный сервис SYNOP METAR и других наблюдений получаемых из международного обмена.}
+    official: false
+    tier: aggregator
+    categories: [surface, aviation, archive]
+    coverage: global
+    operational: true
+    update_cadence: observation dependent
+    typical_latency: generally near-real-time but without an official operational SLA
+    archive: historical query capability
+    access: {level: open, auth: generally no account for interactive queries; automated usage must respect service limits, terms: OGIMET usage policy and upstream data rights}
+    protocols: [https]
+    formats: [HTML, text]
+    endpoints:
+      - {name: OGIMET, url: 'https://www.ogimet.com/', protocol: https, role: portal and query service, healthcheck: true}
+    software: []
+    documentation: ['https://www.ogimet.com/']
+    reliability: medium
+    automation: low
+    last_verified: '2026-09-05'
+    notes: {en: Keep as human-facing fallback; do not build a critical ingest pipeline on HTML scraping when WIS2 or official APIs exist., ru: Оставлять как резерв для человека; не строить критический приём на HTML-парсинге если доступны WIS2 или официальные API.}
+
+  - id: blitzortung
+    provider: Blitzortung.org
+    name: {en: Blitzortung community lightning network, ru: Blitzortung — общественная сеть регистрации молний}
+    summary: {en: Community-operated lightning detection network with useful visualization and community data access under restrictive terms., ru: Общественная сеть регистрации молний с полезной визуализацией и доступом к данным на условиях проекта.}
+    official: false
+    tier: aggregator
+    categories: [lightning]
+    coverage: broad international coverage depending on receiver density
+    operational: true
+    update_cadence: seconds to minutes
+    typical_latency: near-real-time visualization
+    archive: access depends on participant/status and service terms
+    access: {level: restricted, auth: detailed/raw access and redistribution rights are restricted; participant access differs, terms: Blitzortung terms prohibit treating the service as unrestricted public commercial data}
+    protocols: [https]
+    formats: [web visualization, provider-dependent]
+    endpoints:
+      - {name: Blitzortung, url: 'https://www.blitzortung.org/', protocol: https, role: project and visualization, healthcheck: true}
+    software: []
+    documentation: ['https://www.blitzortung.org/']
+    reliability: medium
+    automation: low
+    last_verified: '2026-09-05'
+    notes: {en: Documented for awareness only; do not assume an unrestricted public API. Prefer official GLM or MTG-LI where their coverage fits., ru: Включён для полноты; нельзя считать что существует неограниченный публичный API. При подходящем покрытии предпочитать официальные GLM или MTG-LI.}

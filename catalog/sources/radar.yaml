@@ -1,0 +1,56 @@
+sources:
+  - id: noaa-nexrad
+    provider: NOAA/NCEI/NWS
+    name: {en: NEXRAD Level II and Level III, ru: NOAA NEXRAD Level II и Level III}
+    summary: {en: United States weather-radar volumes and derived products from the NEXRAD network., ru: Радиолокационные объёмы и производные продукты американской сети NEXRAD.}
+    official: true
+    tier: primary
+    categories: [radar, precipitation, severe-weather]
+    coverage: United States and territories
+    operational: true
+    update_cadence: volume-scan cadence, typically several minutes
+    typical_latency: minutes
+    archive: long-term NCEI archive; operational cloud/object feeds available
+    access: {level: open, auth: none for public object storage and NCEI access, terms: NOAA public data terms}
+    protocols: [s3, https]
+    formats: [NEXRAD Level II, NEXRAD Level III]
+    endpoints:
+      - {name: NOAA NEXRAD information, url: 'https://www.ncei.noaa.gov/products/radar/next-generation-weather-radar', protocol: https, role: documentation and archive entry, healthcheck: true}
+      - {name: NOAA Open Data Dissemination, url: 'https://www.noaa.gov/information-technology/open-data-dissemination', protocol: https, role: operational cloud access documentation, healthcheck: true}
+    software:
+      - {name: Py-ART, role: radar reading processing and visualization, url: 'https://github.com/ARM-DOE/pyart'}
+      - {name: MetPy, role: meteorological radar utilities, url: 'https://github.com/Unidata/MetPy'}
+      - {name: nexradaws, role: Python access to public NEXRAD object storage, url: 'https://github.com/aarande/nexradaws'}
+    documentation: ['https://www.ncei.noaa.gov/products/radar/next-generation-weather-radar', 'https://www.noaa.gov/information-technology/open-data-dissemination']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Use object storage for bulk operational reception and NCEI for archive retrieval., ru: Для массового оперативного приёма использовать object storage а NCEI — для архива.}
+
+  - id: noaa-mrms
+    provider: NOAA/NSSL/NCEP
+    name: {en: Multi-Radar Multi-Sensor (MRMS), ru: NOAA MRMS — Multi-Radar Multi-Sensor}
+    summary: {en: Rapid-update gridded radar and multisensor products including reflectivity precipitation and severe-weather diagnostics., ru: Быстро обновляемые сеточные радиолокационные и мультисенсорные продукты включая отражаемость осадки и диагностику опасных явлений.}
+    official: true
+    tier: primary
+    categories: [radar, precipitation, severe-weather]
+    coverage: CONUS and selected surrounding regions/products
+    operational: true
+    update_cadence: approximately minutes; product dependent
+    typical_latency: minutes
+    archive: operational and research archives vary by product
+    access: {level: open, auth: none for public NOAA dissemination, terms: NOAA public data terms}
+    protocols: [https, s3]
+    formats: [GRIB2, NetCDF, GeoTIFF, provider-dependent]
+    endpoints:
+      - {name: MRMS operational data, url: 'https://mrms.ncep.noaa.gov/data/', protocol: https, role: operational file tree, healthcheck: true}
+      - {name: MRMS documentation, url: 'https://www.nssl.noaa.gov/projects/mrms/', protocol: https, role: product documentation, healthcheck: true}
+    software:
+      - {name: wgrib2, role: GRIB2 inspection and extraction, url: 'https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/'}
+      - {name: ecCodes, role: GRIB2 decoding, url: 'https://github.com/ecmwf/eccodes'}
+      - {name: xarray, role: gridded data analysis, url: 'https://github.com/pydata/xarray'}
+    documentation: ['https://www.nssl.noaa.gov/projects/mrms/', 'https://mrms.ncep.noaa.gov/data/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: High-value source for precipitation nowcasting and severe-weather applications; select small metadata or index files for health checks., ru: Ценный источник для наукастинга осадков и опасных явлений; для health-check использовать небольшие индексные или метаданные файлы.}

@@ -1,0 +1,70 @@
+name: New meteorological source / Новый источник
+about: Propose a new operational, archive or specialized meteorological data source
+labels: [source-request]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide enough engineering detail to reproduce access. / Укажите данные так, чтобы доступ можно было воспроизвести программно.
+  - type: input
+    id: provider
+    attributes:
+      label: Provider / Поставщик
+      placeholder: WMO, NOAA, national weather service, university...
+    validations:
+      required: true
+  - type: input
+    id: product
+    attributes:
+      label: Dataset or product / Набор или продукт
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Why it is useful / Зачем он нужен
+      description: Observation type, geographic coverage, operational use and what gap it fills.
+    validations:
+      required: true
+  - type: input
+    id: docs
+    attributes:
+      label: Official documentation URL / Официальная документация
+    validations:
+      required: true
+  - type: textarea
+    id: access
+    attributes:
+      label: Machine access / Машинный доступ
+      description: Protocol, endpoint, authentication, rate limits, update cadence and typical latency.
+      placeholder: HTTPS/S3/WIS2/WFS/API; URL/topic; anonymous/API key; every 10 min; ~5 min latency
+    validations:
+      required: true
+  - type: input
+    id: formats
+    attributes:
+      label: Formats / Форматы
+      placeholder: BUFR, GRIB2, NetCDF, HDF5, ODIM HDF5, JSON, CSV...
+    validations:
+      required: true
+  - type: textarea
+    id: software
+    attributes:
+      label: Ready software / Готовое ПО
+      description: Official client, decoder, Python library, CLI or open-source receiver if known.
+  - type: textarea
+    id: terms
+    attributes:
+      label: Licence and restrictions / Лицензия и ограничения
+      description: Registration, API key, quotas, commercial-use conditions, attribution.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Verification / Проверка
+      options:
+        - label: I checked that the documentation and endpoint are currently reachable. / Я проверил доступность документации и endpoint.
+          required: true
+        - label: I did not include credentials, cookies or private tokens. / Я не публикую ключи, cookie или приватные токены.
+          required: true
