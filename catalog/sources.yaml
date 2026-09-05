@@ -1,0 +1,17 @@
+catalog_version: 1
+last_reviewed: '2026-09-05'
+source_count: 42
+layout: split-by-domain
+files:
+  - catalog/sources/core.yaml
+  - catalog/sources/upper-air.yaml
+  - catalog/sources/surface.yaml
+  - catalog/sources/nwp.yaml
+  - catalog/sources/radar.yaml
+  - catalog/sources/satellite.yaml
+  - catalog/sources/ocean.yaml
+  - catalog/sources/archives.yaml
+  - catalog/sources/aggregators.yaml
+
+# This file is the entry point. Detailed records live in the files above.
+# scripts/validate_catalog.py loads and validates the complete catalogue.
