@@ -1,0 +1,81 @@
+sources:
+  - id: noaa-ndbc
+    provider: NOAA National Data Buoy Center
+    name: {en: NOAA NDBC, ru: NOAA NDBC — буи и морские наблюдения}
+    summary: {en: Operational buoy and coastal station observations including wind pressure waves water temperature and selected ocean variables., ru: Оперативные наблюдения буёв и прибрежных станций включая ветер давление волны температуру воды и другие морские параметры.}
+    official: true
+    tier: primary
+    categories: [marine, ocean, surface, waves]
+    coverage: United States waters plus selected global partner stations
+    operational: true
+    update_cadence: typically minutes to hourly depending on platform
+    typical_latency: minutes to tens of minutes
+    archive: historical station files available
+    access: {level: open, auth: none, terms: NOAA public data terms}
+    protocols: [https]
+    formats: [text, XML, NetCDF, provider-dependent]
+    endpoints:
+      - {name: NDBC, url: 'https://www.ndbc.noaa.gov/', protocol: https, role: operational portal and files, healthcheck: true}
+      - {name: NDBC data access, url: 'https://www.ndbc.noaa.gov/data_access.shtml', protocol: https, role: access documentation, healthcheck: true}
+    software:
+      - {name: pandas, role: text and tabular processing, url: 'https://pandas.pydata.org/'}
+      - {name: xarray, role: NetCDF processing, url: 'https://github.com/pydata/xarray'}
+    documentation: ['https://www.ndbc.noaa.gov/data_access.shtml']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Straightforward official marine observation source suitable for unattended ingestion., ru: Простой официальный источник морских наблюдений хорошо подходящий для автоматического приёма.}
+
+  - id: copernicus-marine
+    provider: Copernicus Marine Service
+    name: {en: Copernicus Marine Data Store, ru: Copernicus Marine Data Store}
+    summary: {en: Global and regional ocean analyses forecasts observations reprocessed products and wave datasets., ru: Глобальные и региональные океанические анализы прогнозы наблюдения реобработанные продукты и поля волн.}
+    official: true
+    tier: primary
+    categories: [ocean, marine, waves, analysis, nwp]
+    coverage: global and regional seas
+    operational: true
+    update_cadence: product dependent; daily and sub-daily operational products available
+    typical_latency: hours to days depending on product
+    archive: multi-year archives and reprocessed products
+    access: {level: registration, auth: free Copernicus Marine account or supported token/client flow, terms: Copernicus Marine licence and product terms}
+    protocols: [https, api]
+    formats: [NetCDF, Zarr, provider-dependent]
+    endpoints:
+      - {name: Copernicus Marine, url: 'https://marine.copernicus.eu/', protocol: https, role: service portal, healthcheck: true}
+      - {name: Data Store, url: 'https://data.marine.copernicus.eu/', protocol: https, role: catalog and subset service, healthcheck: true}
+    software:
+      - {name: copernicusmarine, role: official Python and CLI toolbox, url: 'https://github.com/mercator-ocean/copernicus-marine-toolbox'}
+      - {name: xarray, role: NetCDF and Zarr processing, url: 'https://github.com/pydata/xarray'}
+    documentation: ['https://help.marine.copernicus.eu/', 'https://data.marine.copernicus.eu/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Prefer the toolbox subset/get commands to downloading complete global files when only a small area is required., ru: Для небольших районов использовать subset/get через официальный toolbox а не скачивать целые глобальные файлы.}
+
+  - id: argo-gdac
+    provider: Argo Program / Coriolis / USGODAE
+    name: {en: Argo Global Data Assembly Centres, ru: Argo GDAC — профили океана}
+    summary: {en: Near-real-time and delayed-mode profiling-float observations of temperature salinity pressure and biogeochemical variables., ru: Оперативные и delayed-mode профили автономных буёв Argo: температура солёность давление и биогеохимические параметры.}
+    official: true
+    tier: primary
+    categories: [ocean, upper-ocean, profiling]
+    coverage: global ocean
+    operational: true
+    update_cadence: continuously as floats report; individual floats typically cycle over days
+    typical_latency: near-real-time products typically within hours to about a day after transmission
+    archive: complete mission archive through GDACs
+    access: {level: open, auth: none for GDAC public files, terms: Argo data policy and citation requirements}
+    protocols: [https, ftp]
+    formats: [NetCDF]
+    endpoints:
+      - {name: Argo data access, url: 'https://argo.ucsd.edu/data/data-from-gdacs/', protocol: https, role: access documentation, healthcheck: true}
+      - {name: Coriolis GDAC, url: 'https://data-argo.ifremer.fr/', protocol: https, role: file tree, healthcheck: true}
+    software:
+      - {name: argopy, role: Python Argo data client, url: 'https://github.com/euroargodev/argopy'}
+      - {name: xarray, role: NetCDF processing, url: 'https://github.com/pydata/xarray'}
+    documentation: ['https://argo.ucsd.edu/data/data-from-gdacs/', 'https://argo.ucsd.edu/data/argo-data-user-manual/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Strong free source of in-situ subsurface ocean profiles; use quality flags and distinguish real-time from delayed-mode QC., ru: Сильный бесплатный источник in-situ профилей океана; обязательно учитывать QC-флаги и различать real-time и delayed-mode данные.}
