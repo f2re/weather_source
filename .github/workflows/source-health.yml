@@ -1,0 +1,47 @@
+name: Source health
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  primary-endpoints:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install health-check dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements-dev.txt
+
+      - name: Validate catalogue before network checks
+        run: python scripts/validate_catalog.py
+
+      - name: Check primary official endpoints
+        run: >-
+          python scripts/check_endpoints.py
+          --tier primary
+          --retries 3
+          --timeout 15
+          --report source-health.json
+          --strict
+
+      - name: Upload health report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-health-${{ github.run_id }}
+          path: source-health.json
+          if-no-files-found: warn
+          retention-days: 30
