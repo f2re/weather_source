@@ -2,7 +2,9 @@ sources:
   - id: copernicus-cds
     provider: Copernicus Climate Change Service / ECMWF
     name: {en: Copernicus Climate Data Store, ru: Copernicus Climate Data Store}
-    summary: {en: Climate datasets and reanalyses including ERA5, ERA5-Land, seasonal products and many derived climate datasets., ru: Климатические данные и реанализы включая ERA5 ERA5-Land сезонные продукты и множество производных наборов.}
+    summary:
+      en: Climate datasets and reanalyses including ERA5, ERA5-Land, seasonal products and many derived climate datasets.
+      ru: Климатические данные и реанализы включая ERA5 ERA5-Land сезонные продукты и множество производных наборов.
     official: true
     tier: primary
     categories: [archive, reanalysis, climate]
