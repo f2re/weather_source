@@ -30,11 +30,15 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Русский: index.ru.md
-  - Source catalogue: sources/index.md
-  - Guides:
+  - Каталог / Catalogue:
+      - Обзор / Overview: sources/index.md
+      - Русский каталог: sources/index.ru.md
+      - English catalogue: sources/index.en.md
+  - Guides / Руководства:
       - WMO WIS2: sources/wmo-wis2.md
-      - Aerology: sources/aerology.md
-      - Protocols: protocols.md
-      - Formats: formats.md
-      - Software: software.md
-      - Operational architecture: operations.md
+      - Аэрология / Aerology: sources/aerology.md
+      - Для ИИ-агентов / AI agents: agent-guide.md
+      - Protocols / Протоколы: protocols.md
+      - Formats / Форматы: formats.md
+      - Software / ПО: software.md
+      - Operational architecture / Архитектура: operations.md
