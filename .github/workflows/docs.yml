@@ -35,8 +35,11 @@ jobs:
       - name: Validate catalogue
         run: python scripts/validate_catalog.py
 
-      - name: Generate source cards
-        run: python scripts/generate_docs.py --write
+      - name: Generate normalized source cards
+        run: python scripts/catalog_docs.py --write
+
+      - name: Verify generated artifacts
+        run: python scripts/catalog_docs.py --verify
 
       - name: Build MkDocs strictly
         run: mkdocs build --strict

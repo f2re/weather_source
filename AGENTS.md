@@ -1,70 +1,92 @@
 # AGENTS.md
 
-Weather Source is a knowledge base for humans and software/AI agents. The authoritative machine-readable source is `catalog/sources.yaml`; prose documentation explains it but must not override it.
+Weather Source — база знаний для человека, программных клиентов и ИИ-агентов. Авторитетный слой — YAML-каталог; Markdown и JSON/NDJSON являются детерминированными представлениями и должны совпадать с ним.
 
-## Source selection rules
+## Точки входа для агента
 
-1. Prefer `official: true` and `tier: primary` entries.
-2. For operational systems prefer `operational: true`, machine-accessible protocols and stable provider endpoints.
-3. Prefer event-driven or object/file APIs (WIS2 MQTT+HTTPS, AMQP, HTTPS, S3/object storage, REST, WFS/WCS) over scraping rendered maps or HTML pages.
-4. Do not infer availability from a provider name. Read `access.level`, `access.auth`, `endpoints`, `formats`, `coverage`, `latency`, `update_cadence`, `archive`, `terms` and `status`.
-5. Treat `registration` and `free-tier` as free but not anonymous. Treat `restricted` as unusable for unattended public deployment unless credentials/rights are explicitly available.
-6. When two equivalent official feeds exist, prefer the one with a protocol designed for automation and keep the second as fallback.
-7. For BUFR/GRIB/NetCDF/HDF payloads, preserve raw source files when practical. Normalization should be additive, not destructive.
-8. For WMO data, prefer WIS2 core data when available. Subscribe to notifications and download the canonical payload instead of repeatedly polling web pages.
-9. For upper-air observations, distinguish real radiosonde/TEMP observations from model profiles, satellite retrievals and aircraft-derived profiles.
-10. Never describe a forecast-model profile as a radiosonde observation.
+1. `llms.txt` — короткая карта репозитория.
+2. `catalog/agent-index.json` — компактный индекс для первичного ранжирования источников.
+3. `catalog/sources.json` — полный плоский каталог.
+4. `catalog/sources.ndjson` — одна полная запись на строку для RAG/ETL.
+5. `catalog/sources.yaml` + `catalog/sources/*.yaml` — окончательный источник истины.
+6. `docs/sources/generated/<id>.md` — подробная русско-английская карточка для объяснения решения человеку.
 
-## Reliability policy
+Если сгенерированные JSON/Markdown расходятся с YAML, доверять YAML и считать репозиторий требующим `python scripts/catalog_docs.py --write`.
 
-- `tier: primary` — recommended direct operational source.
-- `tier: secondary` — independent fallback, archive or regional alternative.
-- `tier: specialized` — useful for a narrower observation type or workflow.
-- `tier: aggregator` — convenient non-primary service; never the sole source in a critical pipeline.
+## Алгоритм выбора источника
 
-`status` reflects the repository's last review, not a guarantee of permanent availability. Before deployment, run `scripts/check_endpoints.py` for the selected sources.
+1. Предпочитать `official: true`.
+2. Затем `tier: primary`.
+3. Для текущих данных требовать `operational: true`.
+4. Проверить `coverage` относительно нужной территории.
+5. Проверить `access.level`, `access.auth` и `access.terms`.
+6. Предпочитать машинные протоколы: WIS2/MQTT, AMQP, S3/object storage, REST/OGC API, прямые HTTPS/FTP-файловые деревья.
+7. Проверить нативный `formats` и наличие подходящего декодера.
+8. Сравнить `typical_latency`, `update_cadence`, `archive`, `reliability`, `automation`.
+9. Для критического контура выбрать независимый fallback из другого центра/транспорта.
+10. Никогда не выбирать источник только потому, что у него удобная веб-страница.
 
-## Adding or changing a source
+## Надёжность и приоритет
 
-A source change should include:
+- `primary` — рекомендуемый прямой оперативный источник.
+- `secondary` — резерв, региональная альтернатива или архив.
+- `specialized` — специализированный тип наблюдений/продуктов.
+- `aggregator` — удобный агрегатор, но не единственный канал критической системы.
 
-- unique stable `id`;
-- provider and bilingual name/summary;
-- categories and geographic coverage;
-- operational flag, update cadence and typical latency;
-- access level, authentication and licence/terms notes;
-- at least one official documentation URL;
-- machine endpoint(s), with health-check metadata where safe;
-- formats and decoders/software;
-- source card link;
-- `last_verified` date.
+## Метеорологические правила
 
-Run:
+- Для WMO-оперативных данных сначала проверять WIS2 core.
+- Для upper-air различать радиозонд/TEMP, AMDAR/aircraft, profiler/lidar/radar wind profile, GNSS-RO/спутниковый retrieval и NWP model profile.
+- Модельный профиль **не является радиозондированием**.
+- Для радара различать raw volume, Level II/III, ODIM HDF5, composite, GRIB2 mosaic и image/WMS.
+- Для численного анализа не подменять raw/численные продукты PNG/WMS-визуализацией.
+- Raw BUFR/GRIB/NetCDF/HDF/другие исходные payload желательно сохранять до нормализации.
+
+## Декодеры по умолчанию
+
+- BUFR → ecCodes / pybufrkit;
+- GRIB/GRIB2 → ecCodes / wgrib2 / cfgrib;
+- NetCDF → xarray / netCDF4;
+- HDF5 → h5py / xarray;
+- ODIM HDF5 → wradlib / h5py;
+- GeoTIFF → GDAL / rasterio;
+- OGC → OWSLib / GDAL / прямой HTTP.
+
+## Как отвечать человеку
+
+При рекомендации источника указывать минимум:
+
+- название и владельца;
+- почему выбран именно он;
+- какие данные доступны;
+- покрытие;
+- периодичность и задержку;
+- протокол;
+- формат;
+- регистрацию/ключи/ограничения;
+- библиотеку или декодер;
+- основной endpoint;
+- fallback;
+- `last_verified`.
+
+## Изменение каталога
+
+При добавлении или изменении источника обновлять авторитетную YAML-запись и затем запускать:
 
 ```bash
 python scripts/validate_catalog.py
-python scripts/generate_docs.py --check
+python scripts/catalog_docs.py --write
+python scripts/catalog_docs.py --verify
 pytest -q
+mkdocs build --strict
 ```
 
-## Retrieval examples
+Generated artifacts должны быть закоммичены. Workflow `Sync generated catalogue` автоматически синхронизирует их после изменений YAML в `main`; CI обнаруживает missing/outdated/stale представления.
 
-### Need global upper-air observations
+## Health-check
 
-Filter for `categories` containing `upper-air`, `operational: true`, then prefer WIS2/TEMP entries. Use IGRA/Wyoming as independent fallback/archive paths, not as the primary global real-time transport when WIS2 is available.
+Сетевая проверка должна быть лёгкой: metadata/index/API root/малый range request. Нельзя скачивать гигабайтный GRIB, спутниковый архив или radar volume только ради проверки доступности. Контролировать нужно также **freshness**, а не только HTTP/MQTT connectivity.
 
-### Need global NWP
+## English summary
 
-Filter `categories` for `nwp` or `ensemble`, then compare coverage, latency, update cycle, forecast horizon, grid, formats and access protocol. Prefer direct official object/HTTP/API feeds.
-
-### Need radar
-
-Filter `radar`, then inspect whether the endpoint is raw volume, national composite, image-only, WMS/WCS or object storage. Do not treat a rendered PNG viewer as equivalent to raw radar data.
-
-## Documentation language
-
-Catalogue text should carry both `en` and `ru`. Source cards may be bilingual in one file. Technical identifiers, WMO codes, protocol names and official product names should not be translated when translation would create ambiguity.
-
-## Safety and load
-
-Health checks must be lightweight. Do not download large model/satellite/radar files merely to test availability. Use a catalogue or metadata endpoint, HEAD/range request, small index object or provider status endpoint where possible. Respect documented rate limits.
+Start with `catalog/agent-index.json`, resolve the selected `id` in `catalog/sources.json`, and use YAML as the final authority. Prefer official primary operational machine feeds, validate access/coverage/latency/native format, preserve raw payloads, and keep an independent fallback for critical ingestion.
