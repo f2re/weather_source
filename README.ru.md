@@ -77,15 +77,15 @@ YAML остаётся источником истины, но человекоч
 - `catalog/agent-index.json`;
 - `llms.txt`.
 
-`python scripts/generate_docs.py --verify` падает, если любой из этих файлов отсутствует, устарел или остался лишним после удаления источника.
+`python scripts/catalog_docs.py --verify` падает, если любой из этих файлов отсутствует, устарел или остался лишним после удаления источника.
 
 ## Локальная проверка
 
 ```bash
 python -m pip install -r requirements-dev.txt
 python scripts/validate_catalog.py
-python scripts/generate_docs.py --write
-python scripts/generate_docs.py --verify
+python scripts/catalog_docs.py --write
+python scripts/catalog_docs.py --verify
 python -m compileall -q examples scripts tests
 pytest -q
 mkdocs build --strict
@@ -104,7 +104,7 @@ catalog/                     YAML-источник истины + JSON/NDJSON д
 docs/sources/index*.md       полный коммитируемый каталог
 docs/sources/generated/      одна подробная двуязычная карточка на источник
 docs/sources/categories/     тематические каталоги
-docs/agent-guide.md           правила работы ИИ-агента
+docs/agent-guide.md          правила работы ИИ-агента
 examples/python/             примеры приёма и декодирования
 scripts/                     валидация, генерация и health-check
 tests/                       тесты каталога и примеров
