@@ -1,0 +1,30 @@
+# Weather Source
+
+Bilingual operational meteorological data-source knowledge base for humans and AI agents.
+Русско-английская база знаний оперативных источников метеоинформации.
+
+## Canonical machine data
+- catalog/sources.yaml — catalogue entry point and source-of-truth file list
+- catalog/sources.json — flattened full catalogue
+- catalog/sources.ndjson — one source record per line
+- catalog/agent-index.json — compact source-selection index
+- catalog/schema.json — JSON Schema for source records
+
+## Human documentation
+- docs/sources/index.ru.md — полный русский каталог
+- docs/sources/index.en.md — full English catalogue
+- docs/sources/generated/<id>.md — bilingual technical card for every source
+- docs/sources/wmo-wis2.md — WIS2 transport guide
+- docs/sources/aerology.md — upper-air/aerology guide
+- docs/agent-guide.md — agent retrieval and decision rules
+
+## Agent selection policy
+1. Prefer official=true and tier=primary.
+2. For real-time workflows require operational=true and compatible coverage.
+3. Check access.level/auth/terms before choosing an endpoint.
+4. Prefer MQTT/WIS2, AMQP, S3/object storage, REST/OGC or direct file trees over scraping HTML viewers.
+5. Match native formats to a standards-aware decoder and preserve raw payloads.
+6. Use an independent fallback for critical pipelines.
+7. Do not confuse observed upper-air profiles with NWP model profiles or satellite retrievals.
+
+Catalogue version: 1; sources: 47; reviewed: 2026-09-05

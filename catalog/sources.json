@@ -1,0 +1,3385 @@
+{
+  "catalog_version": 1,
+  "last_reviewed": "2026-09-05",
+  "source_count": 47,
+  "sources": [
+    {
+      "access": {
+        "auth": "anonymous for core data; some datasets may require rights",
+        "level": "open",
+        "terms": "WMO Unified Data Policy and publisher terms"
+      },
+      "archive": "provider dependent; Global Cache is not a long-term archive",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "upper-air",
+        "aircraft",
+        "satellite",
+        "radar",
+        "nwp",
+        "metadata"
+      ],
+      "coverage": "global",
+      "documentation": [
+        "https://wmo-im.github.io/wis2-guide/",
+        "https://docs.wis2box.wis.wmo.int/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "WIS2 guide",
+          "protocol": "https",
+          "role": "documentation",
+          "url": "https://wmo-im.github.io/wis2-guide/"
+        },
+        {
+          "healthcheck": true,
+          "name": "wis2box documentation",
+          "protocol": "https",
+          "role": "reference implementation",
+          "url": "https://docs.wis2box.wis.wmo.int/"
+        }
+      ],
+      "formats": [
+        "BUFR",
+        "GRIB2",
+        "NetCDF",
+        "JSON",
+        "XML",
+        "provider-dependent"
+      ],
+      "id": "wmo-wis2",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "WMO WIS 2.0 Global Services",
+        "ru": "WMO WIS 2.0 — глобальные сервисы"
+      },
+      "notes": {
+        "en": "Preferred global transport for operational WMO observations when published as core data.",
+        "ru": "Предпочтительный глобальный транспорт оперативных наблюдений WMO при публикации как core data."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "mqtt",
+        "https"
+      ],
+      "provider": "WMO",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "wis2downloader",
+          "role": "WIS2 MQTT consumer/downloader",
+          "url": "https://github.com/World-Meteorological-Organization/wis2downloader"
+        },
+        {
+          "name": "pywis-pubsub",
+          "role": "WIS2 pub/sub utilities",
+          "url": "https://github.com/World-Meteorological-Organization/pywis-pubsub"
+        },
+        {
+          "name": "ecCodes",
+          "role": "BUFR/GRIB decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "Global event-driven exchange for WMO core and recommended meteorological data; MQTT notifications point to HTTPS payloads.",
+        "ru": "Глобальный событийный обмен основными и рекомендуемыми данными WMO; MQTT-уведомления указывают на HTTPS-файлы."
+      },
+      "tier": "primary",
+      "typical_latency": "seconds to minutes depending on publisher",
+      "update_cadence": "continuous / event driven"
+    },
+    {
+      "access": {
+        "auth": "no cloud account required for many public buckets",
+        "level": "open",
+        "terms": "NOAA and cloud-provider dataset terms"
+      },
+      "archive": "dataset dependent",
+      "automation": "high",
+      "categories": [
+        "nwp",
+        "radar",
+        "satellite",
+        "surface"
+      ],
+      "coverage": "global / USA depending on dataset",
+      "documentation": [
+        "https://www.noaa.gov/information-technology/open-data-dissemination"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "NODD program",
+          "protocol": "https",
+          "role": "documentation",
+          "url": "https://www.noaa.gov/information-technology/open-data-dissemination"
+        }
+      ],
+      "formats": [
+        "GRIB2",
+        "NetCDF",
+        "HDF5",
+        "Level-II",
+        "Level-III",
+        "provider-dependent"
+      ],
+      "id": "noaa-nodd",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "NOAA Open Data Dissemination (NODD)",
+        "ru": "NOAA Open Data Dissemination (NODD)"
+      },
+      "notes": {
+        "en": "Prefer object storage over scraping NOAA web viewers.",
+        "ru": "Для автоматизации предпочитать object storage а не парсинг веб-визуализаций NOAA."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "s3",
+        "https"
+      ],
+      "provider": "NOAA",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "AWS CLI",
+          "role": "S3-compatible listing and download",
+          "url": "https://aws.amazon.com/cli/"
+        },
+        {
+          "name": "boto3",
+          "role": "Python S3 client",
+          "url": "https://github.com/boto/boto3"
+        }
+      ],
+      "summary": {
+        "en": "Cloud object-storage dissemination for large operational NOAA model radar satellite and observation datasets.",
+        "ru": "Облачная объектная раздача крупных оперативных наборов NOAA — модели радары спутники и наблюдения."
+      },
+      "tier": "primary",
+      "typical_latency": "close to operational publication",
+      "update_cadence": "continuous / product dependent"
+    },
+    {
+      "access": {
+        "auth": "none",
+        "level": "open",
+        "terms": "DWD Open Data terms"
+      },
+      "archive": "recent and historical directory trees",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "upper-air",
+        "radar",
+        "nwp",
+        "climate"
+      ],
+      "coverage": "Germany / Europe / global depending on product",
+      "documentation": [
+        "https://opendata.dwd.de/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "DWD Open Data",
+          "protocol": "https",
+          "role": "file tree",
+          "url": "https://opendata.dwd.de/"
+        }
+      ],
+      "formats": [
+        "BUFR",
+        "GRIB2",
+        "NetCDF",
+        "ODIM HDF5",
+        "text",
+        "CSV"
+      ],
+      "id": "dwd-open-data",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "DWD Open Data",
+        "ru": "Открытые данные DWD"
+      },
+      "notes": {
+        "en": "One of the simplest high-value European file services for unattended ingest.",
+        "ru": "Один из самых удобных европейских файловых сервисов для постоянного автоматического приёма."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https"
+      ],
+      "provider": "DWD",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "ecCodes",
+          "role": "BUFR/GRIB decoder",
+          "url": "https://github.com/ecmwf/eccodes"
+        },
+        {
+          "name": "wradlib",
+          "role": "weather-radar processing",
+          "url": "https://github.com/wradlib/wradlib"
+        }
+      ],
+      "summary": {
+        "en": "German Weather Service open operational observations radar NWP and climate files.",
+        "ru": "Открытые оперативные наблюдения радиолокация модели и климатические файлы Немецкой метеослужбы."
+      },
+      "tier": "primary",
+      "typical_latency": "low for operational products",
+      "update_cadence": "minutes to model-cycle cadence"
+    },
+    {
+      "access": {
+        "auth": "some products may require account or token",
+        "level": "open",
+        "terms": "Etalab/Open Licence or dataset-specific terms"
+      },
+      "archive": "dataset dependent",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "upper-air",
+        "radar",
+        "nwp",
+        "climate"
+      ],
+      "coverage": "France and overseas territories; selected global products",
+      "documentation": [
+        "https://meteo.data.gouv.fr/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Météo-France data portal",
+          "protocol": "https",
+          "role": "catalog",
+          "url": "https://meteo.data.gouv.fr/"
+        }
+      ],
+      "formats": [
+        "BUFR",
+        "GRIB2",
+        "CSV",
+        "JSON",
+        "GeoTIFF",
+        "provider-dependent"
+      ],
+      "id": "meteofrance-open-data",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Météo-France Open Data",
+        "ru": "Открытые данные Météo-France"
+      },
+      "notes": {
+        "en": "Check authentication per product because the portal contains multiple access patterns.",
+        "ru": "Для каждого продукта отдельно проверять авторизацию — портал объединяет несколько схем доступа."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "api"
+      ],
+      "provider": "Météo-France",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "ecCodes",
+          "role": "BUFR/GRIB decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        },
+        {
+          "name": "pandas",
+          "role": "CSV/tabular processing",
+          "url": "https://pandas.pydata.org/"
+        }
+      ],
+      "summary": {
+        "en": "Open observations radiosondes radar and model products through French open-data services.",
+        "ru": "Открытые наблюдения аэрология радиолокация и модельные продукты через французские сервисы."
+      },
+      "tier": "primary",
+      "typical_latency": "minutes to hours",
+      "update_cadence": "product dependent"
+    },
+    {
+      "access": {
+        "auth": "account and API key; quotas depend on product or plan",
+        "level": "free-tier",
+        "terms": "Met Office DataHub terms"
+      },
+      "archive": "product dependent",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "nwp",
+        "upper-air"
+      ],
+      "coverage": "UK and selected global products",
+      "documentation": [
+        "https://datahub.metoffice.gov.uk/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Weather DataHub",
+          "protocol": "https",
+          "role": "portal/API",
+          "url": "https://datahub.metoffice.gov.uk/"
+        }
+      ],
+      "formats": [
+        "JSON",
+        "GeoJSON",
+        "GRIB2",
+        "provider-dependent"
+      ],
+      "id": "metoffice-datahub",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Met Office Weather DataHub",
+        "ru": "UK Met Office Weather DataHub"
+      },
+      "notes": {
+        "en": "Free access is useful but quota and product entitlement must be checked.",
+        "ru": "Бесплатный доступ полезен но необходимо проверять квоты и доступность конкретного продукта."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "rest"
+      ],
+      "provider": "UK Met Office",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "requests",
+          "role": "REST client",
+          "url": "https://requests.readthedocs.io/"
+        }
+      ],
+      "summary": {
+        "en": "API access to selected Met Office observations and forecast products.",
+        "ru": "API-доступ к выбранным наблюдениям и прогнозным продуктам UK Met Office."
+      },
+      "tier": "secondary",
+      "typical_latency": "minutes to hours",
+      "update_cadence": "product dependent"
+    },
+    {
+      "access": {
+        "auth": "none for public Datamart",
+        "level": "open",
+        "terms": "Government of Canada open-data terms"
+      },
+      "archive": "rolling operational archive",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "upper-air",
+        "radar",
+        "nwp",
+        "marine"
+      ],
+      "coverage": "Canada plus international exchange and global model products",
+      "documentation": [
+        "https://eccc-msc.github.io/open-data/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "MSC Datamart",
+          "protocol": "https",
+          "role": "file tree",
+          "url": "https://dd.weather.gc.ca/"
+        },
+        {
+          "healthcheck": true,
+          "name": "MSC Open Data docs",
+          "protocol": "https",
+          "role": "documentation",
+          "url": "https://eccc-msc.github.io/open-data/msc-data/readme_en/"
+        }
+      ],
+      "formats": [
+        "BUFR",
+        "GRIB2",
+        "XML",
+        "CSV",
+        "GeoTIFF",
+        "provider-dependent"
+      ],
+      "id": "eccc-datamart",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "MSC Datamart",
+        "ru": "ECCC MSC Datamart"
+      },
+      "notes": {
+        "en": "AMQP makes Datamart particularly suitable for event-driven operational reception.",
+        "ru": "AMQP делает Datamart особенно удобным для событийного оперативного приёма."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "amqp"
+      ],
+      "provider": "Environment and Climate Change Canada",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "pika",
+          "role": "AMQP notification consumer",
+          "url": "https://pika.readthedocs.io/"
+        },
+        {
+          "name": "ecCodes",
+          "role": "BUFR/GRIB decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "Operational Canadian and international files including observations model output and BUFR bulletins with AMQP notifications.",
+        "ru": "Оперативные канадские и международные файлы наблюдений моделей и BUFR-бюллетеней с уведомлениями AMQP."
+      },
+      "tier": "primary",
+      "typical_latency": "low",
+      "update_cadence": "minutes to model-cycle cadence"
+    },
+    {
+      "access": {
+        "auth": "none",
+        "level": "open",
+        "terms": "Government of Canada open-data terms"
+      },
+      "archive": "dataset dependent",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "radar",
+        "nwp",
+        "climate"
+      ],
+      "coverage": "Canada",
+      "documentation": [
+        "https://eccc-msc.github.io/open-data/msc-geomet/readme_en/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "GeoMet API",
+          "protocol": "https",
+          "role": "OGC API",
+          "url": "https://api.weather.gc.ca/"
+        }
+      ],
+      "formats": [
+        "GeoTIFF",
+        "PNG",
+        "JSON",
+        "GML",
+        "coverage-formats"
+      ],
+      "id": "eccc-geomet",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "MSC GeoMet",
+        "ru": "ECCC MSC GeoMet"
+      },
+      "notes": {
+        "en": "Use WCS or OGC API for data values; WMS is primarily presentation.",
+        "ru": "Для численных данных использовать WCS или OGC API; WMS прежде всего предназначен для визуализации."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "wms",
+        "wcs",
+        "ogc-api",
+        "https"
+      ],
+      "provider": "Environment and Climate Change Canada",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "OWSLib",
+          "role": "OGC client",
+          "url": "https://github.com/geopython/OWSLib"
+        },
+        {
+          "name": "GDAL",
+          "role": "raster/vector decoding",
+          "url": "https://gdal.org/"
+        }
+      ],
+      "summary": {
+        "en": "OGC web services for Canadian meteorological and environmental layers.",
+        "ru": "OGC-сервисы канадских метеорологических и экологических слоёв."
+      },
+      "tier": "primary",
+      "typical_latency": "minutes to hours",
+      "update_cadence": "dataset dependent"
+    },
+    {
+      "access": {
+        "auth": "no API key for standard open-data service; rate limits apply",
+        "level": "open",
+        "terms": "FMI open data licence"
+      },
+      "archive": "dataset dependent; long archives for some observations",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "upper-air",
+        "radar",
+        "nwp"
+      ],
+      "coverage": "Finland and selected surrounding or global products",
+      "documentation": [
+        "https://en.ilmatieteenlaitos.fi/open-data"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "FMI Open Data",
+          "protocol": "https",
+          "role": "documentation",
+          "url": "https://en.ilmatieteenlaitos.fi/open-data"
+        },
+        {
+          "healthcheck": true,
+          "name": "FMI WFS",
+          "protocol": "wfs",
+          "role": "API",
+          "url": "https://opendata.fmi.fi/wfs"
+        }
+      ],
+      "formats": [
+        "GML",
+        "XML",
+        "coverage-formats",
+        "GRIB2",
+        "provider-dependent"
+      ],
+      "id": "fmi-open-data",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "FMI Open Data",
+        "ru": "Открытые данные FMI"
+      },
+      "notes": {
+        "en": "Strong machine-readable regional source including upper-air stored queries.",
+        "ru": "Сильный машиночитаемый региональный источник включая stored queries аэрологии."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "wfs",
+        "https"
+      ],
+      "provider": "Finnish Meteorological Institute",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "OWSLib",
+          "role": "WFS client",
+          "url": "https://github.com/geopython/OWSLib"
+        },
+        {
+          "name": "requests",
+          "role": "HTTP client",
+          "url": "https://requests.readthedocs.io/"
+        }
+      ],
+      "summary": {
+        "en": "WFS/API access to Finnish observations soundings radar and model datasets.",
+        "ru": "WFS/API-доступ к наблюдениям аэрологии радиолокации и моделям Финляндии."
+      },
+      "tier": "primary",
+      "typical_latency": "low",
+      "update_cadence": "minutes to hours"
+    },
+    {
+      "access": {
+        "auth": "none for published OGD files",
+        "level": "open",
+        "terms": "Swiss OGD terms"
+      },
+      "archive": "dataset dependent",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "upper-air",
+        "climate"
+      ],
+      "coverage": "Switzerland",
+      "documentation": [
+        "https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "MeteoSwiss Open Data",
+          "protocol": "https",
+          "role": "documentation",
+          "url": "https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html"
+        }
+      ],
+      "formats": [
+        "CSV",
+        "NetCDF",
+        "provider-dependent"
+      ],
+      "id": "meteoswiss-open-data",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "MeteoSwiss Open Government Data",
+        "ru": "MeteoSwiss Open Government Data"
+      },
+      "notes": {
+        "en": "Particularly convenient for simple file-based radiosonde and station ingestion.",
+        "ru": "Особенно удобен для простого файлового приёма радиозондов и станционных данных."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https"
+      ],
+      "provider": "MeteoSwiss",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "pandas",
+          "role": "CSV processing",
+          "url": "https://pandas.pydata.org/"
+        },
+        {
+          "name": "xarray",
+          "role": "NetCDF processing",
+          "url": "https://github.com/pydata/xarray"
+        }
+      ],
+      "summary": {
+        "en": "Swiss open weather and climate datasets including observations and radiosonde products.",
+        "ru": "Швейцарские открытые метеорологические и климатические данные включая наблюдения и радиозонды."
+      },
+      "tier": "primary",
+      "typical_latency": "low",
+      "update_cadence": "minutes to 12-hourly depending on dataset"
+    },
+    {
+      "access": {
+        "auth": "generally anonymous public access; bulk services may differ",
+        "level": "open",
+        "terms": "JMA terms"
+      },
+      "archive": "dataset dependent",
+      "automation": "medium",
+      "categories": [
+        "surface",
+        "upper-air",
+        "radar",
+        "satellite",
+        "nwp"
+      ],
+      "coverage": "Japan / western Pacific / global depending on product",
+      "documentation": [
+        "https://www.jma.go.jp/jma/indexe.html",
+        "https://www.data.jma.go.jp/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "JMA data portal",
+          "protocol": "https",
+          "role": "portal",
+          "url": "https://www.data.jma.go.jp/"
+        }
+      ],
+      "formats": [
+        "BUFR",
+        "GRIB2",
+        "NetCDF",
+        "image",
+        "XML",
+        "provider-dependent"
+      ],
+      "id": "jma-data",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "JMA public meteorological data",
+        "ru": "Открытые данные JMA"
+      },
+      "notes": {
+        "en": "Machine access is product-specific; validate the exact feed before deployment.",
+        "ru": "Машинный доступ зависит от продукта; перед внедрением проверять конкретный поток."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https"
+      ],
+      "provider": "Japan Meteorological Agency",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "ecCodes",
+          "role": "BUFR/GRIB decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "Public observations warnings radar satellite and NWP products through several JMA services.",
+        "ru": "Публичные наблюдения предупреждения радиолокационные спутниковые и модельные продукты JMA."
+      },
+      "tier": "secondary",
+      "typical_latency": "low to hours",
+      "update_cadence": "minutes to model cycles"
+    },
+    {
+      "access": {
+        "auth": "many public feeds anonymous; product rules vary",
+        "level": "open",
+        "terms": "Bureau of Meteorology terms"
+      },
+      "archive": "dataset dependent",
+      "automation": "medium",
+      "categories": [
+        "surface",
+        "radar",
+        "nwp",
+        "marine"
+      ],
+      "coverage": "Australia and surrounding oceans",
+      "documentation": [
+        "https://www.bom.gov.au/catalogue/data-feeds.shtml"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "BOM data feeds",
+          "protocol": "https",
+          "role": "documentation",
+          "url": "https://www.bom.gov.au/catalogue/data-feeds.shtml"
+        }
+      ],
+      "formats": [
+        "XML",
+        "JSON",
+        "text",
+        "GRIB2",
+        "image",
+        "provider-dependent"
+      ],
+      "id": "bom-open-data",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "BOM data feeds",
+        "ru": "BOM — открытые потоки данных"
+      },
+      "notes": {
+        "en": "Service migration and product-specific machine access should be rechecked periodically.",
+        "ru": "Переезды сервисов и машинный доступ к конкретным продуктам следует периодически перепроверять."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "ftp"
+      ],
+      "provider": "Australian Bureau of Meteorology",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "requests",
+          "role": "HTTP client",
+          "url": "https://requests.readthedocs.io/"
+        },
+        {
+          "name": "ecCodes",
+          "role": "GRIB decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "Australian public observations warnings model and radar-related data feeds.",
+        "ru": "Австралийские публичные потоки наблюдений предупреждений моделей и радиолокационных данных."
+      },
+      "tier": "secondary",
+      "typical_latency": "low",
+      "update_cadence": "minutes to hours"
+    },
+    {
+      "access": {
+        "auth": "API key required for Open Data API",
+        "level": "registration",
+        "terms": "KNMI Data Platform terms"
+      },
+      "archive": "dataset dependent",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "radar",
+        "satellite",
+        "nwp"
+      ],
+      "coverage": "Netherlands / Europe / product dependent",
+      "documentation": [
+        "https://developer.dataplatform.knmi.nl/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "KNMI Data Platform",
+          "protocol": "https",
+          "role": "API documentation",
+          "url": "https://developer.dataplatform.knmi.nl/"
+        }
+      ],
+      "formats": [
+        "NetCDF",
+        "HDF5",
+        "GeoTIFF",
+        "GRIB2",
+        "provider-dependent"
+      ],
+      "id": "knmi-open-data",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "KNMI Data Platform",
+        "ru": "KNMI Data Platform"
+      },
+      "notes": {
+        "en": "API key is free but must be provisioned before unattended access.",
+        "ru": "API-ключ бесплатный но его необходимо получить до запуска автоматического приёма."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "rest"
+      ],
+      "provider": "KNMI",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "requests",
+          "role": "REST client",
+          "url": "https://requests.readthedocs.io/"
+        }
+      ],
+      "summary": {
+        "en": "Dutch open radar observations satellite-derived and model datasets.",
+        "ru": "Открытая платформа KNMI с радарами наблюдениями спутниковыми и модельными данными."
+      },
+      "tier": "secondary",
+      "typical_latency": "low",
+      "update_cadence": "minutes to hours"
+    },
+    {
+      "access": {
+        "auth": "some APIs anonymous with User-Agent policy; Frost uses client credentials",
+        "level": "registration",
+        "terms": "MET Norway licence and terms"
+      },
+      "archive": "historical observations through Frost",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "nwp",
+        "climate"
+      ],
+      "coverage": "Norway / Nordic / selected global forecast services",
+      "documentation": [
+        "https://api.met.no/",
+        "https://frost.met.no/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "MET APIs",
+          "protocol": "https",
+          "role": "API index",
+          "url": "https://api.met.no/"
+        },
+        {
+          "healthcheck": true,
+          "name": "Frost API",
+          "protocol": "https",
+          "role": "observations API",
+          "url": "https://frost.met.no/"
+        }
+      ],
+      "formats": [
+        "JSON",
+        "GeoJSON",
+        "NetCDF",
+        "provider-dependent"
+      ],
+      "id": "met-norway-api",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "MET Norway open APIs",
+        "ru": "MET Norway — открытые API"
+      },
+      "notes": {
+        "en": "Respect the required identifying User-Agent and documented request policy.",
+        "ru": "Соблюдать требование идентифицирующего User-Agent и опубликованную политику запросов."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "rest"
+      ],
+      "provider": "MET Norway",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "requests",
+          "role": "REST client",
+          "url": "https://requests.readthedocs.io/"
+        }
+      ],
+      "summary": {
+        "en": "Open APIs for observations forecasts and metadata; Frost provides historical observations.",
+        "ru": "Открытые API наблюдений прогнозов и метаданных; Frost предоставляет исторические наблюдения."
+      },
+      "tier": "secondary",
+      "typical_latency": "low",
+      "update_cadence": "minutes to hours"
+    },
+    {
+      "access": {
+        "auth": "none for standard open-data endpoints",
+        "level": "open",
+        "terms": "SMHI open data terms"
+      },
+      "archive": "dataset dependent",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "radar",
+        "nwp",
+        "hydrology"
+      ],
+      "coverage": "Sweden / Nordic region",
+      "documentation": [
+        "https://opendata.smhi.se/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "SMHI Open Data",
+          "protocol": "https",
+          "role": "portal/API",
+          "url": "https://opendata.smhi.se/"
+        }
+      ],
+      "formats": [
+        "JSON",
+        "CSV",
+        "GRIB2",
+        "NetCDF",
+        "provider-dependent"
+      ],
+      "id": "smhi-open-data",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "SMHI Open Data",
+        "ru": "SMHI — открытые данные"
+      },
+      "notes": {
+        "en": "Good Nordic regional fallback alongside FMI and MET Norway.",
+        "ru": "Хороший региональный резерв для Скандинавии вместе с FMI и MET Norway."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "rest"
+      ],
+      "provider": "SMHI",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "requests",
+          "role": "HTTP/API client",
+          "url": "https://requests.readthedocs.io/"
+        },
+        {
+          "name": "ecCodes",
+          "role": "GRIB decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "Swedish observations analyses radar and model products through APIs and files.",
+        "ru": "Шведские наблюдения анализы радиолокационные и модельные продукты через API и файлы."
+      },
+      "tier": "secondary",
+      "typical_latency": "low",
+      "update_cadence": "minutes to hours"
+    },
+    {
+      "access": {
+        "auth": "free API key required",
+        "level": "registration",
+        "terms": "AEMET OpenData terms"
+      },
+      "archive": "dataset dependent",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "nwp",
+        "climate"
+      ],
+      "coverage": "Spain and territories",
+      "documentation": [
+        "https://opendata.aemet.es/centrodedescargas/inicio"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "AEMET OpenData",
+          "protocol": "https",
+          "role": "portal/API",
+          "url": "https://opendata.aemet.es/centrodedescargas/inicio"
+        }
+      ],
+      "formats": [
+        "JSON",
+        "CSV",
+        "text",
+        "provider-dependent"
+      ],
+      "id": "aemet-opendata",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "AEMET OpenData",
+        "ru": "AEMET OpenData"
+      },
+      "notes": {
+        "en": "Free key makes the service automatable but credentials must be managed securely.",
+        "ru": "Бесплатный ключ позволяет автоматизацию но учётные данные необходимо хранить безопасно."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "rest"
+      ],
+      "provider": "AEMET",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "requests",
+          "role": "REST client",
+          "url": "https://requests.readthedocs.io/"
+        }
+      ],
+      "summary": {
+        "en": "Spanish State Meteorological Agency API for observations forecasts climatology and selected products.",
+        "ru": "API испанской AEMET для наблюдений прогнозов климатологии и выбранных продуктов."
+      },
+      "tier": "secondary",
+      "typical_latency": "low",
+      "update_cadence": "minutes to hours"
+    },
+    {
+      "access": {
+        "auth": "anonymous WIS2 core access where published",
+        "level": "open",
+        "terms": "WMO Unified Data Policy and publisher terms"
+      },
+      "archive": "WIS2 cache retention; long-term archive via other services",
+      "automation": "high",
+      "categories": [
+        "upper-air"
+      ],
+      "coverage": "Russia",
+      "documentation": [
+        "https://wmo-im.github.io/wis2-guide/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": false,
+          "name": "WIS2 topic",
+          "protocol": "wis2",
+          "role": "subscription topic",
+          "url": "wis2://cache/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp"
+        },
+        {
+          "healthcheck": true,
+          "name": "WIS2 guide",
+          "protocol": "https",
+          "role": "documentation",
+          "url": "https://wmo-im.github.io/wis2-guide/"
+        }
+      ],
+      "formats": [
+        "BUFR"
+      ],
+      "id": "ru-aviamettelecom-wis2-temp",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Russian upper-air TEMP via WIS2",
+        "ru": "Российская аэрология TEMP через WIS2"
+      },
+      "notes": {
+        "en": "Use WIS2 as the primary machine path; keep IGRA/Wyoming as independent fallback and archive paths.",
+        "ru": "Для машинного приёма использовать WIS2 как основной путь; IGRA/Wyoming держать как независимый резерв и архив."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "mqtt",
+        "https",
+        "wis2"
+      ],
+      "provider": "Aviamettelecom of Roshydromet / WMO",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "wis2downloader",
+          "role": "receive notifications and payloads",
+          "url": "https://github.com/World-Meteorological-Organization/wis2downloader"
+        },
+        {
+          "name": "ecCodes",
+          "role": "BUFR decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "Russian radiosonde/TEMP observations published in the WIS2 ecosystem.",
+        "ru": "Российские радиозондовые наблюдения TEMP, публикуемые в экосистеме WIS2."
+      },
+      "tier": "primary",
+      "typical_latency": "minutes after publication",
+      "update_cadence": "typically 00/12 UTC; station dependent"
+    },
+    {
+      "access": {
+        "auth": "none",
+        "level": "open",
+        "terms": "NOAA/NCEI terms"
+      },
+      "archive": "1905-present across the network; station dependent",
+      "automation": "high",
+      "categories": [
+        "upper-air",
+        "archive",
+        "climate"
+      ],
+      "coverage": "global",
+      "documentation": [
+        "https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "IGRA product page",
+          "protocol": "https",
+          "role": "documentation and download",
+          "url": "https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive"
+        }
+      ],
+      "formats": [
+        "fixed-width text",
+        "CSV-derived",
+        "BUFR-source"
+      ],
+      "id": "noaa-ncei-igra",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Integrated Global Radiosonde Archive (IGRA) 2",
+        "ru": "NOAA IGRA 2 — глобальная аэрология"
+      },
+      "notes": {
+        "en": "Strong independent fallback and archive for radiosondes; not a substitute for event-driven WIS2 reception.",
+        "ru": "Сильный независимый резерв и архив аэрологии; не заменяет событийный оперативный приём через WIS2."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https"
+      ],
+      "provider": "NOAA/NCEI",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "Siphon IGRAUpperAir",
+          "role": "Python retrieval client",
+          "url": "https://unidata.github.io/siphon/latest/api/simplewebservice.html"
+        }
+      ],
+      "summary": {
+        "en": "Global radiosonde and pilot-balloon archive with near-real-time updates for many active stations.",
+        "ru": "Глобальный архив радиозондов и шар-пилотов с близким к оперативному обновлением для многих действующих станций."
+      },
+      "tier": "secondary",
+      "typical_latency": "near-real-time to daily",
+      "update_cadence": "daily ingest; sounding schedules are station dependent"
+    },
+    {
+      "access": {
+        "auth": "none; avoid abusive scraping",
+        "level": "open",
+        "terms": "University service terms"
+      },
+      "archive": "large historical archive",
+      "automation": "medium",
+      "categories": [
+        "upper-air"
+      ],
+      "coverage": "global",
+      "documentation": [
+        "https://weather.uwyo.edu/upperair/sounding.html"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Upper Air",
+          "protocol": "https",
+          "role": "query and view",
+          "url": "https://weather.uwyo.edu/upperair/sounding.html"
+        }
+      ],
+      "formats": [
+        "text",
+        "HTML-derived tabular"
+      ],
+      "id": "wyoming-upperair",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Upper Air Soundings",
+        "ru": "University of Wyoming — аэрологические зондирования"
+      },
+      "notes": {
+        "en": "Useful fallback and convenience service; do not make it the sole critical ingest path.",
+        "ru": "Полезный резерв и удобный интерфейс; не использовать как единственный критический канал приёма."
+      },
+      "official": false,
+      "operational": true,
+      "protocols": [
+        "https"
+      ],
+      "provider": "University of Wyoming",
+      "reliability": "medium",
+      "software": [
+        {
+          "name": "Siphon WyomingUpperAir",
+          "role": "Python client",
+          "url": "https://unidata.github.io/siphon/latest/api/simplewebservice.html"
+        }
+      ],
+      "summary": {
+        "en": "Convenient global radiosonde sounding service widely used for viewing and programmatic fallback.",
+        "ru": "Удобный глобальный сервис радиозондовых профилей для просмотра и программного резервного получения."
+      },
+      "tier": "aggregator",
+      "typical_latency": "near-real-time, provider dependent",
+      "update_cadence": "standard sounding times; station dependent"
+    },
+    {
+      "access": {
+        "auth": "data access may require registration",
+        "level": "registration",
+        "terms": "GRUAN data policy"
+      },
+      "archive": "long-term reference archive",
+      "automation": "medium",
+      "categories": [
+        "upper-air",
+        "climate",
+        "reference"
+      ],
+      "coverage": "global sparse network",
+      "documentation": [
+        "https://www.gruan.org/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "GRUAN",
+          "protocol": "https",
+          "role": "documentation and data access",
+          "url": "https://www.gruan.org/"
+        }
+      ],
+      "formats": [
+        "NetCDF"
+      ],
+      "id": "gruan",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "GCOS Reference Upper-Air Network",
+        "ru": "GRUAN — эталонная аэрология"
+      },
+      "notes": {
+        "en": "Best suited to reference validation, homogenization and uncertainty-aware research.",
+        "ru": "Лучше всего подходит для эталонной верификации, гомогенизации и исследований с учётом неопределённостей."
+      },
+      "official": true,
+      "operational": false,
+      "protocols": [
+        "https"
+      ],
+      "provider": "GRUAN / WMO",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "xarray",
+          "role": "NetCDF analysis",
+          "url": "https://github.com/pydata/xarray"
+        }
+      ],
+      "summary": {
+        "en": "Reference-quality upper-air observations with documented corrections and uncertainties.",
+        "ru": "Эталонные верхнеаэрологические наблюдения с документированными поправками и неопределённостями."
+      },
+      "tier": "specialized",
+      "typical_latency": "not designed for synoptic real-time use",
+      "update_cadence": "site and campaign dependent"
+    },
+    {
+      "access": {
+        "auth": "many products are anonymous; service requirements may vary",
+        "level": "open",
+        "terms": "UCAR/COSMIC data terms"
+      },
+      "archive": "large multi-mission archive",
+      "automation": "high",
+      "categories": [
+        "upper-air",
+        "satellite"
+      ],
+      "coverage": "global",
+      "documentation": [
+        "https://cdaac-www.cosmic.ucar.edu/cdaac/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "CDAAC",
+          "protocol": "https",
+          "role": "catalog and download",
+          "url": "https://cdaac-www.cosmic.ucar.edu/cdaac/"
+        }
+      ],
+      "formats": [
+        "NetCDF",
+        "BUFR",
+        "native"
+      ],
+      "id": "ucar-cdaac",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "CDAAC GNSS Radio Occultation",
+        "ru": "UCAR CDAAC — GNSS radio occultation"
+      },
+      "notes": {
+        "en": "Complements radiosondes with global satellite-derived vertical information; do not mix retrievals with direct in-situ soundings.",
+        "ru": "Дополняет радиозонды глобальной спутниковой вертикальной информацией; не смешивать retrieval-профили с прямыми in-situ зондированиями."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https"
+      ],
+      "provider": "UCAR/COSMIC",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "xarray",
+          "role": "NetCDF processing",
+          "url": "https://github.com/pydata/xarray"
+        },
+        {
+          "name": "ecCodes",
+          "role": "BUFR decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "GNSS radio-occultation profiles from COSMIC and other missions with refractivity and derived atmospheric profiles.",
+        "ru": "Профили GNSS radio occultation с COSMIC и других миссий: рефрактивность и производные профили атмосферы."
+      },
+      "tier": "specialized",
+      "typical_latency": "near-real-time for operational streams; public latency varies",
+      "update_cadence": "mission dependent"
+    },
+    {
+      "access": {
+        "auth": "WIS2 core/open subsets where published; some products may have separate rules",
+        "level": "open",
+        "terms": "EUMETNET and WMO terms"
+      },
+      "archive": "archives through partner services",
+      "automation": "high",
+      "categories": [
+        "upper-air",
+        "profiler",
+        "radar"
+      ],
+      "coverage": "Europe",
+      "documentation": [
+        "https://e-profile.eu/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "E-PROFILE",
+          "protocol": "https",
+          "role": "documentation",
+          "url": "https://e-profile.eu/"
+        }
+      ],
+      "formats": [
+        "BUFR",
+        "NetCDF",
+        "provider-dependent"
+      ],
+      "id": "eumetnet-eprofile",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "E-PROFILE",
+        "ru": "EUMETNET E-PROFILE"
+      },
+      "notes": {
+        "en": "Valuable for filling temporal gaps between radiosonde launches with frequent wind/profile observations.",
+        "ru": "Полезен для заполнения временных промежутков между радиозондами частыми профилями ветра и другими вертикальными наблюдениями."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "mqtt",
+        "https",
+        "wis2"
+      ],
+      "provider": "EUMETNET",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "wis2downloader",
+          "role": "WIS2 receiving where available",
+          "url": "https://github.com/World-Meteorological-Organization/wis2downloader"
+        },
+        {
+          "name": "ecCodes",
+          "role": "BUFR decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "European network of radar wind profilers, weather-radar vertical wind profiles, Doppler lidars and ceilometer profiling products.",
+        "ru": "Европейская сеть профайлеров ветра, VWP по метеорадарам, доплеровских лидаров и ceilometer-продуктов."
+      },
+      "tier": "specialized",
+      "typical_latency": "near-real-time",
+      "update_cadence": "minutes to hourly depending on instrument"
+    },
+    {
+      "access": {
+        "auth": "some WIS2/core subsets may be open; many aircraft feeds have access restrictions",
+        "level": "restricted",
+        "terms": "WMO, EUMETNET and aircraft-operator terms"
+      },
+      "archive": "availability and rights vary",
+      "automation": "medium",
+      "categories": [
+        "aircraft",
+        "upper-air"
+      ],
+      "coverage": "global routes; strong European coverage through EUMETNET",
+      "documentation": [
+        "https://community.wmo.int/en/activity-areas/aircraft-based-observations"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "WMO aircraft-based observations",
+          "protocol": "https",
+          "role": "documentation",
+          "url": "https://community.wmo.int/en/activity-areas/aircraft-based-observations"
+        }
+      ],
+      "formats": [
+        "BUFR"
+      ],
+      "id": "eumetnet-amdar",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "AMDAR aircraft observations",
+        "ru": "AMDAR — самолётные наблюдения"
+      },
+      "notes": {
+        "en": "Operationally valuable high-frequency profiles, but access rights must be checked before automated use.",
+        "ru": "Очень ценные частые оперативные профили, но перед автоматическим использованием необходимо проверить права доступа."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "mqtt",
+        "https",
+        "wis2"
+      ],
+      "provider": "EUMETNET / WMO",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "ecCodes",
+          "role": "BUFR decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "Aircraft-based temperature, wind and selected humidity observations, including ascent/descent profiles near airports.",
+        "ru": "Самолётные наблюдения температуры, ветра и части влажностных параметров, включая профили набора и снижения около аэропортов."
+      },
+      "tier": "specialized",
+      "typical_latency": "minutes to hours",
+      "update_cadence": "continuous with flights"
+    },
+    {
+      "access": {
+        "auth": "none for normal public use; respect rate limits",
+        "level": "open",
+        "terms": "NOAA/NWS terms"
+      },
+      "archive": "limited operational API history",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "aviation"
+      ],
+      "coverage": "global aviation network",
+      "documentation": [
+        "https://aviationweather.gov/data/api/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Data API",
+          "protocol": "https",
+          "role": "API documentation",
+          "url": "https://aviationweather.gov/data/api/"
+        }
+      ],
+      "formats": [
+        "JSON",
+        "XML",
+        "CSV",
+        "text"
+      ],
+      "id": "noaa-aviationweather",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "AviationWeather.gov Data API",
+        "ru": "AviationWeather.gov Data API"
+      },
+      "notes": {
+        "en": "Prefer the documented API over scraping decoded METAR pages.",
+        "ru": "Для автоматизации использовать документированный API а не парсинг страниц с декодированными METAR."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "rest"
+      ],
+      "provider": "NOAA/NWS Aviation Weather Center",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "requests",
+          "role": "REST client",
+          "url": "https://requests.readthedocs.io/"
+        }
+      ],
+      "summary": {
+        "en": "Machine access to METAR TAF and related aviation weather products.",
+        "ru": "Машинный доступ к METAR TAF и связанным авиационным метеопродуктам."
+      },
+      "tier": "primary",
+      "typical_latency": "minutes",
+      "update_cadence": "minutes"
+    },
+    {
+      "access": {
+        "auth": "none for standard public endpoints",
+        "level": "open",
+        "terms": "NOAA public data terms"
+      },
+      "archive": "rolling operational archive; long-term archives through NCEI",
+      "automation": "high",
+      "categories": [
+        "nwp",
+        "ensemble",
+        "analysis"
+      ],
+      "coverage": "global",
+      "documentation": [
+        "https://nomads.ncep.noaa.gov/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "NOMADS",
+          "protocol": "https",
+          "role": "catalog/download",
+          "url": "https://nomads.ncep.noaa.gov/"
+        }
+      ],
+      "formats": [
+        "GRIB2",
+        "NetCDF"
+      ],
+      "id": "noaa-nomads",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "NOMADS",
+        "ru": "NOAA/NCEP NOMADS"
+      },
+      "notes": {
+        "en": "Use NOMADS for selective HTTP/OPeNDAP retrieval and NODD object storage for large-scale mirroring.",
+        "ru": "NOMADS удобен для выборочных запросов; для массового зеркалирования предпочтительнее NODD object storage."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "opendap"
+      ],
+      "provider": "NOAA/NCEP",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "wgrib2",
+          "role": "GRIB2 inspection and extraction",
+          "url": "https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/"
+        },
+        {
+          "name": "ecCodes",
+          "role": "GRIB decoder",
+          "url": "https://github.com/ecmwf/eccodes"
+        },
+        {
+          "name": "cfgrib",
+          "role": "xarray GRIB backend",
+          "url": "https://github.com/ecmwf/cfgrib"
+        }
+      ],
+      "summary": {
+        "en": "Operational and archive access to NOAA/NCEP numerical weather prediction products.",
+        "ru": "Оперативный и архивный доступ к продуктам численного прогноза NOAA/NCEP."
+      },
+      "tier": "primary",
+      "typical_latency": "tens of minutes to hours",
+      "update_cadence": "model dependent; GFS commonly four cycles per day"
+    },
+    {
+      "access": {
+        "auth": "none for public open-data endpoints",
+        "level": "open",
+        "terms": "ECMWF Open Data licence and terms"
+      },
+      "archive": "short rolling operational retention",
+      "automation": "high",
+      "categories": [
+        "nwp",
+        "ensemble"
+      ],
+      "coverage": "global",
+      "documentation": [
+        "https://www.ecmwf.int/en/forecasts/datasets/open-data"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "ECMWF Open Data",
+          "protocol": "https",
+          "role": "documentation",
+          "url": "https://www.ecmwf.int/en/forecasts/datasets/open-data"
+        }
+      ],
+      "formats": [
+        "GRIB2"
+      ],
+      "id": "ecmwf-open-data",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "ECMWF Open Data",
+        "ru": "ECMWF Open Data"
+      },
+      "notes": {
+        "en": "Strong primary global forecast source; keep NOAA or DWD as independent fallback.",
+        "ru": "Сильный основной глобальный источник прогнозов; для отказоустойчивости держать NOAA или DWD."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "s3"
+      ],
+      "provider": "ECMWF",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "ecmwf-opendata",
+          "role": "official Python client",
+          "url": "https://github.com/ecmwf/ecmwf-opendata"
+        },
+        {
+          "name": "ecCodes",
+          "role": "GRIB2 decoder",
+          "url": "https://github.com/ecmwf/eccodes"
+        },
+        {
+          "name": "cfgrib",
+          "role": "xarray GRIB backend",
+          "url": "https://github.com/ecmwf/cfgrib"
+        }
+      ],
+      "summary": {
+        "en": "Free operational subset of ECMWF deterministic and ensemble forecasts.",
+        "ru": "Бесплатный оперативный набор детерминированных и ансамблевых прогнозов ECMWF."
+      },
+      "tier": "primary",
+      "typical_latency": "files appear progressively after analysis time",
+      "update_cadence": "00/06/12/18 UTC streams; product dependent"
+    },
+    {
+      "access": {
+        "auth": "free account and API token",
+        "level": "registration",
+        "terms": "Copernicus terms"
+      },
+      "archive": "archive available",
+      "automation": "high",
+      "categories": [
+        "air-quality",
+        "nwp",
+        "reanalysis"
+      ],
+      "coverage": "global and Europe",
+      "documentation": [
+        "https://ads.atmosphere.copernicus.eu/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Atmosphere Data Store",
+          "protocol": "https",
+          "role": "catalog/API",
+          "url": "https://ads.atmosphere.copernicus.eu/"
+        }
+      ],
+      "formats": [
+        "GRIB",
+        "NetCDF"
+      ],
+      "id": "copernicus-ads",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Copernicus Atmosphere Data Store",
+        "ru": "Copernicus Atmosphere Data Store (ADS)"
+      },
+      "notes": {
+        "en": "Specialized source for atmospheric composition rather than a replacement for general-purpose NWP.",
+        "ru": "Специализированный источник состава атмосферы а не замена общему метеорологическому NWP."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "api"
+      ],
+      "provider": "ECMWF / Copernicus Atmosphere Monitoring Service",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "cdsapi",
+          "role": "API client",
+          "url": "https://github.com/ecmwf/cdsapi"
+        }
+      ],
+      "summary": {
+        "en": "CAMS atmospheric composition analyses forecasts and reanalyses.",
+        "ru": "Анализы прогнозы и реанализы состава атмосферы CAMS."
+      },
+      "tier": "primary",
+      "typical_latency": "hours",
+      "update_cadence": "product dependent"
+    },
+    {
+      "access": {
+        "auth": "none for public object storage and NCEI access",
+        "level": "open",
+        "terms": "NOAA public data terms"
+      },
+      "archive": "long-term NCEI archive; operational cloud/object feeds available",
+      "automation": "high",
+      "categories": [
+        "radar",
+        "precipitation",
+        "severe-weather"
+      ],
+      "coverage": "United States and territories",
+      "documentation": [
+        "https://www.ncei.noaa.gov/products/radar/next-generation-weather-radar",
+        "https://www.noaa.gov/information-technology/open-data-dissemination"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "NOAA NEXRAD information",
+          "protocol": "https",
+          "role": "documentation and archive entry",
+          "url": "https://www.ncei.noaa.gov/products/radar/next-generation-weather-radar"
+        },
+        {
+          "healthcheck": true,
+          "name": "NOAA Open Data Dissemination",
+          "protocol": "https",
+          "role": "operational cloud access documentation",
+          "url": "https://www.noaa.gov/information-technology/open-data-dissemination"
+        }
+      ],
+      "formats": [
+        "NEXRAD Level II",
+        "NEXRAD Level III"
+      ],
+      "id": "noaa-nexrad",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "NEXRAD Level II and Level III",
+        "ru": "NOAA NEXRAD Level II и Level III"
+      },
+      "notes": {
+        "en": "Use object storage for bulk operational reception and NCEI for archive retrieval.",
+        "ru": "Для массового оперативного приёма использовать object storage а NCEI — для архива."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "s3",
+        "https"
+      ],
+      "provider": "NOAA/NCEI/NWS",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "Py-ART",
+          "role": "radar reading processing and visualization",
+          "url": "https://github.com/ARM-DOE/pyart"
+        },
+        {
+          "name": "MetPy",
+          "role": "meteorological radar utilities",
+          "url": "https://github.com/Unidata/MetPy"
+        },
+        {
+          "name": "nexradaws",
+          "role": "Python access to public NEXRAD object storage",
+          "url": "https://github.com/aarande/nexradaws"
+        }
+      ],
+      "summary": {
+        "en": "United States weather-radar volumes and derived products from the NEXRAD network.",
+        "ru": "Радиолокационные объёмы и производные продукты американской сети NEXRAD."
+      },
+      "tier": "primary",
+      "typical_latency": "minutes",
+      "update_cadence": "volume-scan cadence, typically several minutes"
+    },
+    {
+      "access": {
+        "auth": "none for public NOAA dissemination",
+        "level": "open",
+        "terms": "NOAA public data terms"
+      },
+      "archive": "operational and research archives vary by product",
+      "automation": "high",
+      "categories": [
+        "radar",
+        "precipitation",
+        "severe-weather"
+      ],
+      "coverage": "CONUS and selected surrounding regions/products",
+      "documentation": [
+        "https://www.nssl.noaa.gov/projects/mrms/",
+        "https://mrms.ncep.noaa.gov/data/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "MRMS operational data",
+          "protocol": "https",
+          "role": "operational file tree",
+          "url": "https://mrms.ncep.noaa.gov/data/"
+        },
+        {
+          "healthcheck": true,
+          "name": "MRMS documentation",
+          "protocol": "https",
+          "role": "product documentation",
+          "url": "https://www.nssl.noaa.gov/projects/mrms/"
+        }
+      ],
+      "formats": [
+        "GRIB2",
+        "NetCDF",
+        "GeoTIFF",
+        "provider-dependent"
+      ],
+      "id": "noaa-mrms",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Multi-Radar Multi-Sensor (MRMS)",
+        "ru": "NOAA MRMS — Multi-Radar Multi-Sensor"
+      },
+      "notes": {
+        "en": "High-value source for precipitation nowcasting and severe-weather applications; select small metadata or index files for health checks.",
+        "ru": "Ценный источник для наукастинга осадков и опасных явлений; для health-check использовать небольшие индексные или метаданные файлы."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "s3"
+      ],
+      "provider": "NOAA/NSSL/NCEP",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "wgrib2",
+          "role": "GRIB2 inspection and extraction",
+          "url": "https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/"
+        },
+        {
+          "name": "ecCodes",
+          "role": "GRIB2 decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        },
+        {
+          "name": "xarray",
+          "role": "gridded data analysis",
+          "url": "https://github.com/pydata/xarray"
+        }
+      ],
+      "summary": {
+        "en": "Rapid-update gridded radar and multisensor products including reflectivity precipitation and severe-weather diagnostics.",
+        "ru": "Быстро обновляемые сеточные радиолокационные и мультисенсорные продукты включая отражаемость осадки и диагностику опасных явлений."
+      },
+      "tier": "primary",
+      "typical_latency": "minutes",
+      "update_cadence": "approximately minutes; product dependent"
+    },
+    {
+      "access": {
+        "auth": "none for many public cloud datasets",
+        "level": "open",
+        "terms": "NOAA public data terms and cloud dataset terms"
+      },
+      "archive": "long-term NOAA archives; operational cloud object storage available",
+      "automation": "high",
+      "categories": [
+        "satellite",
+        "lightning",
+        "clouds",
+        "radiation"
+      ],
+      "coverage": "Americas Atlantic and eastern Pacific sectors",
+      "documentation": [
+        "https://www.goes-r.gov/products/overview.html",
+        "https://www.noaa.gov/information-technology/open-data-dissemination"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "GOES-R program data products",
+          "protocol": "https",
+          "role": "product documentation",
+          "url": "https://www.goes-r.gov/products/overview.html"
+        },
+        {
+          "healthcheck": true,
+          "name": "NOAA Open Data Dissemination",
+          "protocol": "https",
+          "role": "cloud access documentation",
+          "url": "https://www.noaa.gov/information-technology/open-data-dissemination"
+        }
+      ],
+      "formats": [
+        "NetCDF",
+        "HDF5",
+        "provider-dependent"
+      ],
+      "id": "noaa-goes",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "GOES-R Series operational satellite data",
+        "ru": "Оперативные данные спутников GOES-R"
+      },
+      "notes": {
+        "en": "Use public object storage for continuous reception; GLM is one of the strongest freely accessible operational lightning sources.",
+        "ru": "Для непрерывного приёма использовать публичное object storage; GLM — один из наиболее сильных бесплатных оперативных источников молний."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "s3",
+        "https"
+      ],
+      "provider": "NOAA/NESDIS",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "Satpy",
+          "role": "satellite reading resampling and composites",
+          "url": "https://github.com/pytroll/satpy"
+        },
+        {
+          "name": "xarray",
+          "role": "NetCDF processing",
+          "url": "https://github.com/pydata/xarray"
+        }
+      ],
+      "summary": {
+        "en": "Geostationary ABI imagery and derived products plus GLM lightning observations from GOES-East and GOES-West.",
+        "ru": "Геостационарные снимки ABI и производные продукты а также данные молниевого картирования GLM со спутников GOES-East и GOES-West."
+      },
+      "tier": "primary",
+      "typical_latency": "minutes",
+      "update_cadence": "seconds to minutes depending on product and scan mode"
+    },
+    {
+      "access": {
+        "auth": "free EUMETSAT account and OAuth credentials for API use",
+        "level": "registration",
+        "terms": "EUMETSAT data policy and product-specific terms"
+      },
+      "archive": "extensive mission archives",
+      "automation": "high",
+      "categories": [
+        "satellite",
+        "lightning",
+        "upper-air",
+        "clouds",
+        "ocean"
+      ],
+      "coverage": "Europe Africa Atlantic Indian Ocean and global polar products",
+      "documentation": [
+        "https://user.eumetsat.int/resources/user-guides/eumetsat-data-access-client-eumdac-guide"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "EUMETSAT Data Store",
+          "protocol": "https",
+          "role": "catalog/API",
+          "url": "https://data.eumetsat.int/"
+        }
+      ],
+      "formats": [
+        "NetCDF",
+        "HDF5",
+        "BUFR",
+        "HRIT",
+        "native",
+        "GeoTIFF"
+      ],
+      "id": "eumetsat-data-store",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "EUMETSAT Data Store and Data Tailor",
+        "ru": "EUMETSAT Data Store и Data Tailor"
+      },
+      "notes": {
+        "en": "Primary European satellite source. MTG Lightning Imager and IASI/GRAS products are especially important for operational meteorology.",
+        "ru": "Основной европейский спутниковый источник. Для оперативной метеорологии особенно важны MTG Lightning Imager а также IASI/GRAS."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "api"
+      ],
+      "provider": "EUMETSAT",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "EUMDAC",
+          "role": "official Python and CLI client",
+          "url": "https://gitlab.eumetsat.int/eumetlab/data-services/eumdac"
+        },
+        {
+          "name": "Satpy",
+          "role": "satellite decoding and composites",
+          "url": "https://github.com/pytroll/satpy"
+        },
+        {
+          "name": "ecCodes",
+          "role": "BUFR decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "Operational and archived Meteosat Metop MTG and related meteorological satellite products.",
+        "ru": "Оперативные и архивные продукты Meteosat Metop MTG и других метеорологических спутников EUMETSAT."
+      },
+      "tier": "primary",
+      "typical_latency": "minutes to hours",
+      "update_cadence": "minutes to orbital cadence depending on mission/product"
+    },
+    {
+      "access": {
+        "auth": "Earthdata Login for many download APIs",
+        "level": "registration",
+        "terms": "NASA Earthdata terms and dataset-specific licences"
+      },
+      "archive": "long-term products through NASA Earthdata/DAACs",
+      "automation": "high",
+      "categories": [
+        "satellite",
+        "precipitation",
+        "aerosol",
+        "fire",
+        "clouds"
+      ],
+      "coverage": "global",
+      "documentation": [
+        "https://www.earthdata.nasa.gov/data/tools/lance",
+        "https://earthaccess.readthedocs.io/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "LANCE",
+          "protocol": "https",
+          "role": "near-real-time portal",
+          "url": "https://lance.modaps.eosdis.nasa.gov/"
+        },
+        {
+          "healthcheck": true,
+          "name": "Earthdata",
+          "protocol": "https",
+          "role": "catalog and access documentation",
+          "url": "https://www.earthdata.nasa.gov/"
+        }
+      ],
+      "formats": [
+        "HDF5",
+        "NetCDF",
+        "GeoTIFF",
+        "provider-dependent"
+      ],
+      "id": "nasa-earthdata-lance",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "NASA LANCE / Earthdata Near Real-Time",
+        "ru": "NASA LANCE / Earthdata Near Real-Time"
+      },
+      "notes": {
+        "en": "Very useful specialized NRT supplement; authentication should be provisioned before unattended deployment.",
+        "ru": "Очень полезное специализированное NRT-дополнение; перед автономным развёртыванием заранее настроить Earthdata Login."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "api"
+      ],
+      "provider": "NASA Earthdata",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "earthaccess",
+          "role": "Python search and download client",
+          "url": "https://github.com/nsidc/earthaccess"
+        },
+        {
+          "name": "xarray",
+          "role": "NetCDF processing",
+          "url": "https://github.com/pydata/xarray"
+        },
+        {
+          "name": "h5py",
+          "role": "HDF5 processing",
+          "url": "https://github.com/h5py/h5py"
+        }
+      ],
+      "summary": {
+        "en": "Near-real-time satellite products for atmosphere land fire aerosols precipitation and related Earth observations.",
+        "ru": "Спутниковые продукты близкого к реальному времени для атмосферы суши пожаров аэрозолей осадков и других наблюдений Земли."
+      },
+      "tier": "specialized",
+      "typical_latency": "generally near-real-time; product targets range from minutes to a few hours",
+      "update_cadence": "orbital/product dependent"
+    },
+    {
+      "access": {
+        "auth": "Earthdata Login for standard authenticated downloads",
+        "level": "registration",
+        "terms": "NASA/GPM data terms"
+      },
+      "archive": "multi-year archive through NASA GES DISC",
+      "automation": "high",
+      "categories": [
+        "satellite",
+        "precipitation"
+      ],
+      "coverage": "near-global",
+      "documentation": [
+        "https://gpm.nasa.gov/data/imerg"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "GPM IMERG",
+          "protocol": "https",
+          "role": "product documentation",
+          "url": "https://gpm.nasa.gov/data/imerg"
+        },
+        {
+          "healthcheck": true,
+          "name": "GES DISC",
+          "protocol": "https",
+          "role": "search and download",
+          "url": "https://disc.gsfc.nasa.gov/"
+        }
+      ],
+      "formats": [
+        "HDF5",
+        "NetCDF",
+        "GeoTIFF"
+      ],
+      "id": "nasa-gpm-imerg",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "GPM IMERG precipitation",
+        "ru": "NASA GPM IMERG — спутниковые осадки"
+      },
+      "notes": {
+        "en": "Useful where ground radar coverage is absent; distinguish satellite precipitation estimates from radar or gauge observations.",
+        "ru": "Полезен там где нет наземных радаров; спутниковые оценки осадков необходимо отличать от радиолокационных и станционных наблюдений."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "opendap",
+        "api"
+      ],
+      "provider": "NASA GPM",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "earthaccess",
+          "role": "search and download",
+          "url": "https://github.com/nsidc/earthaccess"
+        },
+        {
+          "name": "xarray",
+          "role": "NetCDF processing",
+          "url": "https://github.com/pydata/xarray"
+        }
+      ],
+      "summary": {
+        "en": "Multi-satellite global precipitation estimates with Early Late and Final runs.",
+        "ru": "Глобальные мультиспутниковые оценки осадков с оперативными Early/Late и окончательными Final продуктами."
+      },
+      "tier": "specialized",
+      "typical_latency": "Early and Late runs are near-real-time with product-specific latency; Final is delayed research quality",
+      "update_cadence": "half-hourly product grid; run availability differs"
+    },
+    {
+      "access": {
+        "auth": "some services require JAXA/EORC registration or credentials",
+        "level": "registration",
+        "terms": "JAXA GSMaP terms"
+      },
+      "archive": "historical archive available",
+      "automation": "medium",
+      "categories": [
+        "satellite",
+        "precipitation"
+      ],
+      "coverage": "global",
+      "documentation": [
+        "https://sharaku.eorc.jaxa.jp/GSMaP/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "GSMaP",
+          "protocol": "https",
+          "role": "portal and documentation",
+          "url": "https://sharaku.eorc.jaxa.jp/GSMaP/"
+        }
+      ],
+      "formats": [
+        "binary grid",
+        "NetCDF",
+        "text",
+        "GeoTIFF",
+        "provider-dependent"
+      ],
+      "id": "jaxa-gsmap",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "GSMaP global precipitation",
+        "ru": "JAXA GSMaP — глобальные осадки"
+      },
+      "notes": {
+        "en": "Independent global precipitation estimate useful as a second satellite source alongside IMERG.",
+        "ru": "Независимая глобальная оценка осадков полезная как второй спутниковый источник рядом с IMERG."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "ftp"
+      ],
+      "provider": "JAXA",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "xarray",
+          "role": "NetCDF processing",
+          "url": "https://github.com/pydata/xarray"
+        },
+        {
+          "name": "GDAL",
+          "role": "raster conversion and geospatial processing",
+          "url": "https://gdal.org/"
+        }
+      ],
+      "summary": {
+        "en": "Near-real-time and historical global satellite precipitation maps from JAXA.",
+        "ru": "Оперативные и архивные глобальные спутниковые поля осадков JAXA."
+      },
+      "tier": "specialized",
+      "typical_latency": "product dependent; near-real-time variants available",
+      "update_cadence": "hourly products available for major operational streams"
+    },
+    {
+      "access": {
+        "auth": "none",
+        "level": "open",
+        "terms": "NOAA public data terms"
+      },
+      "archive": "historical station files available",
+      "automation": "high",
+      "categories": [
+        "marine",
+        "ocean",
+        "surface",
+        "waves"
+      ],
+      "coverage": "United States waters plus selected global partner stations",
+      "documentation": [
+        "https://www.ndbc.noaa.gov/data_access.shtml"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "NDBC",
+          "protocol": "https",
+          "role": "operational portal and files",
+          "url": "https://www.ndbc.noaa.gov/"
+        },
+        {
+          "healthcheck": true,
+          "name": "NDBC data access",
+          "protocol": "https",
+          "role": "access documentation",
+          "url": "https://www.ndbc.noaa.gov/data_access.shtml"
+        }
+      ],
+      "formats": [
+        "text",
+        "XML",
+        "NetCDF",
+        "provider-dependent"
+      ],
+      "id": "noaa-ndbc",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "NOAA NDBC",
+        "ru": "NOAA NDBC — буи и морские наблюдения"
+      },
+      "notes": {
+        "en": "Straightforward official marine observation source suitable for unattended ingestion.",
+        "ru": "Простой официальный источник морских наблюдений хорошо подходящий для автоматического приёма."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https"
+      ],
+      "provider": "NOAA National Data Buoy Center",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "pandas",
+          "role": "text and tabular processing",
+          "url": "https://pandas.pydata.org/"
+        },
+        {
+          "name": "xarray",
+          "role": "NetCDF processing",
+          "url": "https://github.com/pydata/xarray"
+        }
+      ],
+      "summary": {
+        "en": "Operational buoy and coastal station observations including wind pressure waves water temperature and selected ocean variables.",
+        "ru": "Оперативные наблюдения буёв и прибрежных станций включая ветер давление волны температуру воды и другие морские параметры."
+      },
+      "tier": "primary",
+      "typical_latency": "minutes to tens of minutes",
+      "update_cadence": "typically minutes to hourly depending on platform"
+    },
+    {
+      "access": {
+        "auth": "free Copernicus Marine account or supported token/client flow",
+        "level": "registration",
+        "terms": "Copernicus Marine licence and product terms"
+      },
+      "archive": "multi-year archives and reprocessed products",
+      "automation": "high",
+      "categories": [
+        "ocean",
+        "marine",
+        "waves",
+        "analysis",
+        "nwp"
+      ],
+      "coverage": "global and regional seas",
+      "documentation": [
+        "https://help.marine.copernicus.eu/",
+        "https://data.marine.copernicus.eu/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Copernicus Marine",
+          "protocol": "https",
+          "role": "service portal",
+          "url": "https://marine.copernicus.eu/"
+        },
+        {
+          "healthcheck": true,
+          "name": "Data Store",
+          "protocol": "https",
+          "role": "catalog and subset service",
+          "url": "https://data.marine.copernicus.eu/"
+        }
+      ],
+      "formats": [
+        "NetCDF",
+        "Zarr",
+        "provider-dependent"
+      ],
+      "id": "copernicus-marine",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Copernicus Marine Data Store",
+        "ru": "Copernicus Marine Data Store"
+      },
+      "notes": {
+        "en": "Prefer the toolbox subset/get commands to downloading complete global files when only a small area is required.",
+        "ru": "Для небольших районов использовать subset/get через официальный toolbox а не скачивать целые глобальные файлы."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "api"
+      ],
+      "provider": "Copernicus Marine Service",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "copernicusmarine",
+          "role": "official Python and CLI toolbox",
+          "url": "https://github.com/mercator-ocean/copernicus-marine-toolbox"
+        },
+        {
+          "name": "xarray",
+          "role": "NetCDF and Zarr processing",
+          "url": "https://github.com/pydata/xarray"
+        }
+      ],
+      "summary": {
+        "en": "Global and regional ocean analyses forecasts observations reprocessed products and wave datasets.",
+        "ru": "Глобальные и региональные океанические анализы прогнозы наблюдения реобработанные продукты и поля волн."
+      },
+      "tier": "primary",
+      "typical_latency": "hours to days depending on product",
+      "update_cadence": "product dependent; daily and sub-daily operational products available"
+    },
+    {
+      "access": {
+        "auth": "none for GDAC public files",
+        "level": "open",
+        "terms": "Argo data policy and citation requirements"
+      },
+      "archive": "complete mission archive through GDACs",
+      "automation": "high",
+      "categories": [
+        "ocean",
+        "upper-ocean",
+        "profiling"
+      ],
+      "coverage": "global ocean",
+      "documentation": [
+        "https://argo.ucsd.edu/data/data-from-gdacs/",
+        "https://argo.ucsd.edu/data/argo-data-user-manual/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Argo data access",
+          "protocol": "https",
+          "role": "access documentation",
+          "url": "https://argo.ucsd.edu/data/data-from-gdacs/"
+        },
+        {
+          "healthcheck": true,
+          "name": "Coriolis GDAC",
+          "protocol": "https",
+          "role": "file tree",
+          "url": "https://data-argo.ifremer.fr/"
+        }
+      ],
+      "formats": [
+        "NetCDF"
+      ],
+      "id": "argo-gdac",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Argo Global Data Assembly Centres",
+        "ru": "Argo GDAC — профили океана"
+      },
+      "notes": {
+        "en": "Strong free source of in-situ subsurface ocean profiles; use quality flags and distinguish real-time from delayed-mode QC.",
+        "ru": "Сильный бесплатный источник in-situ профилей океана; обязательно учитывать QC-флаги и различать real-time и delayed-mode данные."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "ftp"
+      ],
+      "provider": "Argo Program / Coriolis / USGODAE",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "argopy",
+          "role": "Python Argo data client",
+          "url": "https://github.com/euroargodev/argopy"
+        },
+        {
+          "name": "xarray",
+          "role": "NetCDF processing",
+          "url": "https://github.com/pydata/xarray"
+        }
+      ],
+      "summary": {
+        "en": "Near-real-time and delayed-mode profiling-float observations of temperature salinity pressure and biogeochemical variables.",
+        "ru": "Оперативные и delayed-mode профили автономных буёв Argo: температура солёность давление и биогеохимические параметры."
+      },
+      "tier": "primary",
+      "typical_latency": "near-real-time products typically within hours to about a day after transmission",
+      "update_cadence": "continuously as floats report; individual floats typically cycle over days"
+    },
+    {
+      "access": {
+        "auth": "free account and API token for programmatic access",
+        "level": "registration",
+        "terms": "Copernicus licences and dataset-specific terms"
+      },
+      "archive": "extensive multi-decadal climate archive",
+      "automation": "high",
+      "categories": [
+        "archive",
+        "reanalysis",
+        "climate"
+      ],
+      "coverage": "global and regional depending on dataset",
+      "documentation": [
+        "https://cds.climate.copernicus.eu/how-to-api"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Climate Data Store",
+          "protocol": "https",
+          "role": "catalog and API",
+          "url": "https://cds.climate.copernicus.eu/"
+        }
+      ],
+      "formats": [
+        "NetCDF",
+        "GRIB",
+        "ZIP",
+        "provider-dependent"
+      ],
+      "id": "copernicus-cds",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Copernicus Climate Data Store",
+        "ru": "Copernicus Climate Data Store"
+      },
+      "notes": {
+        "en": "Excellent archive and reanalysis service; do not use ERA5 as a substitute for operational observations or forecasts.",
+        "ru": "Отличный архив и сервис реанализа; ERA5 нельзя использовать как замену оперативным наблюдениям или прогнозам."
+      },
+      "official": true,
+      "operational": false,
+      "protocols": [
+        "https",
+        "api"
+      ],
+      "provider": "Copernicus Climate Change Service / ECMWF",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "cdsapi",
+          "role": "official API client",
+          "url": "https://github.com/ecmwf/cdsapi"
+        },
+        {
+          "name": "xarray",
+          "role": "NetCDF processing",
+          "url": "https://github.com/pydata/xarray"
+        },
+        {
+          "name": "ecCodes",
+          "role": "GRIB processing",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "Climate datasets and reanalyses including ERA5, ERA5-Land, seasonal products and many derived climate datasets.",
+        "ru": "Климатические данные и реанализы включая ERA5 ERA5-Land сезонные продукты и множество производных наборов."
+      },
+      "tier": "primary",
+      "typical_latency": "not intended as a primary real-time feed",
+      "update_cadence": "dataset dependent; some products are updated routinely"
+    },
+    {
+      "access": {
+        "auth": "generally none; respect service policies and request limits",
+        "level": "open",
+        "terms": "Iowa State/IEM usage policy and upstream provider terms"
+      },
+      "archive": "extensive archives for many US datasets",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "radar",
+        "upper-air",
+        "archive"
+      ],
+      "coverage": "primarily United States; selected global aviation and upper-air data",
+      "documentation": [
+        "https://mesonet.agron.iastate.edu/info/api.phtml"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "IEM",
+          "protocol": "https",
+          "role": "portal and API documentation",
+          "url": "https://mesonet.agron.iastate.edu/"
+        }
+      ],
+      "formats": [
+        "JSON",
+        "CSV",
+        "text",
+        "GeoJSON",
+        "provider-dependent"
+      ],
+      "id": "iowa-mesonet",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Iowa Environmental Mesonet",
+        "ru": "Iowa Environmental Mesonet"
+      },
+      "notes": {
+        "en": "Excellent convenience and fallback source but upstream official feeds should remain primary in critical systems.",
+        "ru": "Очень удобный резервный источник но в критических системах первичными должны оставаться официальные каналы."
+      },
+      "official": false,
+      "operational": true,
+      "protocols": [
+        "https",
+        "rest"
+      ],
+      "provider": "Iowa Environmental Mesonet / Iowa State University",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "Siphon IAStateUpperAir",
+          "role": "Python upper-air client",
+          "url": "https://unidata.github.io/siphon/latest/api/simplewebservice.html"
+        },
+        {
+          "name": "requests",
+          "role": "REST and file client",
+          "url": "https://requests.readthedocs.io/"
+        }
+      ],
+      "summary": {
+        "en": "High-value academic aggregation and APIs for METAR radar warnings radiosondes and other weather datasets.",
+        "ru": "Академический агрегатор и API для METAR радаров предупреждений аэрологии и других метеоданных."
+      },
+      "tier": "aggregator",
+      "typical_latency": "near-real-time for many feeds",
+      "update_cadence": "minutes to hours depending on dataset"
+    },
+    {
+      "access": {
+        "auth": "free non-commercial/open access patterns plus paid/commercial plans; check current limits",
+        "level": "free-tier",
+        "terms": "Open-Meteo licence and API terms plus upstream licences"
+      },
+      "archive": "historical and archive APIs available for selected datasets",
+      "automation": "high",
+      "categories": [
+        "nwp",
+        "surface",
+        "archive"
+      ],
+      "coverage": "global",
+      "documentation": [
+        "https://open-meteo.com/en/docs"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Open-Meteo documentation",
+          "protocol": "https",
+          "role": "API documentation",
+          "url": "https://open-meteo.com/en/docs"
+        }
+      ],
+      "formats": [
+        "JSON",
+        "CSV"
+      ],
+      "id": "open-meteo",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Open-Meteo APIs",
+        "ru": "Open-Meteo API"
+      },
+      "notes": {
+        "en": "Useful normalization layer and prototype source; verify upstream model identity and licensing before scientific or operational use.",
+        "ru": "Полезный унифицированный слой для прототипов; перед научным или оперативным использованием проверять исходную модель и её лицензию."
+      },
+      "official": false,
+      "operational": true,
+      "protocols": [
+        "https",
+        "rest"
+      ],
+      "provider": "Open-Meteo",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "requests",
+          "role": "REST client",
+          "url": "https://requests.readthedocs.io/"
+        }
+      ],
+      "summary": {
+        "en": "Convenient APIs that aggregate weather models observations and climate-oriented products behind a unified interface.",
+        "ru": "Удобные API объединяющие модели погоды наблюдения и климатические продукты через единый интерфейс."
+      },
+      "tier": "aggregator",
+      "typical_latency": "upstream dependent",
+      "update_cadence": "upstream-model dependent"
+    },
+    {
+      "access": {
+        "auth": "library and bulk access patterns vary",
+        "level": "open",
+        "terms": "Meteostat licence and upstream data terms"
+      },
+      "archive": "extensive historical station archive",
+      "automation": "high",
+      "categories": [
+        "surface",
+        "climate",
+        "archive"
+      ],
+      "coverage": "global station network",
+      "documentation": [
+        "https://dev.meteostat.net/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Meteostat developers",
+          "protocol": "https",
+          "role": "documentation",
+          "url": "https://dev.meteostat.net/"
+        }
+      ],
+      "formats": [
+        "CSV",
+        "JSON",
+        "tabular"
+      ],
+      "id": "meteostat",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Meteostat weather and climate data",
+        "ru": "Meteostat — погода и климат"
+      },
+      "notes": {
+        "en": "Good historical convenience layer; use national or WMO sources when provenance and operational latency matter.",
+        "ru": "Удобен для истории; когда важны происхождение и оперативная задержка использовать национальные или WMO-источники."
+      },
+      "official": false,
+      "operational": false,
+      "protocols": [
+        "https",
+        "api"
+      ],
+      "provider": "Meteostat",
+      "reliability": "medium",
+      "software": [
+        {
+          "name": "meteostat-python",
+          "role": "Python data client",
+          "url": "https://github.com/meteostat/meteostat-python"
+        },
+        {
+          "name": "pandas",
+          "role": "tabular processing",
+          "url": "https://pandas.pydata.org/"
+        }
+      ],
+      "summary": {
+        "en": "Community/open-source interface to historical and recent station-based weather data assembled from multiple providers.",
+        "ru": "Open-source интерфейс к историческим и недавним станционным данным собранным из нескольких источников."
+      },
+      "tier": "aggregator",
+      "typical_latency": "provider dependent and unsuitable for strict real-time SLAs",
+      "update_cadence": "periodic; not intended as a primary real-time feed"
+    },
+    {
+      "access": {
+        "auth": "generally no account for interactive queries; automated usage must respect service limits",
+        "level": "open",
+        "terms": "OGIMET usage policy and upstream data rights"
+      },
+      "archive": "historical query capability",
+      "automation": "low",
+      "categories": [
+        "surface",
+        "aviation",
+        "archive"
+      ],
+      "coverage": "global",
+      "documentation": [
+        "https://www.ogimet.com/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "OGIMET",
+          "protocol": "https",
+          "role": "portal and query service",
+          "url": "https://www.ogimet.com/"
+        }
+      ],
+      "formats": [
+        "HTML",
+        "text"
+      ],
+      "id": "ogimet",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "OGIMET professional meteorological information",
+        "ru": "OGIMET — метеорологическая информация"
+      },
+      "notes": {
+        "en": "Keep as human-facing fallback; do not build a critical ingest pipeline on HTML scraping when WIS2 or official APIs exist.",
+        "ru": "Оставлять как резерв для человека; не строить критический приём на HTML-парсинге если доступны WIS2 или официальные API."
+      },
+      "official": false,
+      "operational": true,
+      "protocols": [
+        "https"
+      ],
+      "provider": "OGIMET",
+      "reliability": "medium",
+      "software": [],
+      "summary": {
+        "en": "Long-running convenience service exposing SYNOP METAR and other observation products derived from international exchange.",
+        "ru": "Давно работающий удобный сервис SYNOP METAR и других наблюдений получаемых из международного обмена."
+      },
+      "tier": "aggregator",
+      "typical_latency": "generally near-real-time but without an official operational SLA",
+      "update_cadence": "observation dependent"
+    },
+    {
+      "access": {
+        "auth": "detailed/raw access and redistribution rights are restricted; participant access differs",
+        "level": "restricted",
+        "terms": "Blitzortung terms prohibit treating the service as unrestricted public commercial data"
+      },
+      "archive": "access depends on participant/status and service terms",
+      "automation": "low",
+      "categories": [
+        "lightning"
+      ],
+      "coverage": "broad international coverage depending on receiver density",
+      "documentation": [
+        "https://www.blitzortung.org/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Blitzortung",
+          "protocol": "https",
+          "role": "project and visualization",
+          "url": "https://www.blitzortung.org/"
+        }
+      ],
+      "formats": [
+        "web visualization",
+        "provider-dependent"
+      ],
+      "id": "blitzortung",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Blitzortung community lightning network",
+        "ru": "Blitzortung — общественная сеть регистрации молний"
+      },
+      "notes": {
+        "en": "Documented for awareness only; do not assume an unrestricted public API. Prefer official GLM or MTG-LI where their coverage fits.",
+        "ru": "Включён для полноты; нельзя считать что существует неограниченный публичный API. При подходящем покрытии предпочитать официальные GLM или MTG-LI."
+      },
+      "official": false,
+      "operational": true,
+      "protocols": [
+        "https"
+      ],
+      "provider": "Blitzortung.org",
+      "reliability": "medium",
+      "software": [],
+      "summary": {
+        "en": "Community-operated lightning detection network with useful visualization and community data access under restrictive terms.",
+        "ru": "Общественная сеть регистрации молний с полезной визуализацией и доступом к данным на условиях проекта."
+      },
+      "tier": "aggregator",
+      "typical_latency": "near-real-time visualization",
+      "update_cadence": "seconds to minutes"
+    },
+    {
+      "access": {
+        "auth": "free MADIS data application/account for machine access; unrestricted and restricted dataset classes coexist",
+        "level": "registration",
+        "terms": "NOAA MADIS data policy; radiosonde, Multi-Agency Profiler, satellite sounding and several other datasets are unrestricted, while aircraft and some mesonet data have restrictions"
+      },
+      "archive": "archives exist for many datasets; start dates vary by dataset",
+      "automation": "high",
+      "categories": [
+        "upper-air",
+        "profiler",
+        "aircraft",
+        "surface"
+      ],
+      "coverage": "global database with highest density over North America",
+      "documentation": [
+        "https://madis.ncep.noaa.gov/madis_datasets.shtml",
+        "https://madis.ncep.noaa.gov/madis_restrictions.shtml",
+        "https://madis.ncep.noaa.gov/data_application.shtml"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "MADIS home",
+          "protocol": "https",
+          "role": "documentation and service entry point",
+          "url": "https://madis.ncep.noaa.gov/"
+        },
+        {
+          "healthcheck": true,
+          "name": "MADIS data application",
+          "protocol": "https",
+          "role": "account and access request",
+          "url": "https://madis.ncep.noaa.gov/data_application.shtml"
+        }
+      ],
+      "formats": [
+        "NetCDF",
+        "XML",
+        "text"
+      ],
+      "id": "noaa-madis",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Meteorological Assimilation Data Ingest System (MADIS)",
+        "ru": "NOAA MADIS — система приёма метеорологических наблюдений"
+      },
+      "notes": {
+        "en": "Strong supplement for upper-air and profiler data. Check per-dataset rights before redistributing data, especially aircraft observations.",
+        "ru": "Сильный дополнительный источник аэрологии и профайлеров. Перед распространением данных проверять права конкретного набора, особенно для самолётных наблюдений."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "ftp",
+        "opendap",
+        "ldm"
+      ],
+      "provider": "NOAA/NCEP MADIS",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "xarray",
+          "role": "NetCDF processing",
+          "url": "https://github.com/pydata/xarray"
+        },
+        {
+          "name": "netCDF4",
+          "role": "NetCDF processing",
+          "url": "https://github.com/Unidata/netcdf4-python"
+        }
+      ],
+      "summary": {
+        "en": "NOAA observational database and delivery system with radiosondes, profiler networks, aircraft observations, satellite soundings and other in-situ datasets.",
+        "ru": "База и система доставки наблюдений NOAA, включающая радиозонды, профайлеры, самолётные наблюдения, спутниковые зондирования и другие in-situ наборы."
+      },
+      "tier": "specialized",
+      "typical_latency": "near-real-time for operational datasets; exact latency is dataset dependent",
+      "update_cadence": "dataset dependent; continuous, minutes or hourly depending on feed"
+    },
+    {
+      "access": {
+        "auth": "none for standard electronic download",
+        "level": "open",
+        "terms": "NOAA/NCEI data terms; dataset citation requested"
+      },
+      "archive": "NWSTG global BUFR from 2017-present; related ECMWF and NWS-managed raw upper-air streams are also archived",
+      "automation": "high",
+      "categories": [
+        "upper-air",
+        "archive"
+      ],
+      "coverage": "global, approximately 90S to 83N for the NWSTG collection",
+      "documentation": [
+        "https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc%3AC01500",
+        "https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "Global BUFR upper-air dataset",
+          "protocol": "https",
+          "role": "metadata and direct-download entry",
+          "url": "https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc%3AC01500"
+        },
+        {
+          "healthcheck": true,
+          "name": "IGRA raw BUFR overview",
+          "protocol": "https",
+          "role": "raw BUFR stream documentation",
+          "url": "https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive"
+        }
+      ],
+      "formats": [
+        "BUFR"
+      ],
+      "id": "noaa-ncei-upperair-bufr",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "Global Upper-Air BUFR Data Stream",
+        "ru": "NOAA/NCEI — глобальный поток аэрологии BUFR"
+      },
+      "notes": {
+        "en": "Preserve these raw BUFR messages when high vertical resolution or original metadata are important. For real-time reception, prefer WIS2 where available.",
+        "ru": "Сохранять исходные BUFR, если важны высокое вертикальное разрешение и оригинальные метаданные. Для реального времени при наличии предпочитать WIS2."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https"
+      ],
+      "provider": "NOAA/NCEI",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "ecCodes",
+          "role": "BUFR decoding",
+          "url": "https://github.com/ecmwf/eccodes"
+        },
+        {
+          "name": "pybufrkit",
+          "role": "alternative Python BUFR toolkit",
+          "url": "https://github.com/ywangd/pybufrkit"
+        }
+      ],
+      "summary": {
+        "en": "Raw radiosonde and pilot-balloon observations received through the NWS Telecommunications Gateway from the global WMO exchange and archived by NCEI.",
+        "ru": "Сырые радиозондовые и шар-пилотные наблюдения глобального обмена WMO, получаемые через NWS Telecommunications Gateway и архивируемые NCEI."
+      },
+      "tier": "secondary",
+      "typical_latency": "archive-oriented daily update rather than event-driven real-time delivery",
+      "update_cadence": "NCEI NWSTG collection updated daily; observations are typically synoptic sounding reports"
+    },
+    {
+      "access": {
+        "auth": "archived and operational distribution paths differ; NOAA CLASS/NDE access requirements apply",
+        "level": "registration",
+        "terms": "NOAA/NESDIS product and CLASS terms"
+      },
+      "archive": "long-term Environmental Data Record archive through NOAA CLASS",
+      "automation": "medium",
+      "categories": [
+        "satellite",
+        "upper-air"
+      ],
+      "coverage": "global polar-orbiting coverage",
+      "documentation": [
+        "https://www.star.nesdis.noaa.gov/jpss/soundings.php",
+        "https://www.ospo.noaa.gov/products/atmosphere/soundings/heap/nucaps/index.html"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "NUCAPS product page",
+          "protocol": "https",
+          "role": "product description and data-access links",
+          "url": "https://www.star.nesdis.noaa.gov/jpss/soundings.php"
+        },
+        {
+          "healthcheck": true,
+          "name": "OSPO HEAP NUCAPS",
+          "protocol": "https",
+          "role": "operational product documentation",
+          "url": "https://www.ospo.noaa.gov/products/atmosphere/soundings/heap/nucaps/index.html"
+        }
+      ],
+      "formats": [
+        "NetCDF",
+        "BUFR"
+      ],
+      "id": "noaa-nucaps",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "NUCAPS / HEAP atmospheric sounding products",
+        "ru": "NOAA NUCAPS / HEAP — спутниковые профили атмосферы"
+      },
+      "notes": {
+        "en": "NUCAPS standard NetCDF products contain retrieved profiles on 100 vertical points from roughly 1100 hPa to 0.016 hPa. Treat them as satellite retrievals, not radiosonde observations.",
+        "ru": "Стандартные NetCDF-продукты NUCAPS содержат retrieval-профили на 100 вертикальных точках примерно от 1100 до 0.016 гПа. Это спутниковые retrieval-профили, а не радиозонды."
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https"
+      ],
+      "provider": "NOAA/NESDIS/STAR and OSPO",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "xarray",
+          "role": "NetCDF profile processing",
+          "url": "https://github.com/pydata/xarray"
+        },
+        {
+          "name": "ecCodes",
+          "role": "BUFR radiance/profile decoding where applicable",
+          "url": "https://github.com/ecmwf/eccodes"
+        }
+      ],
+      "summary": {
+        "en": "Operational satellite retrievals from CrIS and ATMS providing vertical temperature and moisture profiles, cloud properties and trace-gas products.",
+        "ru": "Оперативные спутниковые retrieval-продукты CrIS и ATMS с вертикальными профилями температуры и влажности, облачными параметрами и малыми газовыми составляющими."
+      },
+      "tier": "specialized",
+      "typical_latency": "operational product stream; public archive latency and access path depend on OSPO/NDE/CLASS distribution",
+      "update_cadence": "orbital overpasses; production cadence follows JPSS observations and processing"
+    },
+    {
+      "access": {
+        "auth": "free ARM user account required for data download",
+        "level": "registration",
+        "terms": "ARM data policy and citation requirements"
+      },
+      "archive": "more than 30 years of ARM atmospheric observations; site and campaign dependent",
+      "automation": "medium",
+      "categories": [
+        "upper-air",
+        "reference",
+        "research"
+      ],
+      "coverage": "ARM observatories and field campaigns across multiple continents and oceans",
+      "documentation": [
+        "https://arm.gov/data/vaps/sonde/",
+        "https://www.arm.gov/publications/tech_reports/handbooks/sonde_handbook.pdf",
+        "https://armgov.svcs.arm.gov/data/"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "ARM SONDE",
+          "protocol": "https",
+          "role": "instrument/product documentation",
+          "url": "https://arm.gov/data/vaps/sonde/"
+        },
+        {
+          "healthcheck": true,
+          "name": "ARM Data Discovery",
+          "protocol": "https",
+          "role": "search and download",
+          "url": "https://adc.arm.gov/discovery/"
+        }
+      ],
+      "formats": [
+        "NetCDF",
+        "ASCII",
+        "MWX"
+      ],
+      "id": "doe-arm-sonde",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "ARM Balloon-Borne Sounding System (SONDE)",
+        "ru": "DOE ARM SONDE — радиозондовые наблюдения"
+      },
+      "notes": {
+        "en": "Valuable validation/research dataset with standardized NetCDF sounding files. It is not intended to replace synoptic real-time WIS2 TEMP reception.",
+        "ru": "Ценный набор для верификации и исследований со стандартизованными NetCDF-зондированиями. Не предназначен для замены синоптического realtime-приёма TEMP через WIS2."
+      },
+      "official": true,
+      "operational": false,
+      "protocols": [
+        "https"
+      ],
+      "provider": "U.S. Department of Energy Atmospheric Radiation Measurement (ARM) User Facility",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "xarray",
+          "role": "NetCDF sounding processing",
+          "url": "https://github.com/pydata/xarray"
+        },
+        {
+          "name": "netCDF4",
+          "role": "NetCDF access",
+          "url": "https://github.com/Unidata/netcdf4-python"
+        }
+      ],
+      "summary": {
+        "en": "Research-quality radiosonde observations from ARM observatories and field campaigns measuring pressure, temperature, moisture and horizontal wind.",
+        "ru": "Научные радиозондовые наблюдения обсерваторий и полевых кампаний ARM с давлением, температурой, влажностью и горизонтальным ветром."
+      },
+      "tier": "specialized",
+      "typical_latency": "ARM datastreams are generally available for download within 48 hours",
+      "update_cadence": "launch schedule depends on observatory or campaign; many soundings are separated by 6-12 hours"
+    },
+    {
+      "access": {
+        "auth": "anonymous public API and web-accessible archive for published data",
+        "level": "open",
+        "terms": "WOUDC Data Policy and attribution/citation requirements"
+      },
+      "archive": "long-term global ozone and UV archive",
+      "automation": "high",
+      "categories": [
+        "upper-air",
+        "ozone",
+        "archive"
+      ],
+      "coverage": "global specialized station network",
+      "documentation": [
+        "https://api.woudc.org/?f=html",
+        "https://woudc.org/en/data/data-use-policy",
+        "https://woudc.org/archive/Documentation/PDF_files/WOUDC_Guidebooks/o3_guidev2.pdf"
+      ],
+      "endpoints": [
+        {
+          "healthcheck": true,
+          "name": "WOUDC API",
+          "protocol": "api",
+          "role": "API and OpenAPI documentation",
+          "url": "https://api.woudc.org/?f=html"
+        },
+        {
+          "healthcheck": true,
+          "name": "Dataset snapshots",
+          "protocol": "https",
+          "role": "weekly full-dataset archives",
+          "url": "https://woudc.org/archive/Summaries/dataset-snapshots/"
+        }
+      ],
+      "formats": [
+        "CSV",
+        "ZIP",
+        "JSON",
+        "provider-dependent"
+      ],
+      "id": "woudc-ozonesonde",
+      "last_verified": "2026-09-05",
+      "name": {
+        "en": "WOUDC Ozonesonde archive and API",
+        "ru": "WOUDC — озонозондовые профили и API"
+      },
+      "notes": {
+        "en": "Whole-dataset ozonesonde snapshots are distributed as compressed CSV archives and are updated weekly; station-level files are also available in the archive.",
+        "ru": "Полные snapshots озонозондового набора распространяются как сжатые CSV-архивы и обновляются еженедельно; в архиве доступны и отдельные станционные файлы."
+      },
+      "official": true,
+      "operational": false,
+      "protocols": [
+        "https",
+        "api"
+      ],
+      "provider": "WMO Global Atmosphere Watch / WOUDC / Environment and Climate Change Canada",
+      "reliability": "high",
+      "software": [
+        {
+          "name": "requests",
+          "role": "API and file retrieval",
+          "url": "https://requests.readthedocs.io/"
+        },
+        {
+          "name": "pandas",
+          "role": "extCSV and tabular processing",
+          "url": "https://pandas.pydata.org/"
+        }
+      ],
+      "summary": {
+        "en": "Global World Ozone and Ultraviolet Radiation Data Centre collection of ozonesonde profiles and related ozone/UV observations.",
+        "ru": "Глобальная коллекция World Ozone and Ultraviolet Radiation Data Centre с озонозондовыми профилями и связанными наблюдениями озона и УФ-излучения."
+      },
+      "tier": "specialized",
+      "typical_latency": "archive/submission oriented rather than synoptic real-time",
+      "update_cadence": "station submissions are asynchronous; full dataset archive snapshots are updated weekly"
+    }
+  ]
+}
