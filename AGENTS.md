@@ -11,7 +11,7 @@ Weather Source — база знаний для человека, програм
 5. `catalog/sources.yaml` + `catalog/sources/*.yaml` — окончательный источник истины.
 6. `docs/sources/generated/<id>.md` — подробная русско-английская карточка для объяснения решения человеку.
 
-Если сгенерированные JSON/Markdown расходятся с YAML, доверять YAML и считать репозиторий требующим `python scripts/generate_docs.py --write`.
+Если сгенерированные JSON/Markdown расходятся с YAML, доверять YAML и считать репозиторий требующим `python scripts/catalog_docs.py --write`.
 
 ## Алгоритм выбора источника
 
@@ -71,17 +71,17 @@ Weather Source — база знаний для человека, програм
 
 ## Изменение каталога
 
-При добавлении или изменении источника обновлять только авторитетную YAML-запись и затем запускать:
+При добавлении или изменении источника обновлять авторитетную YAML-запись и затем запускать:
 
 ```bash
 python scripts/validate_catalog.py
-python scripts/generate_docs.py --write
-python scripts/generate_docs.py --verify
+python scripts/catalog_docs.py --write
+python scripts/catalog_docs.py --verify
 pytest -q
 mkdocs build --strict
 ```
 
-Generated artifacts должны быть закоммичены. Workflow `Sync generated catalogue` автоматически синхронизирует их после изменений YAML в `main`; CI должен обнаруживать drift.
+Generated artifacts должны быть закоммичены. Workflow `Sync generated catalogue` автоматически синхронизирует их после изменений YAML в `main`; CI обнаруживает missing/outdated/stale представления.
 
 ## Health-check
 
