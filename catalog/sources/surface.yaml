@@ -1,0 +1,25 @@
+sources:
+  - id: noaa-aviationweather
+    provider: NOAA/NWS Aviation Weather Center
+    name: {en: AviationWeather.gov Data API, ru: AviationWeather.gov Data API}
+    summary: {en: Machine access to METAR TAF and related aviation weather products., ru: Машинный доступ к METAR TAF и связанным авиационным метеопродуктам.}
+    official: true
+    tier: primary
+    categories: [surface, aviation]
+    coverage: global aviation network
+    operational: true
+    update_cadence: minutes
+    typical_latency: minutes
+    archive: limited operational API history
+    access: {level: open, auth: none for normal public use; respect rate limits, terms: NOAA/NWS terms}
+    protocols: [https, rest]
+    formats: [JSON, XML, CSV, text]
+    endpoints:
+      - {name: Data API, url: 'https://aviationweather.gov/data/api/', protocol: https, role: API documentation, healthcheck: true}
+    software:
+      - {name: requests, role: REST client, url: 'https://requests.readthedocs.io/'}
+    documentation: ['https://aviationweather.gov/data/api/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Prefer the documented API over scraping decoded METAR pages., ru: Для автоматизации использовать документированный API а не парсинг страниц с декодированными METAR.}
