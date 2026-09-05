@@ -35,13 +35,10 @@ jobs:
       - name: Validate catalogue
         run: python scripts/validate_catalog.py
 
-      - name: Generate normalized source cards
-        run: python scripts/catalog_docs.py --write
-
-      - name: Verify generated artifacts
+      - name: Verify committed source cards and indexes
         run: python scripts/catalog_docs.py --verify
 
-      - name: Build MkDocs strictly
+      - name: Build committed MkDocs site strictly
         run: mkdocs build --strict
 
       - name: Upload built documentation artifact
@@ -65,7 +62,7 @@ jobs:
           {
             echo "## Documentation publication"
             echo
-            echo "The built site has been published to the \`gh-pages\` branch."
+            echo "The verified committed site has been published to the \`gh-pages\` branch."
             echo "GitHub Pages site activation itself is a repository-admin setting and is not granted to the connected GitHub App."
             echo "Once enabled, select **Deploy from a branch → gh-pages → /(root)**."
           } >> "$GITHUB_STEP_SUMMARY"
