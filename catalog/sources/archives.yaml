@@ -1,0 +1,27 @@
+sources:
+  - id: copernicus-cds
+    provider: Copernicus Climate Change Service / ECMWF
+    name: {en: Copernicus Climate Data Store, ru: Copernicus Climate Data Store}
+    summary: {en: Climate datasets and reanalyses including ERA5, ERA5-Land, seasonal products and many derived climate datasets., ru: Климатические данные и реанализы включая ERA5 ERA5-Land сезонные продукты и множество производных наборов.}
+    official: true
+    tier: primary
+    categories: [archive, reanalysis, climate]
+    coverage: global and regional depending on dataset
+    operational: false
+    update_cadence: dataset dependent; some products are updated routinely
+    typical_latency: not intended as a primary real-time feed
+    archive: extensive multi-decadal climate archive
+    access: {level: registration, auth: free account and API token for programmatic access, terms: Copernicus licences and dataset-specific terms}
+    protocols: [https, api]
+    formats: [NetCDF, GRIB, ZIP, provider-dependent]
+    endpoints:
+      - {name: Climate Data Store, url: 'https://cds.climate.copernicus.eu/', protocol: https, role: catalog and API, healthcheck: true}
+    software:
+      - {name: cdsapi, role: official API client, url: 'https://github.com/ecmwf/cdsapi'}
+      - {name: xarray, role: NetCDF processing, url: 'https://github.com/pydata/xarray'}
+      - {name: ecCodes, role: GRIB processing, url: 'https://github.com/ecmwf/eccodes'}
+    documentation: ['https://cds.climate.copernicus.eu/how-to-api']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Excellent archive and reanalysis service; do not use ERA5 as a substitute for operational observations or forecasts., ru: Отличный архив и сервис реанализа; ERA5 нельзя использовать как замену оперативным наблюдениям или прогнозам.}
