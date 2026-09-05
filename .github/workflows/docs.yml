@@ -6,21 +6,21 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: docs-publish
   cancel-in-progress: true
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -38,26 +38,31 @@ jobs:
       - name: Generate source cards
         run: python scripts/generate_docs.py --write
 
-      - name: Build MkDocs
+      - name: Build MkDocs strictly
         run: mkdocs build --strict
 
-      - name: Configure and enable Pages
-        uses: actions/configure-pages@v5
+      - name: Upload built documentation artifact
+        uses: actions/upload-artifact@v4
         with:
-          enablement: true
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
+          name: weather-source-site-${{ github.run_id }}
           path: site
+          if-no-files-found: error
+          retention-days: 14
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Configure publishing identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Publish to gh-pages branch
+        run: mkdocs gh-deploy --force --no-history
+
+      - name: Record Pages activation note
+        run: |
+          {
+            echo "## Documentation publication"
+            echo
+            echo "The built site has been published to the \`gh-pages\` branch."
+            echo "GitHub Pages site activation itself is a repository-admin setting and is not granted to the connected GitHub App."
+            echo "Once enabled, select **Deploy from a branch → gh-pages → /(root)**."
+          } >> "$GITHUB_STEP_SUMMARY"
