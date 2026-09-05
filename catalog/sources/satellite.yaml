@@ -1,0 +1,135 @@
+sources:
+  - id: noaa-goes
+    provider: NOAA/NESDIS
+    name: {en: GOES-R Series operational satellite data, ru: Оперативные данные спутников GOES-R}
+    summary: {en: Geostationary ABI imagery and derived products plus GLM lightning observations from GOES-East and GOES-West., ru: Геостационарные снимки ABI и производные продукты а также данные молниевого картирования GLM со спутников GOES-East и GOES-West.}
+    official: true
+    tier: primary
+    categories: [satellite, lightning, clouds, radiation]
+    coverage: Americas Atlantic and eastern Pacific sectors
+    operational: true
+    update_cadence: seconds to minutes depending on product and scan mode
+    typical_latency: minutes
+    archive: long-term NOAA archives; operational cloud object storage available
+    access: {level: open, auth: none for many public cloud datasets, terms: NOAA public data terms and cloud dataset terms}
+    protocols: [s3, https]
+    formats: [NetCDF, HDF5, provider-dependent]
+    endpoints:
+      - {name: GOES-R program data products, url: 'https://www.goes-r.gov/products/overview.html', protocol: https, role: product documentation, healthcheck: true}
+      - {name: NOAA Open Data Dissemination, url: 'https://www.noaa.gov/information-technology/open-data-dissemination', protocol: https, role: cloud access documentation, healthcheck: true}
+    software:
+      - {name: Satpy, role: satellite reading resampling and composites, url: 'https://github.com/pytroll/satpy'}
+      - {name: xarray, role: NetCDF processing, url: 'https://github.com/pydata/xarray'}
+    documentation: ['https://www.goes-r.gov/products/overview.html', 'https://www.noaa.gov/information-technology/open-data-dissemination']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Use public object storage for continuous reception; GLM is one of the strongest freely accessible operational lightning sources., ru: Для непрерывного приёма использовать публичное object storage; GLM — один из наиболее сильных бесплатных оперативных источников молний.}
+
+  - id: eumetsat-data-store
+    provider: EUMETSAT
+    name: {en: EUMETSAT Data Store and Data Tailor, ru: EUMETSAT Data Store и Data Tailor}
+    summary: {en: Operational and archived Meteosat Metop MTG and related meteorological satellite products., ru: Оперативные и архивные продукты Meteosat Metop MTG и других метеорологических спутников EUMETSAT.}
+    official: true
+    tier: primary
+    categories: [satellite, lightning, upper-air, clouds, ocean]
+    coverage: Europe Africa Atlantic Indian Ocean and global polar products
+    operational: true
+    update_cadence: minutes to orbital cadence depending on mission/product
+    typical_latency: minutes to hours
+    archive: extensive mission archives
+    access: {level: registration, auth: free EUMETSAT account and OAuth credentials for API use, terms: EUMETSAT data policy and product-specific terms}
+    protocols: [https, api]
+    formats: [NetCDF, HDF5, BUFR, HRIT, native, GeoTIFF]
+    endpoints:
+      - {name: EUMETSAT Data Store, url: 'https://data.eumetsat.int/', protocol: https, role: catalog/API, healthcheck: true}
+    software:
+      - {name: EUMDAC, role: official Python and CLI client, url: 'https://gitlab.eumetsat.int/eumetlab/data-services/eumdac'}
+      - {name: Satpy, role: satellite decoding and composites, url: 'https://github.com/pytroll/satpy'}
+      - {name: ecCodes, role: BUFR decoding, url: 'https://github.com/ecmwf/eccodes'}
+    documentation: ['https://user.eumetsat.int/resources/user-guides/eumetsat-data-access-client-eumdac-guide']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Primary European satellite source. MTG Lightning Imager and IASI/GRAS products are especially important for operational meteorology., ru: Основной европейский спутниковый источник. Для оперативной метеорологии особенно важны MTG Lightning Imager а также IASI/GRAS.}
+
+  - id: nasa-earthdata-lance
+    provider: NASA Earthdata
+    name: {en: NASA LANCE / Earthdata Near Real-Time, ru: NASA LANCE / Earthdata Near Real-Time}
+    summary: {en: Near-real-time satellite products for atmosphere land fire aerosols precipitation and related Earth observations., ru: Спутниковые продукты близкого к реальному времени для атмосферы суши пожаров аэрозолей осадков и других наблюдений Земли.}
+    official: true
+    tier: specialized
+    categories: [satellite, precipitation, aerosol, fire, clouds]
+    coverage: global
+    operational: true
+    update_cadence: orbital/product dependent
+    typical_latency: generally near-real-time; product targets range from minutes to a few hours
+    archive: long-term products through NASA Earthdata/DAACs
+    access: {level: registration, auth: Earthdata Login for many download APIs, terms: NASA Earthdata terms and dataset-specific licences}
+    protocols: [https, api]
+    formats: [HDF5, NetCDF, GeoTIFF, provider-dependent]
+    endpoints:
+      - {name: LANCE, url: 'https://lance.modaps.eosdis.nasa.gov/', protocol: https, role: near-real-time portal, healthcheck: true}
+      - {name: Earthdata, url: 'https://www.earthdata.nasa.gov/', protocol: https, role: catalog and access documentation, healthcheck: true}
+    software:
+      - {name: earthaccess, role: Python search and download client, url: 'https://github.com/nsidc/earthaccess'}
+      - {name: xarray, role: NetCDF processing, url: 'https://github.com/pydata/xarray'}
+      - {name: h5py, role: HDF5 processing, url: 'https://github.com/h5py/h5py'}
+    documentation: ['https://www.earthdata.nasa.gov/data/tools/lance', 'https://earthaccess.readthedocs.io/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Very useful specialized NRT supplement; authentication should be provisioned before unattended deployment., ru: Очень полезное специализированное NRT-дополнение; перед автономным развёртыванием заранее настроить Earthdata Login.}
+
+  - id: nasa-gpm-imerg
+    provider: NASA GPM
+    name: {en: GPM IMERG precipitation, ru: NASA GPM IMERG — спутниковые осадки}
+    summary: {en: Multi-satellite global precipitation estimates with Early Late and Final runs., ru: Глобальные мультиспутниковые оценки осадков с оперативными Early/Late и окончательными Final продуктами.}
+    official: true
+    tier: specialized
+    categories: [satellite, precipitation]
+    coverage: near-global
+    operational: true
+    update_cadence: half-hourly product grid; run availability differs
+    typical_latency: Early and Late runs are near-real-time with product-specific latency; Final is delayed research quality
+    archive: multi-year archive through NASA GES DISC
+    access: {level: registration, auth: Earthdata Login for standard authenticated downloads, terms: NASA/GPM data terms}
+    protocols: [https, opendap, api]
+    formats: [HDF5, NetCDF, GeoTIFF]
+    endpoints:
+      - {name: GPM IMERG, url: 'https://gpm.nasa.gov/data/imerg', protocol: https, role: product documentation, healthcheck: true}
+      - {name: GES DISC, url: 'https://disc.gsfc.nasa.gov/', protocol: https, role: search and download, healthcheck: true}
+    software:
+      - {name: earthaccess, role: search and download, url: 'https://github.com/nsidc/earthaccess'}
+      - {name: xarray, role: NetCDF processing, url: 'https://github.com/pydata/xarray'}
+    documentation: ['https://gpm.nasa.gov/data/imerg']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Useful where ground radar coverage is absent; distinguish satellite precipitation estimates from radar or gauge observations., ru: Полезен там где нет наземных радаров; спутниковые оценки осадков необходимо отличать от радиолокационных и станционных наблюдений.}
+
+  - id: jaxa-gsmap
+    provider: JAXA
+    name: {en: GSMaP global precipitation, ru: JAXA GSMaP — глобальные осадки}
+    summary: {en: Near-real-time and historical global satellite precipitation maps from JAXA., ru: Оперативные и архивные глобальные спутниковые поля осадков JAXA.}
+    official: true
+    tier: specialized
+    categories: [satellite, precipitation]
+    coverage: global
+    operational: true
+    update_cadence: hourly products available for major operational streams
+    typical_latency: product dependent; near-real-time variants available
+    archive: historical archive available
+    access: {level: registration, auth: some services require JAXA/EORC registration or credentials, terms: JAXA GSMaP terms}
+    protocols: [https, ftp]
+    formats: [binary grid, NetCDF, text, GeoTIFF, provider-dependent]
+    endpoints:
+      - {name: GSMaP, url: 'https://sharaku.eorc.jaxa.jp/GSMaP/', protocol: https, role: portal and documentation, healthcheck: true}
+    software:
+      - {name: xarray, role: NetCDF processing, url: 'https://github.com/pydata/xarray'}
+      - {name: GDAL, role: raster conversion and geospatial processing, url: 'https://gdal.org/'}
+    documentation: ['https://sharaku.eorc.jaxa.jp/GSMaP/']
+    reliability: high
+    automation: medium
+    last_verified: '2026-09-05'
+    notes: {en: Independent global precipitation estimate useful as a second satellite source alongside IMERG., ru: Независимая глобальная оценка осадков полезная как второй спутниковый источник рядом с IMERG.}
