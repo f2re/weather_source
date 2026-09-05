@@ -6,6 +6,7 @@ import argparse
 import json
 import sys
 import time
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -14,6 +15,12 @@ import requests
 from catalog_lib import DEFAULT_CATALOG, filter_sources, load_catalog
 
 USER_AGENT = "weather-source-health/1.0 (+https://github.com/f2re/weather_source)"
+
+# Health checks answer a reachability question, not whether a bare request is a
+# semantically valid API call. API roots may legitimately answer 400/401/403/
+# 405/429 while still proving that the service is alive. Broken/moved URLs
+# (404/410), server errors and transport failures remain failures.
+REACHABLE_4XX = {400, 401, 403, 405, 416, 429}
 
 
 def probe(url: str, timeout: float) -> tuple[bool, int | None, float, str | None]:
@@ -29,10 +36,31 @@ def probe(url: str, timeout: float) -> tuple[bool, int | None, float, str | None
         status = response.status_code
         response.close()
         elapsed = time.monotonic() - started
-        ok = 200 <= status < 400 or status == 416
+        ok = 200 <= status < 400 or status in REACHABLE_4XX
         return ok, status, elapsed, None if ok else f"HTTP {status}"
     except requests.RequestException as exc:
         return False, None, time.monotonic() - started, f"{type(exc).__name__}: {exc}"
+
+
+def summarize_source_health(results: list[dict]) -> list[dict]:
+    grouped: dict[str, list[dict]] = defaultdict(list)
+    for item in results:
+        grouped[item["source_id"]].append(item)
+
+    summary = []
+    for source_id in sorted(grouped):
+        endpoints = grouped[source_id]
+        healthy = any(item["ok"] for item in endpoints)
+        summary.append(
+            {
+                "source_id": source_id,
+                "healthy": healthy,
+                "checked_endpoints": len(endpoints),
+                "healthy_endpoints": sum(1 for item in endpoints if item["ok"]),
+                "failed_endpoints": [item["endpoint"] for item in endpoints if not item["ok"]],
+            }
+        )
+    return summary
 
 
 def main() -> int:
@@ -61,13 +89,15 @@ def main() -> int:
             attempts = []
             for attempt in range(1, args.retries + 1):
                 ok, status, elapsed, error = probe(url, args.timeout)
-                attempts.append({
-                    "attempt": attempt,
-                    "ok": ok,
-                    "status": status,
-                    "latency_ms": round(elapsed * 1000, 1),
-                    "error": error,
-                })
+                attempts.append(
+                    {
+                        "attempt": attempt,
+                        "ok": ok,
+                        "status": status,
+                        "latency_ms": round(elapsed * 1000, 1),
+                        "error": error,
+                    }
+                )
                 if ok:
                     break
                 if attempt < args.retries:
@@ -88,18 +118,40 @@ def main() -> int:
             marker = "OK" if item["ok"] else "FAIL"
             print(f"[{marker}] {item['source_id']} :: {item['endpoint']} :: {item['status']}")
 
-    failures = [item for item in results if not item["ok"]]
+    endpoint_failures = [item for item in results if not item["ok"]]
+    sources_summary = summarize_source_health(results)
+    source_failures = [item for item in sources_summary if not item["healthy"]]
+
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "checked": len(results),
-        "healthy": len(results) - len(failures),
-        "failed": len(failures),
+        "endpoints": {
+            "checked": len(results),
+            "healthy": len(results) - len(endpoint_failures),
+            "failed": len(endpoint_failures),
+        },
+        "sources": {
+            "checked": len(sources_summary),
+            "healthy": len(sources_summary) - len(source_failures),
+            "failed": len(source_failures),
+            "summary": sources_summary,
+        },
         "results": results,
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Report: {args.report} ({report['healthy']}/{report['checked']} healthy)")
-    return 1 if args.strict and failures else 0
+
+    print(
+        "Report: "
+        f"{args.report} — sources {report['sources']['healthy']}/{report['sources']['checked']} healthy; "
+        f"endpoints {report['endpoints']['healthy']}/{report['endpoints']['checked']} reachable"
+    )
+    if source_failures:
+        print("Unhealthy sources: " + ", ".join(item["source_id"] for item in source_failures))
+
+    # Strict mode protects source availability: a source fails only when all of
+    # its health-check endpoints fail. Individual auxiliary endpoint failures
+    # remain visible in the JSON report without making the whole workflow red.
+    return 1 if args.strict and source_failures else 0
 
 
 if __name__ == "__main__":
