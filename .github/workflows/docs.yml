@@ -42,7 +42,7 @@ jobs:
         run: mkdocs build --strict
 
       - name: Upload built documentation artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: weather-source-site-${{ github.run_id }}
           path: site
