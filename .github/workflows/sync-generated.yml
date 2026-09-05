@@ -7,6 +7,7 @@ on:
       - 'catalog/**/*.yaml'
       - 'catalog/schema.json'
       - 'scripts/generate_docs.py'
+      - 'scripts/catalog_docs.py'
       - 'scripts/catalog_lib.py'
   workflow_dispatch:
 
@@ -42,11 +43,11 @@ jobs:
         run: python scripts/validate_catalog.py
 
       - name: Generate committed human and agent artefacts
-        run: python scripts/generate_docs.py --write
+        run: python scripts/catalog_docs.py --write
 
       - name: Validate generated documentation
         run: |
-          python scripts/generate_docs.py --verify
+          python scripts/catalog_docs.py --verify
           mkdocs build --strict
 
       - name: Commit generated artefacts
