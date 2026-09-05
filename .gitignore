@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Documentation build
+site/
+
+# Health and local reports
+source-health.json
+*.health.json
+
+# Local meteorological payloads
+*.grib
+*.grib2
+*.bufr
+*.nc
+*.nc4
+*.h5
+*.hdf5
+*.tif
+*.tiff
+
+# Credentials and environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
