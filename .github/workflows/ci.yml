@@ -21,7 +21,9 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
-          cache-dependency-path: requirements-dev.txt
+          cache-dependency-path: |
+            requirements-dev.txt
+            requirements-examples.txt
 
       - name: Install development dependencies
         run: python -m pip install --upgrade pip && python -m pip install -r requirements-dev.txt
@@ -43,3 +45,38 @@ jobs:
 
       - name: Build documentation strictly
         run: mkdocs build --strict
+
+  examples-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-examples.txt
+
+      - name: Install example runtime dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements-examples.txt
+
+      - name: Import meteorological runtime libraries
+        run: python -c "import cfgrib, eccodes, netCDF4, paho.mqtt.client, requests, xarray; print('example runtimes OK')"
+
+      - name: Smoke HTTP downloader
+        run: python examples/python/http_download.py --help
+
+      - name: Smoke WIS2 subscriber
+        run: python examples/python/wis2_subscribe.py --help
+
+      - name: Smoke BUFR decoder
+        run: python examples/python/bufr_decode.py --help
+
+      - name: Smoke GRIB reader
+        run: python examples/python/grib_open.py --help
+
+      - name: Smoke NetCDF reader
+        run: python examples/python/netcdf_open.py --help
