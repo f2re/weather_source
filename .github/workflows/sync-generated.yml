@@ -9,6 +9,7 @@ on:
       - 'scripts/generate_docs.py'
       - 'scripts/catalog_docs.py'
       - 'scripts/catalog_lib.py'
+      - '.github/workflows/sync-generated.yml'
   workflow_dispatch:
 
 permissions:
@@ -53,30 +54,28 @@ jobs:
       - name: Commit generated artefacts
         shell: bash
         run: |
-          if git diff --quiet -- \
-            docs/sources/index.md \
-            docs/sources/index.ru.md \
-            docs/sources/index.en.md \
-            docs/sources/generated \
-            docs/sources/categories \
-            catalog/sources.json \
-            catalog/sources.ndjson \
-            catalog/agent-index.json \
-            llms.txt; then
+          GENERATED_PATHS=(
+            docs/sources/index.md
+            docs/sources/index.ru.md
+            docs/sources/index.en.md
+            docs/sources/generated
+            docs/sources/categories
+            catalog/sources.json
+            catalog/sources.ndjson
+            catalog/agent-index.json
+            llms.txt
+          )
+
+          if [ -z "$(git status --porcelain -- "${GENERATED_PATHS[@]}")" ]; then
             echo 'Generated catalogue is already current.'
             exit 0
           fi
+
+          echo 'Generated catalogue changes:'
+          git status --short -- "${GENERATED_PATHS[@]}"
+
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add \
-            docs/sources/index.md \
-            docs/sources/index.ru.md \
-            docs/sources/index.en.md \
-            docs/sources/generated \
-            docs/sources/categories \
-            catalog/sources.json \
-            catalog/sources.ndjson \
-            catalog/agent-index.json \
-            llms.txt
+          git add -- "${GENERATED_PATHS[@]}"
           git commit -m 'docs: sync generated weather source catalogue [skip ci]'
           git push origin HEAD:main
