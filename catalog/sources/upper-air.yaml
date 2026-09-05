@@ -178,7 +178,7 @@ sources:
       ru: UCAR CDAAC — GNSS radio occultation
     summary:
       en: GNSS radio-occultation profiles from COSMIC and other missions with refractivity and derived atmospheric profiles.
-      ru: Профили GNSS radio occultation с COSMIC и других миссий: рефрактивность и производные профили атмосферы.
+      ru: "Профили GNSS radio occultation с COSMIC и других миссий: рефрактивность и производные профили атмосферы."
     official: true
     tier: specialized
     categories: [upper-air, satellite]
