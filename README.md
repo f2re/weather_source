@@ -64,15 +64,15 @@ For WMO observations, check **WIS2 core data first**. For upper air, never confu
 
 ## Generated catalogue is committed
 
-The YAML catalogue remains authoritative, but human and agent views are committed to `main`, not hidden inside a CI build. `Sync generated catalogue` regenerates and commits the indexes/cards after catalogue changes. `generate_docs.py --verify` detects missing, stale or outdated generated artifacts.
+The YAML catalogue remains authoritative, but human and agent views are committed to `main`, not hidden inside a CI build. `Sync generated catalogue` regenerates and commits the indexes/cards after catalogue changes. `catalog_docs.py --verify` detects missing, stale or outdated generated artifacts.
 
 ## Local validation
 
 ```bash
 python -m pip install -r requirements-dev.txt
 python scripts/validate_catalog.py
-python scripts/generate_docs.py --write
-python scripts/generate_docs.py --verify
+python scripts/catalog_docs.py --write
+python scripts/catalog_docs.py --verify
 python -m compileall -q examples scripts tests
 pytest -q
 mkdocs build --strict
@@ -91,7 +91,7 @@ catalog/                     authoritative YAML + JSON/NDJSON agent views
 docs/sources/index*.md       committed human catalogues
 docs/sources/generated/      one detailed bilingual card per source
 docs/sources/categories/     category indexes
-docs/agent-guide.md           AI-agent retrieval rules
+docs/agent-guide.md          AI-agent retrieval rules
 examples/python/             ingestion/decoder examples
 scripts/                     validation, generation and health checks
 tests/                       catalogue and runtime tests
