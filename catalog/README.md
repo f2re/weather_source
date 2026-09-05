@@ -22,9 +22,11 @@
 
 ```bash
 python scripts/validate_catalog.py
-python scripts/generate_docs.py --write
-python scripts/generate_docs.py --verify
+python scripts/catalog_docs.py --write
+python scripts/catalog_docs.py --verify
 ```
+
+`catalog_docs.py` — стабильный фронтенд генерации: он использует общий движок `generate_docs.py`, но одновременно нормализует ссылки для прямого просмотра в GitHub и для строгой сборки MkDocs.
 
 ## Поля записи
 
@@ -56,4 +58,4 @@ python scripts/generate_docs.py --verify
 
 ## English
 
-The YAML records under `catalog/sources/` are authoritative. JSON/NDJSON, source cards, category pages and `llms.txt` are deterministic generated views and must never be hand-edited independently from the YAML catalogue.
+The YAML records under `catalog/sources/` are authoritative. JSON/NDJSON, source cards, category pages and `llms.txt` are deterministic generated views and must never be hand-edited independently from the YAML catalogue. Use `scripts/catalog_docs.py` as the public generation/verification interface.
