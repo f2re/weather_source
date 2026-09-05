@@ -31,6 +31,9 @@ jobs:
       - name: Validate machine-readable catalogue
         run: python scripts/validate_catalog.py
 
+      - name: Verify committed catalogue is in sync with YAML
+        run: python scripts/catalog_docs.py --verify
+
       - name: Validate catalogue generator
         run: python scripts/catalog_docs.py --check
 
@@ -40,13 +43,7 @@ jobs:
       - name: Run tests
         run: pytest -q
 
-      - name: Generate documentation pages
-        run: python scripts/catalog_docs.py --write
-
-      - name: Verify generated artifacts
-        run: python scripts/catalog_docs.py --verify
-
-      - name: Build documentation strictly
+      - name: Build committed documentation strictly
         run: mkdocs build --strict
 
   examples-smoke:
