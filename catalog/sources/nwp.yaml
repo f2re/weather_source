@@ -1,0 +1,79 @@
+sources:
+  - id: noaa-nomads
+    provider: NOAA/NCEP
+    name: {en: NOMADS, ru: NOAA/NCEP NOMADS}
+    summary: {en: Operational and archive access to NOAA/NCEP numerical weather prediction products., ru: Оперативный и архивный доступ к продуктам численного прогноза NOAA/NCEP.}
+    official: true
+    tier: primary
+    categories: [nwp, ensemble, analysis]
+    coverage: global
+    operational: true
+    update_cadence: model dependent; GFS commonly four cycles per day
+    typical_latency: tens of minutes to hours
+    archive: rolling operational archive; long-term archives through NCEI
+    access: {level: open, auth: none for standard public endpoints, terms: NOAA public data terms}
+    protocols: [https, opendap]
+    formats: [GRIB2, NetCDF]
+    endpoints:
+      - {name: NOMADS, url: 'https://nomads.ncep.noaa.gov/', protocol: https, role: catalog/download, healthcheck: true}
+    software:
+      - {name: wgrib2, role: GRIB2 inspection and extraction, url: 'https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/'}
+      - {name: ecCodes, role: GRIB decoder, url: 'https://github.com/ecmwf/eccodes'}
+      - {name: cfgrib, role: xarray GRIB backend, url: 'https://github.com/ecmwf/cfgrib'}
+    documentation: ['https://nomads.ncep.noaa.gov/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Use NOMADS for selective HTTP/OPeNDAP retrieval and NODD object storage for large-scale mirroring., ru: NOMADS удобен для выборочных запросов; для массового зеркалирования предпочтительнее NODD object storage.}
+
+  - id: ecmwf-open-data
+    provider: ECMWF
+    name: {en: ECMWF Open Data, ru: ECMWF Open Data}
+    summary: {en: Free operational subset of ECMWF deterministic and ensemble forecasts., ru: Бесплатный оперативный набор детерминированных и ансамблевых прогнозов ECMWF.}
+    official: true
+    tier: primary
+    categories: [nwp, ensemble]
+    coverage: global
+    operational: true
+    update_cadence: 00/06/12/18 UTC streams; product dependent
+    typical_latency: files appear progressively after analysis time
+    archive: short rolling operational retention
+    access: {level: open, auth: none for public open-data endpoints, terms: ECMWF Open Data licence and terms}
+    protocols: [https, s3]
+    formats: [GRIB2]
+    endpoints:
+      - {name: ECMWF Open Data, url: 'https://www.ecmwf.int/en/forecasts/datasets/open-data', protocol: https, role: documentation, healthcheck: true}
+    software:
+      - {name: ecmwf-opendata, role: official Python client, url: 'https://github.com/ecmwf/ecmwf-opendata'}
+      - {name: ecCodes, role: GRIB2 decoder, url: 'https://github.com/ecmwf/eccodes'}
+      - {name: cfgrib, role: xarray GRIB backend, url: 'https://github.com/ecmwf/cfgrib'}
+    documentation: ['https://www.ecmwf.int/en/forecasts/datasets/open-data']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Strong primary global forecast source; keep NOAA or DWD as independent fallback., ru: Сильный основной глобальный источник прогнозов; для отказоустойчивости держать NOAA или DWD.}
+
+  - id: copernicus-ads
+    provider: ECMWF / Copernicus Atmosphere Monitoring Service
+    name: {en: Copernicus Atmosphere Data Store, ru: Copernicus Atmosphere Data Store (ADS)}
+    summary: {en: CAMS atmospheric composition analyses forecasts and reanalyses., ru: Анализы прогнозы и реанализы состава атмосферы CAMS.}
+    official: true
+    tier: primary
+    categories: [air-quality, nwp, reanalysis]
+    coverage: global and Europe
+    operational: true
+    update_cadence: product dependent
+    typical_latency: hours
+    archive: archive available
+    access: {level: registration, auth: free account and API token, terms: Copernicus terms}
+    protocols: [https, api]
+    formats: [GRIB, NetCDF]
+    endpoints:
+      - {name: Atmosphere Data Store, url: 'https://ads.atmosphere.copernicus.eu/', protocol: https, role: catalog/API, healthcheck: true}
+    software:
+      - {name: cdsapi, role: API client, url: 'https://github.com/ecmwf/cdsapi'}
+    documentation: ['https://ads.atmosphere.copernicus.eu/']
+    reliability: high
+    automation: high
+    last_verified: '2026-09-05'
+    notes: {en: Specialized source for atmospheric composition rather than a replacement for general-purpose NWP., ru: Специализированный источник состава атмосферы а не замена общему метеорологическому NWP.}
