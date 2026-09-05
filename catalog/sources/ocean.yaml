@@ -56,7 +56,9 @@ sources:
   - id: argo-gdac
     provider: Argo Program / Coriolis / USGODAE
     name: {en: Argo Global Data Assembly Centres, ru: Argo GDAC — профили океана}
-    summary: {en: Near-real-time and delayed-mode profiling-float observations of temperature salinity pressure and biogeochemical variables., ru: Оперативные и delayed-mode профили автономных буёв Argo: температура солёность давление и биогеохимические параметры.}
+    summary:
+      en: Near-real-time and delayed-mode profiling-float observations of temperature salinity pressure and biogeochemical variables.
+      ru: "Оперативные и delayed-mode профили автономных буёв Argo: температура солёность давление и биогеохимические параметры."
     official: true
     tier: primary
     categories: [ocean, upper-ocean, profiling]
