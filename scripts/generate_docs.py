@@ -61,9 +61,11 @@ def render_source(source: dict) -> str:
         "|---|---|---|---:|---|",
     ]
     for endpoint in source["endpoints"]:
+        url = endpoint["url"]
+        display_url = md_link("open", url) if url.startswith(("http://", "https://")) else f"`{url}`"
         lines.append(
             f"| {endpoint['name']} | `{endpoint['protocol']}` | {endpoint['role']} | "
-            f"{'yes' if endpoint['healthcheck'] else 'no'} | {md_link('open', endpoint['url']) if endpoint['url'].startswith(('http://', 'https://')) else f'`{endpoint[\"url\"]}`'} |"
+            f"{'yes' if endpoint['healthcheck'] else 'no'} | {display_url} |"
         )
 
     lines += ["", "## Software and decoders / ПО и декодеры", ""]
@@ -96,7 +98,12 @@ def render_index(sources: list[dict]) -> str:
         "",
     ]
     for category in sorted(groups):
-        lines += [f"## {category}", "", "| Source | Tier | Access | Operational | Coverage |", "|---|---|---|---:|---|"]
+        lines += [
+            f"## {category}",
+            "",
+            "| Source | Tier | Access | Operational | Coverage |",
+            "|---|---|---|---:|---|",
+        ]
         for source in sorted(groups[category], key=lambda item: item["id"]):
             link = f"generated/{source['id']}.md"
             title = f"{source['name']['en']} / {source['name']['ru']}"
