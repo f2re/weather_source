@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import json
 from collections import Counter
-from pathlib import Path
 from typing import Any
 
 import generate_docs as engine
@@ -199,10 +198,11 @@ def render_audit(sources: list[dict[str, Any]], recipes: dict[str, dict[str, Any
     for source in sorted(sources, key=lambda x: x["id"]):
         recipe = recipes[source["id"]]
         issues = "<br>".join(recipe.get("issues_ru") or ["Существенных коллизий в текущей записи не выявлено."])
+        safe_issues = issues.replace("|", "\\|")
         command = cli_fetch_command(source["id"], recipe).replace("|", "\\|")
         lines.append(
             f"| [`{source['id']}`](../sources/generated/{source['id']}.md) | `{recipe.get('verdict')}` | "
-            f"`{recipe.get('status')}` | `{recipe.get('adapter')}` | {issues.replace('|', '\\|')} | `{command}` |"
+            f"`{recipe.get('status')}` | `{recipe.get('adapter')}` | {safe_issues} | `{command}` |"
         )
     lines += [
         "",
@@ -242,7 +242,7 @@ def flatten_recipes(recipes: dict[str, dict[str, Any]]) -> str:
     return json.dumps({"verified": AUDIT_DATE, "source_count": len(public), "sources": public}, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
 
 
-def build_artifacts(catalog_path: Path):
+def build_artifacts(catalog_path):
     artifacts, count = _original_build_artifacts(catalog_path)
     index, sources, _ = engine.load_catalog(catalog_path)
     recipes = load_runtime_recipes()
