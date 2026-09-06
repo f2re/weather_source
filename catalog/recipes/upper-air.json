@@ -1,0 +1,91 @@
+{
+  "sources": {
+    "ru-aviamettelecom-wis2-temp": {
+      "status": "public",
+      "adapter": "wis2",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "Текущий `wis2://cache/...` записан как URL, хотя это не рабочий URI загрузки.",
+        "Реальный приём выполняется MQTT-подпиской на WIS2 topic `origin/a/wis2/...`; payload скачивается по canonical/cache HTTPS URL из уведомления."
+      ],
+      "example_ru": "Подписаться на российскую TEMP-тему Aviamettelecom через публичный WIS2 Global Broker и сохранить первый пришедший BUFR payload.",
+      "request": {
+        "broker": "globalbroker.meteo.fr",
+        "port": 8883,
+        "username": "everyone",
+        "password": "everyone",
+        "topic": "origin/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp",
+        "max_bytes": 8388608
+      },
+      "fallback": "noaa-ncei-igra"
+    },
+    "noaa-ncei-igra": {
+      "status": "public",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Карточка указывала product landing page, хотя есть прямое HTTPS file tree и готовый Siphon IGRAUpperAir."],
+      "example_ru": "Воспроизвести официальный пример Siphon: скачать sounding IGRA2 станции USM00070026 за 2014-09-10 00 UTC и сохранить таблицу CSV.",
+      "request": {
+        "command": "python -c \"from datetime import datetime; from siphon.simplewebservice.igra2 import IGRAUpperAir; df,h=IGRAUpperAir.request_data(datetime(2014,9,10,0),'USM00070026'); df.to_csv('igra-USM00070026-2014091000.csv',index=False); print(h.to_dict('records'))\""
+      },
+      "probe": {"url": "https://www.ncei.noaa.gov/pub/data/igra/data/"},
+      "fallback": "wyoming-upperair"
+    },
+    "wyoming-upperair": {
+      "status": "public",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["В каталоге указана веб-страница; Siphon использует отдельный CGI endpoint и является более устойчивым клиентским слоем."],
+      "example_ru": "Воспроизвести документированный Siphon example: GSO, 2024-09-27 00 UTC, сохранить радиозондовый профиль CSV.",
+      "request": {
+        "command": "python -c \"from datetime import datetime; from siphon.simplewebservice.wyoming import WyomingUpperAir; df=WyomingUpperAir.request_data(datetime(2024,9,27,0),'GSO'); df.to_csv('wyoming-GSO-2024092700.csv',index=False); print(df[['pressure','height','temperature','dewpoint']].head())\""
+      },
+      "probe": {"url": "https://weather.uwyo.edu/upperair/sounding.html"},
+      "fallback": "noaa-ncei-igra"
+    },
+    "gruan": {
+      "status": "manual",
+      "adapter": "unavailable",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["GRUAN products open, но Lead Centre прямо требует зарегистрироваться перед доступом к file archive. Публичный стабильный machine API без этого шага не подтверждён."],
+      "example_ru": "После бесплатной регистрации использовать File archive для RS41-GDP.1/RS92-GDP.2. Репозиторий намеренно не имитирует anonymous API, которого GRUAN не документирует.",
+      "reason_ru": "Перед доступом к опубликованным файлам GRUAN требуется регистрация на сайте; стабильный публичный machine endpoint, который можно безопасно зашить в автоматический клиент, не подтверждён.",
+      "fallback": "noaa-ncei-igra"
+    },
+    "ucar-cdaac": {
+      "status": "public",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Старый CDAAC landing не показывает новый anonymous data host `data.cosmic.ucar.edu/gnss-ro/`. NRT Level 2 публикуется в `atmPrf`, `wetPf2` и BUFR."],
+      "example_ru": "Скачать небольшой из доступных COSMIC-2 NRT Level-2 пакетов для последнего опубликованного дня через `data.cosmic.ucar.edu` (по умолчанию avnPrf, а не гигабайтный atmPrf).",
+      "request": {"command": "python -m weather_source.providers cdaac-avnprf"},
+      "probe": {"url": "https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level2/"},
+      "fallback": "noaa-ncei-igra"
+    },
+    "eumetnet-eprofile": {
+      "status": "manual",
+      "adapter": "unavailable",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Сеть и продукты E-PROFILE существуют, но текущая карточка ошибочно превращает это в гарантированный anonymous WIS2 feed. Публичный универсальный bulk/API endpoint для всех E-PROFILE продуктов не подтверждён."],
+      "example_ru": "Использовать E-PROFILE как каталог/сеть и получать конкретные открытые профили через WIS2 или национального поставщика только после обнаружения соответствующего dataset/topic.",
+      "reason_ru": "Нельзя создать один гарантированно рабочий anonymous endpoint для всей E-PROFILE сети: доступ зависит от конкретного продукта/поставщика. Для автоматизации сначала discovery через WIS2/national service.",
+      "fallback": "fmi-open-data"
+    },
+    "eumetnet-amdar": {
+      "status": "restricted",
+      "adapter": "unavailable",
+      "verified": "2026-09-06",
+      "verdict": "ok",
+      "issues_ru": ["Самолётные наблюдения неоднородны по правам: наличие WMO/BUFR описания не означает unrestricted public access к EUMETNET AMDAR feed."],
+      "example_ru": "При наличии прав получать AMDAR BUFR через выделенный WIS2/GTS/национальный канал и декодировать ecCodes; без прав использовать открытые aircraft subsets только там, где они явно опубликованы как core/open.",
+      "reason_ru": "Публичный неограниченный EUMETNET AMDAR endpoint не подтверждён; права зависят от программы и авиакомпаний.",
+      "fallback": "noaa-madis"
+    }
+  }
+}
