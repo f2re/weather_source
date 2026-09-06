@@ -1,0 +1,93 @@
+{
+  "sources": {
+    "noaa-madis": {
+      "status": "public",
+      "adapter": "html_latest",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "Карточка всё ещё перечисляет FTP как основной протокол, но NWS прекратил FTP на `madis-data.ncep.noaa.gov` 21 апреля 2026 года; эквивалентный путь теперь HTTPS.",
+        "Для unrestricted public1 radiosonde существует прямой operational NetCDF file tree, поэтому регистрация не нужна для этого конкретного потока."
+      ],
+      "example_ru": "Из публичного HTTPS-каталога MADIS `point/raob/netcdf` скачать последний текущий radiosonde NetCDF-файл.",
+      "request": {
+        "url": "https://madis-data.ncep.noaa.gov/madisPublic1/data/point/raob/netcdf/",
+        "pattern": "\\.gz$",
+        "max_bytes": 8388608
+      },
+      "probe": {"url": "https://madis-data.ncep.noaa.gov/madisPublic1/data/point/raob/netcdf/"},
+      "fallback": "wmo-wis2"
+    },
+    "noaa-ncei-upperair-bufr": {
+      "status": "public",
+      "adapter": "html_latest",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "В каталоге был metadata landing page, но NCEI публикует прямой HTTPS archive.",
+        "Файлы архива крупные monthly tar.gz; автоматический клиент не должен скачивать их как health-check."
+      ],
+      "example_ru": "Найти последний monthly raw NWSTG upper-air BUFR archive в прямом NCEI каталоге. Полная загрузка намеренно требует `--full`.",
+      "request": {
+        "url": "https://www.ncei.noaa.gov/data/nws-global-upper-air-bufr/archive/",
+        "pattern": "\\.tar\\.gz$",
+        "max_bytes": 8388608
+      },
+      "probe": {"url": "https://www.ncei.noaa.gov/data/nws-global-upper-air-bufr/archive/"},
+      "fallback": "noaa-ncei-igra"
+    },
+    "noaa-nucaps": {
+      "status": "public",
+      "adapter": "s3_latest",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "Карточка указывала STAR/OSPO pages и registration, но NOAA JPSS/NUCAPS EDR также распространяется через публичный NODD AWS bucket без AWS account.",
+        "Нужно явно различать NUCAPS retrieval и radiosonde in-situ профиль."
+      ],
+      "example_ru": "В публичном NOAA-20 NODD bucket найти последний NUCAPS EDR NetCDF текущего UTC-дня. Полный большой объект требует `--full` при превышении лимита.",
+      "request": {
+        "bucket": "noaa-nesdis-n20-pds",
+        "prefix": "NUCAPS-EDR/{utc:%Y}/{utc:%m}/{utc:%d}/",
+        "suffix": ".nc",
+        "max_bytes": 8388608
+      },
+      "probe": {"url": "https://noaa-nesdis-n20-pds.s3.amazonaws.com/?list-type=2&prefix=NUCAPS-EDR/&max-keys=1"},
+      "fallback": "ucar-cdaac"
+    },
+    "doe-arm-sonde": {
+      "status": "credentials",
+      "adapter": "unavailable",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["ARM данные бесплатны, но ARM прямо требует бесплатный User Profile для доступа. Публичный стабильный anonymous download API для SONDE не подтверждён."],
+      "example_ru": "После создания бесплатного ARM User Profile открыть Data Discovery, выбрать SONDE/SONDEWNPN datastream и скачать NetCDF. Репозиторий не имитирует anonymous URL вместо реального авторизованного workflow.",
+      "env": ["ARM_USERNAME"],
+      "reason_ru": "ARM требует бесплатный user account для data access; стабильный публичный machine download endpoint без авторизации не подтверждён.",
+      "fallback": "gruan"
+    },
+    "woudc-ozonesonde": {
+      "status": "public",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Карточка уже упоминала WOUDC API, но не давала конкретного OGC API запроса и не фиксировала официальный WIS2 MQTT broker/topic."],
+      "example_ru": "Получить один опубликованный WOUDC data-record через официальный OGC API; для realtime ozone notifications использовать broker.woudc.org:8883 и documented WIS2 topic.",
+      "request": {
+        "url": "https://api.woudc.org/collections/data-records/items",
+        "params": {"f": "json", "limit": 1},
+        "filename": "woudc-data-record.json",
+        "max_bytes": 2097152
+      },
+      "probe": {"url": "https://api.woudc.org/collections/discovery_metadata/items/OzoneSonde?f=json&lang=en"},
+      "wis2": {
+        "broker": "broker.woudc.org",
+        "port": 8883,
+        "username": "everyone",
+        "password": "everyone",
+        "topic": "origin/a/wis2/org-woudc/data/core/atmospheric-composition/experimental/observations/gases/ozone"
+      },
+      "fallback": "gruan"
+    }
+  }
+}
