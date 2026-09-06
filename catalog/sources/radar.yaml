@@ -10,22 +10,22 @@ sources:
     operational: true
     update_cadence: volume-scan cadence, typically several minutes
     typical_latency: minutes
-    archive: long-term NCEI archive; operational cloud/object feeds available
+    archive: long-term NCEI archive; operational public object feed available
     access: {level: open, auth: none for public object storage and NCEI access, terms: NOAA public data terms}
     protocols: [s3, https]
     formats: [NEXRAD Level II, NEXRAD Level III]
     endpoints:
+      - {name: Current Level II public object storage, url: 'https://unidata-nexrad-level2.s3.amazonaws.com/?list-type=2&max-keys=1', protocol: s3, role: operational Level II object listing; old noaa-nexrad-level2 bucket was retired in 2025, healthcheck: true}
       - {name: NOAA NEXRAD information, url: 'https://www.ncei.noaa.gov/products/radar/next-generation-weather-radar', protocol: https, role: documentation and archive entry, healthcheck: true}
-      - {name: NOAA Open Data Dissemination, url: 'https://www.noaa.gov/information-technology/open-data-dissemination', protocol: https, role: operational cloud access documentation, healthcheck: true}
     software:
       - {name: Py-ART, role: radar reading processing and visualization, url: 'https://github.com/ARM-DOE/pyart'}
       - {name: MetPy, role: meteorological radar utilities, url: 'https://github.com/Unidata/MetPy'}
       - {name: nexradaws, role: Python access to public NEXRAD object storage, url: 'https://github.com/aarande/nexradaws'}
-    documentation: ['https://www.ncei.noaa.gov/products/radar/next-generation-weather-radar', 'https://www.noaa.gov/information-technology/open-data-dissemination']
+    documentation: ['https://www.ncei.noaa.gov/products/radar/next-generation-weather-radar', 'https://registry.opendata.aws/noaa-nexrad/']
     reliability: high
     automation: high
-    last_verified: '2026-09-05'
-    notes: {en: Use object storage for bulk operational reception and NCEI for archive retrieval., ru: Для массового оперативного приёма использовать object storage а NCEI — для архива.}
+    last_verified: '2026-09-06'
+    notes: {en: Use the current unidata-nexrad-level2 public bucket for operational Level II reception and NCEI for archive retrieval., ru: Для оперативного Level II использовать актуальный публичный bucket unidata-nexrad-level2 а NCEI — для архива.}
 
   - id: noaa-mrms
     provider: NOAA/NSSL/NCEP
@@ -43,7 +43,8 @@ sources:
     protocols: [https, s3]
     formats: [GRIB2, NetCDF, GeoTIFF, provider-dependent]
     endpoints:
-      - {name: MRMS operational data, url: 'https://mrms.ncep.noaa.gov/data/', protocol: https, role: operational file tree, healthcheck: true}
+      - {name: CompositeReflectivity operational tree, url: 'https://mrms.ncep.noaa.gov/data/2D/CompositeReflectivity/', protocol: https, role: direct rapidly updated GRIB2 products, healthcheck: true}
+      - {name: MRMS public object storage, url: 'https://noaa-mrms-pds.s3.amazonaws.com/?list-type=2&max-keys=1', protocol: s3, role: public cloud distribution, healthcheck: true}
       - {name: MRMS documentation, url: 'https://www.nssl.noaa.gov/projects/mrms/', protocol: https, role: product documentation, healthcheck: true}
     software:
       - {name: wgrib2, role: GRIB2 inspection and extraction, url: 'https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/'}
@@ -52,5 +53,5 @@ sources:
     documentation: ['https://www.nssl.noaa.gov/projects/mrms/', 'https://mrms.ncep.noaa.gov/data/']
     reliability: high
     automation: high
-    last_verified: '2026-09-05'
-    notes: {en: High-value source for precipitation nowcasting and severe-weather applications; select small metadata or index files for health checks., ru: Ценный источник для наукастинга осадков и опасных явлений; для health-check использовать небольшие индексные или метаданные файлы.}
+    last_verified: '2026-09-06'
+    notes: {en: Use a concrete product tree or S3 prefix rather than the MRMS landing directory; never download a full product only to test reachability., ru: Использовать конкретное дерево продукта или S3-prefix а не корень MRMS; не скачивать полный продукт только ради проверки доступности.}
