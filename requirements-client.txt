@@ -1,0 +1,13 @@
+requests>=2.32,<3
+paho-mqtt>=2.1,<3
+pika>=1.3,<2
+
+# Optional provider-specific clients are installed only for the corresponding
+# source recipe, not as hard dependencies of the transport core:
+#   siphon            — IGRA / Wyoming upper-air
+#   ecmwf-opendata    — ECMWF Open Data
+#   copernicusmarine  — Copernicus Marine
+#   argopy            — Argo profiles
+#   cdsapi            — CDS / ADS
+#   earthaccess       — NASA Earthdata / LANCE / GES DISC
+#   eumdac            — EUMETSAT Data Store
