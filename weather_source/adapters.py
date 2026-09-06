@@ -80,25 +80,34 @@ def _write_bytes(source_id: str, data: bytes, output: Path | None, suggested_nam
     return output
 
 
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def _finalize(result: FetchResult) -> FetchResult:
     """Write a reproducibility sidecar for every payload that exists on disk."""
     path = result.path
     if path is None or not path.is_file():
         return result
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    size = path.stat().st_size
+    digest = _sha256_file(path)
     metadata = {
         "source_id": result.source_id,
         "adapter": result.adapter,
         "url": result.url,
         "received_at": datetime.now(timezone.utc).isoformat(),
         "path": str(path),
-        "bytes": path.stat().st_size,
+        "bytes": size,
         "sha256": digest,
         "transport_metadata": result.metadata,
     }
     sidecar = path.with_name(path.name + ".metadata.json")
     sidecar.write_text(json.dumps(metadata, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
-    result.bytes_written = path.stat().st_size
+    result.bytes_written = size
     result.metadata = {**result.metadata, "sha256": digest, "metadata_path": str(sidecar)}
     return result
 
@@ -477,7 +486,6 @@ def probe(recipe: dict[str, Any], timeout: float = 12.0) -> tuple[bool, str]:
     try:
         req = render(recipe.get("probe", {}))
     except FetchError:
-        # A probe must remain possible even when the full retrieval needs a secret.
         req = recipe.get("probe", {})
     url = req.get("url")
     if not url:
