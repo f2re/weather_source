@@ -31,14 +31,17 @@
       "status": "credentials",
       "adapter": "external",
       "verified": "2026-09-06",
-      "verdict": "ok",
-      "issues_ru": ["Программный доступ требует учётную запись/API-конфигурацию; открытие ADS landing page не проверяет получение CAMS."],
-      "example_ru": "Использовать cdsapi с URL ADS и своей API-конфигурацией; конкретный dataset/request берётся со страницы выбранного CAMS dataset через Show API request.",
-      "env": ["CDSAPI_URL", "CDSAPI_KEY"],
+      "verdict": "corrected",
+      "issues_ru": [
+        "Программный доступ требует учётную запись/API token и принятие условий ADS.",
+        "Предыдущий recipe только создавал `cdsapi.Client` и не получал данных; теперь он выполняет реальный минимальный CAMS retrieval."
+      ],
+      "example_ru": "Через CDS API Atmosphere Data Store скачать небольшой CAMS analysis: total aerosol optical depth 670 nm, 2021-03-24 00 UTC, область 69–70N / 17–18W, NetCDF ZIP.",
+      "env": ["CDSAPI_KEY"],
       "request": {
-        "command": "python -c \"import os, cdsapi; c=cdsapi.Client(url=os.environ.get('CDSAPI_URL','https://ads.atmosphere.copernicus.eu/api'), key=os.environ['CDSAPI_KEY']); print('ADS client configured:', c.url)\""
+        "command": "python -c \"import os,cdsapi; c=cdsapi.Client(url='https://ads.atmosphere.copernicus.eu/api',key=os.environ['CDSAPI_KEY']); c.retrieve('cams-global-atmospheric-composition-forecasts',{'date':'2021-03-24','time':['00:00'],'leadtime_hour':'0','area':[70,-18,69,-17],'type':'analysis','variable':'total_aerosol_optical_depth_670nm','format':'netcdf_zip'},'cams-aod670-2021032400.zip')\""
       },
-      "probe": {"url": "https://ads.atmosphere.copernicus.eu/"},
+      "probe": {"url": "https://ads.atmosphere.copernicus.eu/datasets/cams-global-atmospheric-composition-forecasts?tab=overview"},
       "fallback": "nasa-earthdata-lance"
     }
   }
