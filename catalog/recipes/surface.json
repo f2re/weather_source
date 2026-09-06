@@ -1,0 +1,26 @@
+{
+  "sources": {
+    "noaa-aviationweather": {
+      "status": "public",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "В основном каталоге указан только URL документации, хотя существует прямой Data API.",
+        "Health-check landing page не доказывал получение METAR."
+      ],
+      "example_ru": "Получить последние METAR для KJFK непосредственно из официального AviationWeather Data API в JSON.",
+      "request": {
+        "url": "https://aviationweather.gov/api/data/metar",
+        "params": {"ids": "KJFK", "format": "json"},
+        "filename": "KJFK-metar.json",
+        "max_bytes": 1048576
+      },
+      "probe": {
+        "url": "https://aviationweather.gov/api/data/metar",
+        "params": {"ids": "KJFK", "format": "json"}
+      },
+      "fallback": "wmo-wis2"
+    }
+  }
+}
