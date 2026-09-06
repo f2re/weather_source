@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import base64
 import ftplib
+import hashlib
 import json
 import os
 import re
 import ssl
 import subprocess
-import tempfile
 import time
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -79,6 +80,29 @@ def _write_bytes(source_id: str, data: bytes, output: Path | None, suggested_nam
     return output
 
 
+def _finalize(result: FetchResult) -> FetchResult:
+    """Write a reproducibility sidecar for every payload that exists on disk."""
+    path = result.path
+    if path is None or not path.is_file():
+        return result
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    metadata = {
+        "source_id": result.source_id,
+        "adapter": result.adapter,
+        "url": result.url,
+        "received_at": datetime.now(timezone.utc).isoformat(),
+        "path": str(path),
+        "bytes": path.stat().st_size,
+        "sha256": digest,
+        "transport_metadata": result.metadata,
+    }
+    sidecar = path.with_name(path.name + ".metadata.json")
+    sidecar.write_text(json.dumps(metadata, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
+    result.bytes_written = path.stat().st_size
+    result.metadata = {**result.metadata, "sha256": digest, "metadata_path": str(sidecar)}
+    return result
+
+
 def _bounded_get(
     url: str,
     *,
@@ -140,6 +164,9 @@ def fetch_http(source_id: str, recipe: dict[str, Any], output: Path | None, time
         finally:
             response.close()
 
+    if max_bytes is not None and len(content) > max_bytes:
+        raise FetchError(f"Ответ превысил безопасный предел {max_bytes}; используйте --full")
+
     suggested = req.get("filename") or Path(final_url.split("?", 1)[0]).name or "response.bin"
     if "json" in content_type and not suggested.endswith(".json"):
         suggested += ".json"
@@ -198,7 +225,7 @@ def fetch_ftp(source_id: str, recipe: dict[str, Any], output: Path | None, timeo
 
     data = b"".join(chunks)
     path = _write_bytes(source_id, data, output, Path(remote_path).name or "ftp.bin")
-    return FetchResult(source_id, "ftp", f"ftp://{host}/{remote_path.lstrip('/')}", path, len(data), {})
+    return FetchResult(source_id, "ftp", f"ftp://{host}/{remote_path.lstrip('/')}", path, len(data), {"reported_size": size})
 
 
 def _s3_list(bucket: str, prefix: str, timeout: float, endpoint: str | None = None) -> list[tuple[str, str, int]]:
@@ -249,6 +276,26 @@ def fetch_s3_latest(source_id: str, recipe: dict[str, Any], output: Path | None,
     return result
 
 
+def _decode_inline_wis2(content: dict[str, Any]) -> bytes | None:
+    value = content.get("value")
+    if value is None:
+        return None
+    if isinstance(value, bytes):
+        return value
+    if not isinstance(value, str):
+        return json.dumps(value, ensure_ascii=False).encode("utf-8")
+    encoding = str(content.get("encoding", "utf-8")).lower()
+    if encoding in {"base64", "base64url"}:
+        padding = "=" * (-len(value) % 4)
+        try:
+            if encoding == "base64url":
+                return base64.urlsafe_b64decode(value + padding)
+            return base64.b64decode(value + padding)
+        except Exception as exc:  # noqa: BLE001
+            raise FetchError(f"Не удалось декодировать inline WIS2 content.value: {exc}") from exc
+    return value.encode("utf-8")
+
+
 def fetch_wis2(source_id: str, recipe: dict[str, Any], output: Path | None, timeout: float, full: bool) -> FetchResult:
     try:
         import paho.mqtt.client as mqtt
@@ -285,8 +332,9 @@ def fetch_wis2(source_id: str, recipe: dict[str, Any], output: Path | None, time
                 ),
                 None,
             )
-            if href:
-                received.update({"href": href, "notification": payload, "topic": message.topic})
+            inline = _decode_inline_wis2(payload.get("content", {}))
+            if href or inline is not None:
+                received.update({"href": href, "inline": inline, "notification": payload, "topic": message.topic})
                 client.disconnect()
         except Exception as exc:  # noqa: BLE001
             received["error"] = str(exc)
@@ -297,7 +345,7 @@ def fetch_wis2(source_id: str, recipe: dict[str, Any], output: Path | None, time
     client.connect(broker, port, keepalive=max(30, int(timeout)))
     client.loop_start()
     deadline = time.monotonic() + timeout
-    while time.monotonic() < deadline and "href" not in received and "error" not in received:
+    while time.monotonic() < deadline and not any(key in received for key in ("href", "inline", "error")):
         time.sleep(0.1)
     client.loop_stop()
     try:
@@ -307,14 +355,29 @@ def fetch_wis2(source_id: str, recipe: dict[str, Any], output: Path | None, time
 
     if "error" in received:
         raise FetchError(received["error"])
-    if "href" not in received:
-        raise FetchError(f"За {timeout:g} с по теме {topic} не получено WIS2-уведомление с canonical/update URL")
+    if not any(key in received for key in ("href", "inline")):
+        raise FetchError(f"За {timeout:g} с по теме {topic} не получено WIS2-уведомление с payload")
+
+    max_bytes = None if full else int(req.get("max_bytes", 8 * 1024 * 1024))
+    if received.get("inline") is not None:
+        data = received["inline"]
+        if max_bytes is not None and len(data) > max_bytes:
+            raise FetchError(f"Inline WIS2 payload {len(data)} байт превышает предел {max_bytes}; используйте --full")
+        path = _write_bytes(source_id, data, output, req.get("filename", "wis2-inline.bin"))
+        return FetchResult(
+            source_id,
+            "wis2",
+            None,
+            path,
+            len(data),
+            {"broker": broker, "topic": received["topic"], "notification": received["notification"], "inline": True},
+        )
 
     nested = dict(recipe)
     nested["request"] = {"url": received["href"], "max_bytes": req.get("max_bytes", 8 * 1024 * 1024)}
     result = fetch_http(source_id, nested, output, timeout, full)
     result.adapter = "wis2"
-    result.metadata.update({"broker": broker, "topic": received["topic"], "notification": received["notification"]})
+    result.metadata.update({"broker": broker, "topic": received["topic"], "notification": received["notification"], "inline": False})
     return result
 
 
@@ -390,26 +453,32 @@ def fetch(
 ) -> FetchResult:
     adapter = recipe["adapter"]
     if adapter == "http":
-        return fetch_http(source_id, recipe, output, timeout, full)
-    if adapter == "html_latest":
-        return fetch_html_latest(source_id, recipe, output, timeout, full)
-    if adapter == "ftp":
-        return fetch_ftp(source_id, recipe, output, timeout, full)
-    if adapter == "s3_latest":
-        return fetch_s3_latest(source_id, recipe, output, timeout, full)
-    if adapter == "wis2":
-        return fetch_wis2(source_id, recipe, output, timeout, full)
-    if adapter == "amqp":
-        return fetch_amqp(source_id, recipe, output, timeout, full)
-    if adapter == "external":
-        return fetch_external(source_id, recipe, output, timeout, full, allow_external)
-    if adapter == "unavailable":
+        result = fetch_http(source_id, recipe, output, timeout, full)
+    elif adapter == "html_latest":
+        result = fetch_html_latest(source_id, recipe, output, timeout, full)
+    elif adapter == "ftp":
+        result = fetch_ftp(source_id, recipe, output, timeout, full)
+    elif adapter == "s3_latest":
+        result = fetch_s3_latest(source_id, recipe, output, timeout, full)
+    elif adapter == "wis2":
+        result = fetch_wis2(source_id, recipe, output, timeout, full)
+    elif adapter == "amqp":
+        result = fetch_amqp(source_id, recipe, output, timeout, full)
+    elif adapter == "external":
+        result = fetch_external(source_id, recipe, output, timeout, full, allow_external)
+    elif adapter == "unavailable":
         return fetch_unavailable(source_id, recipe)
-    raise FetchError(f"Неизвестный adapter={adapter}")
+    else:
+        raise FetchError(f"Неизвестный adapter={adapter}")
+    return _finalize(result)
 
 
 def probe(recipe: dict[str, Any], timeout: float = 12.0) -> tuple[bool, str]:
-    req = render(recipe.get("probe", {}))
+    try:
+        req = render(recipe.get("probe", {}))
+    except FetchError:
+        # A probe must remain possible even when the full retrieval needs a secret.
+        req = recipe.get("probe", {})
     url = req.get("url")
     if not url:
         if recipe["adapter"] == "unavailable":
