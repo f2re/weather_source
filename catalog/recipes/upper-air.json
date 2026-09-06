@@ -6,16 +6,16 @@
       "verified": "2026-09-06",
       "verdict": "corrected",
       "issues_ru": [
-        "Текущий `wis2://cache/...` записан как URL, хотя это не рабочий URI загрузки.",
-        "Реальный приём выполняется MQTT-подпиской на WIS2 topic `origin/a/wis2/...`; payload скачивается по canonical/cache HTTPS URL из уведомления."
+        "Старый `wis2://cache/...` был записан как URL, хотя это не рабочий URI загрузки.",
+        "Актуальная WIS2 GDC запись публикует точную MQTT-тему `cache/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp` и конфигурацию Global Broker. Payload берётся из WIS2 notification."
       ],
-      "example_ru": "Подписаться на российскую TEMP-тему Aviamettelecom через публичный WIS2 Global Broker и сохранить первый пришедший BUFR payload.",
+      "example_ru": "Подписаться на точную российскую TEMP-тему из WIS2 GDC через публичный CMA Global Broker и сохранить первый пришедший BUFR payload.",
       "request": {
-        "broker": "globalbroker.meteo.fr",
+        "broker": "gb.wis.cma.cn",
         "port": 8883,
         "username": "everyone",
         "password": "everyone",
-        "topic": "origin/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp",
+        "topic": "cache/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp",
         "max_bytes": 8388608
       },
       "fallback": "noaa-ncei-igra"
@@ -62,19 +62,19 @@
       "verified": "2026-09-06",
       "verdict": "corrected",
       "issues_ru": ["Старый CDAAC landing не показывает новый anonymous data host `data.cosmic.ucar.edu/gnss-ro/`. NRT Level 2 публикуется в `atmPrf`, `wetPf2` и BUFR."],
-      "example_ru": "Скачать небольшой из доступных COSMIC-2 NRT Level-2 пакетов для последнего опубликованного дня через `data.cosmic.ucar.edu` (по умолчанию avnPrf, а не гигабайтный atmPrf).",
+      "example_ru": "Скачать небольшой COSMIC-2 NRT Level-2 пакет для последнего опубликованного дня через `data.cosmic.ucar.edu` (по умолчанию avnPrf, а не гигабайтный atmPrf).",
       "request": {"command": "python -m weather_source.providers cdaac-avnprf"},
       "probe": {"url": "https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level2/"},
       "fallback": "noaa-ncei-igra"
     },
     "eumetnet-eprofile": {
-      "status": "manual",
+      "status": "restricted",
       "adapter": "unavailable",
       "verified": "2026-09-06",
       "verdict": "corrected",
-      "issues_ru": ["Сеть и продукты E-PROFILE существуют, но текущая карточка ошибочно превращает это в гарантированный anonymous WIS2 feed. Публичный универсальный bulk/API endpoint для всех E-PROFILE продуктов не подтверждён."],
-      "example_ru": "Использовать E-PROFILE как каталог/сеть и получать конкретные открытые профили через WIS2 или национального поставщика только после обнаружения соответствующего dataset/topic.",
-      "reason_ru": "Нельзя создать один гарантированно рабочий anonymous endpoint для всей E-PROFILE сети: доступ зависит от конкретного продукта/поставщика. Для автоматизации сначала discovery через WIS2/national service.",
+      "issues_ru": ["Сеть и продукты E-PROFILE существуют, но текущая карточка ошибочно превращала это в гарантированный anonymous WIS2 feed. Политика EUMETNET ограничивает часть третьестороннего использования и не подтверждает единый unrestricted bulk/API endpoint."],
+      "example_ru": "Использовать E-PROFILE как сеть/каталог и получать конкретный профиль через национального поставщика, WIS2 или лицензированный EUMETNET-канал после проверки прав конкретного продукта.",
+      "reason_ru": "Нет одного гарантированного unrestricted machine endpoint для всей E-PROFILE сети; доступ зависит от конкретного продукта, поставщика и лицензии.",
       "fallback": "fmi-open-data"
     },
     "eumetnet-amdar": {
