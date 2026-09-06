@@ -1,0 +1,229 @@
+{
+  "sources": {
+    "wmo-wis2": {
+      "status": "public",
+      "adapter": "wis2",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "Каталог заявлял MQTT, но содержал только документацию и не содержал рабочего Global Broker.",
+        "Для core data используются публичные Global Brokers с everyone/everyone; уведомление содержит ссылку на payload."
+      ],
+      "example_ru": "Подписаться на французский WIS2 Global Broker и получить первое core-data уведомление с последующим скачиванием payload.",
+      "request": {
+        "broker": "globalbroker.meteo.fr",
+        "port": 8883,
+        "username": "everyone",
+        "password": "everyone",
+        "topic": "origin/a/wis2/+/data/core/#",
+        "max_bytes": 8388608
+      },
+      "fallback": "eccc-datamart"
+    },
+    "noaa-nodd": {
+      "status": "public",
+      "adapter": "s3_latest",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["NODD — программа распространения, а не один dataset; каталог не содержал ни одного реального bucket."],
+      "example_ru": "Проверить реальный публичный NODD bucket GFS и скачать небольшой последний index-файл из текущего 00 UTC цикла.",
+      "request": {
+        "bucket": "noaa-gfs-bdp-pds",
+        "prefix": "gfs.{utc:%Y%m%d}/00/atmos/",
+        "suffix": ".idx",
+        "max_bytes": 2097152
+      },
+      "probe": {"url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/?list-type=2&max-keys=1"},
+      "fallback": "noaa-nomads"
+    },
+    "dwd-open-data": {
+      "status": "public",
+      "adapter": "html_latest",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Корень opendata.dwd.de не проверял конкретный поток. В оперативном дереве есть реальные radiosonde BUFR/TXT файлы."],
+      "example_ru": "Найти и скачать последний оперативный DWD TEMP radiosonde text-файл; BUFR-поток доступен соседним каталогом `radiosonde/bufr/`.",
+      "request": {
+        "url": "https://opendata.dwd.de/weather/weather_reports/radiosonde/txt/",
+        "pattern": "gda01-temp-.*\\.txt$",
+        "max_bytes": 2097152
+      },
+      "probe": {"url": "https://opendata.dwd.de/weather/weather_reports/radiosonde/txt/"},
+      "fallback": "wmo-wis2"
+    },
+    "meteofrance-open-data": {
+      "status": "public",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["`meteo.data.gouv.fr` — каталог; для части данных существуют прямые anonymous files. Из-за разных схем нельзя считать весь портал одинаково open/API."],
+      "example_ru": "Автоматически найти последний доступный 3-часовой SYNOP CSV Météo-France в `donnees_libres/Txt/Synop/`.",
+      "request": {"command": "python -m weather_source.providers meteofrance-synop"},
+      "probe": {"url": "https://donneespubliques.meteofrance.fr/donnees_libres/Txt/Synop/postesSynop.csv"},
+      "fallback": "wmo-wis2"
+    },
+    "metoffice-datahub": {
+      "status": "credentials",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["DataHub landing page не является API endpoint. Конкретный продукт/подписка определяют доступ и квоту."],
+      "example_ru": "Получить Site-Specific Global Spot three-hourly forecast для Лондона через Weather DataHub с API key.",
+      "env": ["METOFFICE_API_KEY"],
+      "request": {
+        "url": "https://data.hub.api.metoffice.gov.uk/sitespecific/v0/point/three-hourly",
+        "params": {"datasource": "BD1", "latitude": "51.5074", "longitude": "-0.1278", "includeLocationName": "true", "excludeParameterMetadata": "true"},
+        "headers": {"apikey": "${METOFFICE_API_KEY}"},
+        "filename": "metoffice-london-three-hourly.json",
+        "max_bytes": 4194304
+      },
+      "probe": {"url": "https://datahub.metoffice.gov.uk/"},
+      "fallback": "met-norway-api"
+    },
+    "eccc-datamart": {
+      "status": "public",
+      "adapter": "html_latest",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Корень Datamart не доказывал получение данных. Для текущих данных есть `/today/`; ECCC рекомендует AMQP/Sarracenia для событийного приёма."],
+      "example_ru": "Из официального `/today/observations/swob-ml/latest/` выбрать и скачать последний SWOB XML.",
+      "request": {
+        "url": "https://dd.weather.gc.ca/today/observations/swob-ml/latest/",
+        "pattern": "\\.xml$",
+        "max_bytes": 2097152
+      },
+      "probe": {"url": "https://dd.weather.gc.ca/today/observations/swob-ml/latest/"},
+      "fallback": "eccc-geomet"
+    },
+    "eccc-geomet": {
+      "status": "public",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Каталог указывал только API root; теперь пример подтверждает получение численных/атрибутивных данных, а не WMS-картинки."],
+      "example_ru": "Получить одну актуальную Surface Weather Observation из OGC API collection `swob-realtime` в JSON.",
+      "request": {
+        "url": "https://api.weather.gc.ca/collections/swob-realtime/items",
+        "params": {"f": "json", "limit": 1},
+        "filename": "eccc-swob-realtime.json",
+        "max_bytes": 2097152
+      },
+      "probe": {"url": "https://api.weather.gc.ca/collections/swob-realtime/items?f=json&limit=1"},
+      "fallback": "eccc-datamart"
+    },
+    "fmi-open-data": {
+      "status": "public",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Общая WFS-ссылка не показывала, какой stored query нужен для аэрологии."],
+      "example_ru": "Получить последние sounding observations FMI через официальный WFS stored query в multipointcoverage.",
+      "request": {
+        "url": "https://opendata.fmi.fi/wfs",
+        "params": {"request": "GetFeature", "storedquery_id": "fmi::observations::weather::sounding::multipointcoverage"},
+        "filename": "fmi-soundings.xml",
+        "max_bytes": 8388608
+      },
+      "probe": {"url": "https://opendata.fmi.fi/wfs?request=GetFeature&storedquery_id=fmi::observations::weather::sounding::multipointcoverage"},
+      "fallback": "wmo-wis2"
+    },
+    "meteoswiss-open-data": {
+      "status": "public",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Карточка не отражала текущую STAC-раздачу `data.geo.admin.ch`. Портал документации недостаточен для автоматизации."],
+      "example_ru": "Через официальный STAC collection MeteoSwiss получить один реальный downloadable asset автоматической сети SMN.",
+      "request": {"command": "python -m weather_source.providers meteoswiss-stac"},
+      "probe": {"url": "https://data.geo.admin.ch/api/stac/v1/collections/ch.meteoschweiz.ogd-smn"},
+      "fallback": "fmi-open-data"
+    },
+    "jma-data": {
+      "status": "public",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["`www.data.jma.go.jp` — широкий портал; machine access зависит от продукта. Нельзя обещать единый JMA API для BUFR/GRIB/radar/satellite."],
+      "example_ru": "Получить официальный регулярный XML feed JMA как проверяемый публичный machine endpoint. Для бинарных продуктов использовать отдельные продуктовые каналы/WIS2.",
+      "request": {
+        "url": "https://www.data.jma.go.jp/developer/xml/feed/regular.xml",
+        "filename": "jma-regular.xml",
+        "max_bytes": 4194304
+      },
+      "probe": {"url": "https://www.data.jma.go.jp/developer/xml/feed/regular.xml"},
+      "fallback": "wmo-wis2"
+    },
+    "bom-open-data": {
+      "status": "public",
+      "adapter": "ftp",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "BOM действительно предоставляет anonymous FTP, но доступ не означает свободную коммерческую лицензию.",
+        "Anonymous products разрешены для личного использования/внутри организации и не должны автоматически маркироваться как unrestricted redistribution."
+      ],
+      "example_ru": "Скачать XML-файл оперативных наблюдений NSW с официального anonymous FTP BOM.",
+      "request": {
+        "host": "ftp.bom.gov.au",
+        "path": "/anon/gen/fwo/IDN60920.xml",
+        "max_bytes": 8388608
+      },
+      "fallback": "wmo-wis2"
+    },
+    "knmi-open-data": {
+      "status": "credentials",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Старые KNMI dataset IDs были выведены из эксплуатации; актуальный dataset — `10-minute-in-situ-meteorological-observations` v1.0. Open Data API требует Authorization key."],
+      "example_ru": "Через KNMI Open Data API получить список последних файлов актуального 10-minute dataset, запросить temporaryDownloadUrl и скачать NetCDF.",
+      "env": ["KNMI_API_KEY"],
+      "request": {"command": "python -m weather_source.providers knmi"},
+      "probe": {"url": "https://developer.dataplatform.knmi.nl/"},
+      "fallback": "fmi-open-data"
+    },
+    "met-norway-api": {
+      "status": "public",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Каталог смешивал anonymous Locationforecast и credentialed Frost и поэтому ошибочно маркировал весь источник как registration."],
+      "example_ru": "Получить открытый Locationforecast 2.0 compact для Осло; обязательный идентифицирующий User-Agent добавляет клиент Weather Source.",
+      "request": {
+        "url": "https://api.met.no/weatherapi/locationforecast/2.0/compact",
+        "params": {"lat": "59.9139", "lon": "10.7522"},
+        "filename": "met-norway-oslo.json",
+        "max_bytes": 4194304
+      },
+      "probe": {"url": "https://api.met.no/weatherapi/locationforecast/2.0/status"},
+      "fallback": "smhi-open-data"
+    },
+    "smhi-open-data": {
+      "status": "public",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Старый прогнозный API `pmp3g/version/2` прекращён 2026-03-31. Для новых интеграций используется SNOW `snow1g/version/1`."],
+      "example_ru": "Получить актуальный прогноз SMHI SNOW для точки 16E 58N через `snow1g/version/1`.",
+      "request": {
+        "url": "https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/16/lat/58/data.json",
+        "filename": "smhi-snow-16E-58N.json",
+        "max_bytes": 4194304
+      },
+      "probe": {"url": "https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/16/lat/58/data.json"},
+      "fallback": "fmi-open-data"
+    },
+    "aemet-opendata": {
+      "status": "credentials",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "ok",
+      "issues_ru": ["AEMET OpenData требует API key и возвращает метаданные со вторым URL `datos`; один GET к landing page не является получением наблюдений."],
+      "example_ru": "Запросить `/api/observacion/convencional/todas`, извлечь поле `datos` и скачать текущие наблюдения.",
+      "env": ["AEMET_API_KEY"],
+      "request": {"command": "python -m weather_source.providers aemet"},
+      "probe": {"url": "https://opendata.aemet.es/dist/"},
+      "fallback": "wmo-wis2"
+    }
+  }
+}
