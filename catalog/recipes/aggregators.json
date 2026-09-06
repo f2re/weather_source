@@ -1,0 +1,94 @@
+{
+  "sources": {
+    "iowa-mesonet": {
+      "status": "public",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Карточка указывала только портал IEM; официальный API-документ прямо перечисляет scriptable CGI services, включая ASOS/METAR."],
+      "example_ru": "Скачать воспроизводимый суточный CSV ASOS станции DSM за 2026-09-05 через официальный IEM CGI backend.",
+      "request": {
+        "url": "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py",
+        "params": {
+          "network": "IA_ASOS",
+          "station": "DSM",
+          "data": "all",
+          "year1": 2026,
+          "month1": 9,
+          "day1": 5,
+          "year2": 2026,
+          "month2": 9,
+          "day2": 6,
+          "tz": "Etc/UTC",
+          "format": "onlycomma",
+          "latlon": "yes",
+          "elev": "yes",
+          "missing": "M",
+          "trace": "T",
+          "direct": "no",
+          "report_type": 3
+        },
+        "filename": "iem-DSM-20260905.csv",
+        "max_bytes": 4194304
+      },
+      "probe": {"url": "https://mesonet.agron.iastate.edu/api/"},
+      "fallback": "noaa-aviationweather"
+    },
+    "open-meteo": {
+      "status": "public",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "ok",
+      "issues_ru": ["Это нормализующий агрегатор, а не первичный источник; необходимо сохранять имя модели/источника из ответа и не использовать как доказательство наблюдения."],
+      "example_ru": "Получить однодневный прогноз температуры и осадков для Санкт-Петербурга через публичный Open-Meteo Forecast API.",
+      "request": {
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "params": {"latitude": 59.93, "longitude": 30.31, "hourly": "temperature_2m,precipitation", "forecast_days": 1},
+        "filename": "open-meteo-spb.json",
+        "max_bytes": 2097152
+      },
+      "probe": {"url": "https://api.open-meteo.com/v1/forecast?latitude=59.93&longitude=30.31&hourly=temperature_2m&forecast_days=1"},
+      "fallback": "ecmwf-open-data"
+    },
+    "meteostat": {
+      "status": "public",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Карточка описывала API/library patterns, но не фиксировала самый простой официальный bulk interface: годовые Parquet-файлы без регистрации."],
+      "example_ru": "Скачать anonymous hourly Parquet за предыдущий полностью завершённый год с `data.meteostat.net`.",
+      "request": {"command": "python -m weather_source.providers meteostat-bulk"},
+      "probe": {"url": "https://data.meteostat.net/hourly/2024.parquet", "ok_statuses": [200, 206]},
+      "fallback": "iowa-mesonet"
+    },
+    "ogimet": {
+      "status": "public",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "Карточка недооценивала автоматизацию: OGIMET документирует `getsynop` CGI, возвращающий CSV без HTML.",
+        "Сам OGIMET прямо пишет, что его данные не должны использоваться в critical mission; источник остаётся только fallback/диагностикой."
+      ],
+      "example_ru": "Через документированный `getsynop` CGI получить CSV SYNOP из WMO block 26 за фиксированный 6-часовой интервал 2026-08-24.",
+      "request": {
+        "url": "https://www.ogimet.com/cgi-bin/getsynop",
+        "params": {"begin": "202608240000", "end": "202608240600", "lang": "eng", "header": "yes", "block": "26"},
+        "filename": "ogimet-block26-2026082400-06.csv",
+        "max_bytes": 4194304
+      },
+      "probe": {"url": "https://www.ogimet.com/getsynop_help.phtml.en"},
+      "fallback": "wmo-wis2"
+    },
+    "blitzortung": {
+      "status": "restricted",
+      "adapter": "unavailable",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Raw lightning data не является unrestricted public API: проект разрешает raw access участникам или отдельно одобренным пользователям и ограничивает внешние проекты."],
+      "example_ru": "Для участника использовать предоставленный проектом participant/raw access согласно личным правам. Для публичной автоматизации вместо Blitzortung использовать NOAA GLM (`noaa-goes`) или MTG-LI через EUMETSAT.",
+      "reason_ru": "Blitzortung не документирует unrestricted public raw-data API; raw access предназначен участникам или отдельно разрешённым проектам.",
+      "fallback": "noaa-goes"
+    }
+  }
+}
