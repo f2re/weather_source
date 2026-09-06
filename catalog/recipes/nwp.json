@@ -1,0 +1,45 @@
+{
+  "sources": {
+    "noaa-nomads": {
+      "status": "public",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "Корневой URL NOMADS не является рабочим примером получения данных.",
+        "Для выборочного GFS правильнее использовать GRIB Filter; код должен учитывать задержку публикации текущего цикла."
+      ],
+      "example_ru": "Автоматически перебрать последние доступные GFS-циклы NOMADS и скачать небольшой GRIB2-фрагмент TMP 2 m для 29–31E, 59–61N.",
+      "request": {"command": "python -m weather_source.providers nomads-gfs"},
+      "probe": {"url": "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25.pl"},
+      "fallback": "noaa-nodd"
+    },
+    "ecmwf-open-data": {
+      "status": "public",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["В каталоге была только страница документации, хотя ECMWF поддерживает официальный ecmwf-opendata клиент."],
+      "example_ru": "Официальным ecmwf-opendata скачать из последнего доступного IFS-прогноза 2m temperature на шаге 24 в GRIB2.",
+      "request": {
+        "command": "python -c \"from ecmwf.opendata import Client; r=Client(source='ecmwf').retrieve(type='fc', step=24, param='2t', target='ecmwf-2t.grib2'); print(r.datetime)\""
+      },
+      "probe": {"url": "https://data.ecmwf.int/forecasts/"},
+      "fallback": "noaa-nomads"
+    },
+    "copernicus-ads": {
+      "status": "credentials",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "ok",
+      "issues_ru": ["Программный доступ требует учётную запись/API-конфигурацию; открытие ADS landing page не проверяет получение CAMS."],
+      "example_ru": "Использовать cdsapi с URL ADS и своей API-конфигурацией; конкретный dataset/request берётся со страницы выбранного CAMS dataset через Show API request.",
+      "env": ["CDSAPI_URL", "CDSAPI_KEY"],
+      "request": {
+        "command": "python -c \"import os, cdsapi; c=cdsapi.Client(url=os.environ.get('CDSAPI_URL','https://ads.atmosphere.copernicus.eu/api'), key=os.environ['CDSAPI_KEY']); print('ADS client configured:', c.url)\""
+      },
+      "probe": {"url": "https://ads.atmosphere.copernicus.eu/"},
+      "fallback": "nasa-earthdata-lance"
+    }
+  }
+}
