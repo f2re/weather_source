@@ -2,9 +2,9 @@ name: Sync generated catalogue
 
 on:
   push:
-    branches: [main]
     paths:
       - 'catalog/**/*.yaml'
+      - 'catalog/recipes/**/*.json'
       - 'catalog/schema.json'
       - 'scripts/generate_docs.py'
       - 'scripts/catalog_docs.py'
@@ -16,7 +16,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: sync-generated-catalogue
+  group: sync-generated-catalogue-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -25,10 +25,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout
+      - name: Checkout current branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.ref_name }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -51,7 +52,7 @@ jobs:
           python scripts/catalog_docs.py --verify
           mkdocs build --strict
 
-      - name: Commit generated artefacts
+      - name: Commit generated artefacts to current branch
         shell: bash
         run: |
           GENERATED_PATHS=(
@@ -60,9 +61,11 @@ jobs:
             docs/sources/index.en.md
             docs/sources/generated
             docs/sources/categories
+            docs/audit
             catalog/sources.json
             catalog/sources.ndjson
             catalog/agent-index.json
+            catalog/recipes.json
             llms.txt
           )
 
@@ -78,4 +81,4 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -- "${GENERATED_PATHS[@]}"
           git commit -m 'docs: sync generated weather source catalogue [skip ci]'
-          git push origin HEAD:main
+          git push origin HEAD:"${GITHUB_REF_NAME}"
