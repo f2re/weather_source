@@ -26,8 +26,19 @@ def load_sources(root: Path | None = None) -> dict[str, dict[str, Any]]:
 
 def load_recipes(root: Path | None = None) -> dict[str, dict[str, Any]]:
     root = root or repo_root()
-    payload = json.loads((root / "catalog" / "recipes.json").read_text(encoding="utf-8"))
-    return payload["sources"]
+    recipe_dir = root / "catalog" / "recipes"
+    recipes: dict[str, dict[str, Any]] = {}
+    for path in sorted(recipe_dir.glob("*.json")):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        for source_id, recipe in payload.get("sources", {}).items():
+            if source_id in recipes:
+                raise CatalogueError(f"Дублирующий runtime-рецепт {source_id}: {path}")
+            recipe = dict(recipe)
+            recipe["_recipe_file"] = str(path.relative_to(root))
+            recipes[source_id] = recipe
+    if not recipes:
+        raise CatalogueError(f"Runtime-рецепты не найдены в {recipe_dir}")
+    return recipes
 
 
 def get_source(source_id: str, root: Path | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -78,5 +89,7 @@ def validate_runtime_contract(root: Path | None = None) -> list[str]:
             errors.append(f"{source_id}: public не может иметь unavailable adapter")
         if status == "restricted" and adapter not in {"unavailable", "external", "wis2"}:
             errors.append(f"{source_id}: restricted требует явного ограниченного адаптера")
+        if adapter != "unavailable" and not recipe.get("request"):
+            errors.append(f"{source_id}: для adapter={adapter} отсутствует request")
 
     return errors
