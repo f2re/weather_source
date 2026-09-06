@@ -19,12 +19,15 @@
       "status": "credentials",
       "adapter": "external",
       "verified": "2026-09-06",
-      "verdict": "ok",
-      "issues_ru": ["Для реального получения данных нужны бесплатные учётные данные Copernicus Marine; портал сам по себе не является endpoint загрузки."],
-      "example_ru": "Через официальный copernicusmarine subset получить небольшой фрагмент глобальной физической модели, а не весь мировой файл.",
+      "verdict": "corrected",
+      "issues_ru": [
+        "Для реального получения данных нужны бесплатные учётные данные Copernicus Marine; портал сам по себе не является endpoint загрузки.",
+        "Предыдущий пример не ограничивал время и мог запросить избыточный объём. Теперь зафиксирован минимальный spatial/time subset по документированному dataset id и переменной `zos`."
+      ],
+      "example_ru": "Через официальный Copernicus Marine Toolbox получить однодневный фрагмент sea-surface height `zos` глобальной физической модели на небольшом районе 29–30E, 59–60N.",
       "env": ["COPERNICUSMARINE_SERVICE_USERNAME", "COPERNICUSMARINE_SERVICE_PASSWORD"],
       "request": {
-        "command": "python -c \"import copernicusmarine; copernicusmarine.subset(dataset_id='cmems_mod_glo_phy_anfc_0.083deg_P1D-m', variables=['thetao'], minimum_longitude=29, maximum_longitude=30, minimum_latitude=59, maximum_latitude=60, minimum_depth=0, maximum_depth=5, output_filename='copernicus-marine.nc')\""
+        "command": "python -c \"import copernicusmarine; copernicusmarine.subset(dataset_id='cmems_mod_glo_phy_anfc_0.083deg_P1D-m', variables=['zos'], minimum_longitude=29, maximum_longitude=30, minimum_latitude=59, maximum_latitude=60, start_datetime='2026-09-05T00:00:00', end_datetime='2026-09-05T00:00:00', output_filename='copernicus-marine-zos-20260905.nc')\""
       },
       "probe": {"url": "https://data.marine.copernicus.eu/"},
       "fallback": "noaa-ndbc"
