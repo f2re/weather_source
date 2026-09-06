@@ -1,0 +1,46 @@
+{
+  "sources": {
+    "noaa-ndbc": {
+      "status": "public",
+      "adapter": "http",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Каталог ссылался на портал, но не содержал прямой operational-файл станции."],
+      "example_ru": "Скачать официальный realtime2 текстовый поток буя 46042 (последние наблюдения).",
+      "request": {
+        "url": "https://www.ndbc.noaa.gov/data/realtime2/46042.txt",
+        "filename": "46042.txt",
+        "max_bytes": 1048576
+      },
+      "probe": {"url": "https://www.ndbc.noaa.gov/data/realtime2/46042.txt"},
+      "fallback": "eccc-datamart"
+    },
+    "copernicus-marine": {
+      "status": "credentials",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "ok",
+      "issues_ru": ["Для реального получения данных нужны бесплатные учётные данные Copernicus Marine; портал сам по себе не является endpoint загрузки."],
+      "example_ru": "Через официальный copernicusmarine subset получить небольшой фрагмент глобальной физической модели, а не весь мировой файл.",
+      "env": ["COPERNICUSMARINE_SERVICE_USERNAME", "COPERNICUSMARINE_SERVICE_PASSWORD"],
+      "request": {
+        "command": "python -c \"import copernicusmarine; copernicusmarine.subset(dataset_id='cmems_mod_glo_phy_anfc_0.083deg_P1D-m', variables=['thetao'], minimum_longitude=29, maximum_longitude=30, minimum_latitude=59, maximum_latitude=60, minimum_depth=0, maximum_depth=5, output_filename='copernicus-marine.nc')\""
+      },
+      "probe": {"url": "https://data.marine.copernicus.eu/"},
+      "fallback": "noaa-ndbc"
+    },
+    "argo-gdac": {
+      "status": "public",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["В каталоге был только корень GDAC; не было воспроизводимого запроса реальных профилей и проверки QC."],
+      "example_ru": "Получить реальные Argo-профили небольшого района через argopy и сохранить NetCDF; QC-флаги остаются в наборе.",
+      "request": {
+        "command": "python -c \"from argopy import DataFetcher; ds=DataFetcher(src='erddap').region([-75,-65,20,30,0,1000,'2025-01-01','2025-02-01']).to_xarray(); ds.to_netcdf('argo-sample.nc'); print(ds)\""
+      },
+      "probe": {"url": "https://data-argo.ifremer.fr/ar_index_global_prof.txt"},
+      "fallback": "copernicus-marine"
+    }
+  }
+}
