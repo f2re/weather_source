@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import argparse
-import gzip
-import json
 import os
+import re
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -78,8 +77,6 @@ def knmi() -> Path:
 
 
 def meteofrance_synop() -> Path:
-    # Public SYNOP files are published for 3-hour synoptic terms. Walk backwards
-    # through recent terms instead of assuming the current hour is present.
     now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
     hour = (now.hour // 3) * 3
     candidate = now.replace(hour=hour)
@@ -102,8 +99,6 @@ def meteofrance_synop() -> Path:
 
 
 def nomads_gfs() -> Path:
-    # Request a tiny operational GFS subset via the official GRIB Filter. Try
-    # recent cycles because publication of a cycle takes time.
     now = datetime.now(timezone.utc)
     cycles = [18, 12, 6, 0]
     candidates: list[tuple[datetime, int]] = []
@@ -143,8 +138,6 @@ def nomads_gfs() -> Path:
 
 
 def meteostat_bulk() -> Path:
-    # Bulk files are anonymous. Use the previous complete year to avoid a
-    # partially written current-year object.
     year = datetime.now(timezone.utc).year - 1
     url = f"https://data.meteostat.net/hourly/{year}.parquet"
     return _download(url, _output(f"meteostat-hourly-{year}.parquet"), timeout=60)
@@ -167,11 +160,45 @@ def meteoswiss_stac() -> Path:
     return _download(href, _output(name))
 
 
+def cdaac_avnprf() -> Path:
+    # COSMIC-2 NRT products are published daily by about 02 UTC on the next day.
+    # Walk backwards to find the newest available day and choose avnPrf, which is
+    # much smaller than the 1–2 GB atmPrf package while still containing real
+    # atmospheric profile data.
+    base = "https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level2/"
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT})
+    now = datetime.now(timezone.utc)
+    errors: list[str] = []
+    for offset in range(1, 8):
+        day = now - timedelta(days=offset)
+        day_url = f"{base}{day:%Y}/{day:%j}/"
+        response = session.get(day_url, timeout=20)
+        if response.status_code != 200:
+            errors.append(f"{day:%Y-%j}: HTTP {response.status_code}")
+            continue
+        match = re.search(r'href=["\'](avnPrf_nrt_[^"\']+\.tar\.gz)["\']', response.text)
+        if not match:
+            errors.append(f"{day:%Y-%j}: avnPrf отсутствует")
+            continue
+        filename = match.group(1)
+        return _download(urljoin(day_url, filename), _output(filename), timeout=120)
+    raise RuntimeError("Не найден свежий COSMIC-2 avnPrf: " + "; ".join(errors))
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Source-specific retrieval flows used by runtime recipes")
     parser.add_argument(
         "provider",
-        choices=["aemet", "knmi", "meteofrance-synop", "nomads-gfs", "meteostat-bulk", "meteoswiss-stac"],
+        choices=[
+            "aemet",
+            "knmi",
+            "meteofrance-synop",
+            "nomads-gfs",
+            "meteostat-bulk",
+            "meteoswiss-stac",
+            "cdaac-avnprf",
+        ],
     )
     args = parser.parse_args(argv)
     try:
@@ -182,6 +209,7 @@ def main(argv: list[str] | None = None) -> int:
             "nomads-gfs": nomads_gfs,
             "meteostat-bulk": meteostat_bulk,
             "meteoswiss-stac": meteoswiss_stac,
+            "cdaac-avnprf": cdaac_avnprf,
         }[args.provider]()
     except Exception as exc:  # noqa: BLE001
         print(f"ERROR: {exc}", file=sys.stderr)
