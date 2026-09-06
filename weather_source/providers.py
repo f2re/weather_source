@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import ftplib
 import os
 import re
 import sys
@@ -161,10 +162,6 @@ def meteoswiss_stac() -> Path:
 
 
 def cdaac_avnprf() -> Path:
-    # COSMIC-2 NRT products are published daily by about 02 UTC on the next day.
-    # Walk backwards to find the newest available day and choose avnPrf, which is
-    # much smaller than the 1–2 GB atmPrf package while still containing real
-    # atmospheric profile data.
     base = "https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level2/"
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
@@ -186,6 +183,27 @@ def cdaac_avnprf() -> Path:
     raise RuntimeError("Не найден свежий COSMIC-2 avnPrf: " + "; ".join(errors))
 
 
+def jaxa_gsmap() -> Path:
+    host = os.environ.get("JAXA_GSMAP_HOST")
+    user = os.environ.get("JAXA_GSMAP_USER")
+    password = os.environ.get("JAXA_GSMAP_PASSWORD")
+    if not all((host, user, password)):
+        raise RuntimeError("Задайте JAXA_GSMAP_HOST, JAXA_GSMAP_USER и JAXA_GSMAP_PASSWORD из письма GSMaP registration")
+    remote_dir = "/now/latest/"
+    with ftplib.FTP(host, timeout=30) as ftp:
+        ftp.login(user=user, passwd=password)
+        names = ftp.nlst(remote_dir)
+        candidates = sorted(name for name in names if name.endswith(".dat.gz"))
+        if not candidates:
+            raise RuntimeError(f"В {remote_dir} нет GSMaP .dat.gz файлов")
+        remote = candidates[-1]
+        path = _output(Path(remote).name)
+        with path.open("wb") as fh:
+            ftp.retrbinary(f"RETR {remote}", fh.write)
+    print(path)
+    return path
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Source-specific retrieval flows used by runtime recipes")
     parser.add_argument(
@@ -198,6 +216,7 @@ def main(argv: list[str] | None = None) -> int:
             "meteostat-bulk",
             "meteoswiss-stac",
             "cdaac-avnprf",
+            "jaxa-gsmap",
         ],
     )
     args = parser.parse_args(argv)
@@ -210,6 +229,7 @@ def main(argv: list[str] | None = None) -> int:
             "meteostat-bulk": meteostat_bulk,
             "meteoswiss-stac": meteoswiss_stac,
             "cdaac-avnprf": cdaac_avnprf,
+            "jaxa-gsmap": jaxa_gsmap,
         }[args.provider]()
     except Exception as exc:  # noqa: BLE001
         print(f"ERROR: {exc}", file=sys.stderr)
