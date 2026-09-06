@@ -5,8 +5,8 @@ sources:
       en: Russian upper-air TEMP via WIS2
       ru: Российская аэрология TEMP через WIS2
     summary:
-      en: Russian radiosonde/TEMP observations published in the WIS2 ecosystem.
-      ru: Российские радиозондовые наблюдения TEMP, публикуемые в экосистеме WIS2.
+      en: Russian radiosonde/TEMP observations published as WMO core data in WIS2.
+      ru: Российские радиозондовые наблюдения TEMP, публикуемые как основные данные WMO в WIS2.
     official: true
     tier: primary
     categories: [upper-air]
@@ -14,19 +14,24 @@ sources:
     operational: true
     update_cadence: typically 00/12 UTC; station dependent
     typical_latency: minutes after publication
-    archive: WIS2 cache retention; long-term archive via other services
+    archive: WIS2 cache retention; long-term archive via IGRA/NCEI and other services
     access:
       level: open
-      auth: anonymous WIS2 core access where published
+      auth: everyone/everyone on public WIS2 Global Brokers for core-data subscription
       terms: WMO Unified Data Policy and publisher terms
     protocols: [mqtt, https, wis2]
     formats: [BUFR]
     endpoints:
-      - name: WIS2 topic
-        url: wis2://cache/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp
-        protocol: wis2
-        role: subscription topic
+      - name: WIS2 Global Broker (CMA)
+        url: mqtts://gb.wis.cma.cn:8883
+        protocol: mqtt
+        role: subscribe to cache/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp
         healthcheck: false
+      - name: WIS2 Global Discovery Catalogue record
+        url: https://wis2-gdc.weather.gc.ca/collections/wis2-discovery-metadata/items/urn%3Awmo%3Amd%3Aru-aviamettelecom%3Acore.surface-based-observations.temp?f=html
+        protocol: https
+        role: authoritative discovery metadata and generated subscription examples
+        healthcheck: true
       - name: WIS2 guide
         url: https://wmo-im.github.io/wis2-guide/
         protocol: https
@@ -36,17 +41,21 @@ sources:
       - name: wis2downloader
         role: receive notifications and payloads
         url: https://github.com/World-Meteorological-Organization/wis2downloader
+      - name: pywis-pubsub
+        role: WIS2 MQTT subscriber utilities
+        url: https://github.com/World-Meteorological-Organization/pywis-pubsub
       - name: ecCodes
         role: BUFR decoding
         url: https://github.com/ecmwf/eccodes
     documentation:
+      - https://wis2-gdc.weather.gc.ca/collections/wis2-discovery-metadata/items/urn%3Awmo%3Amd%3Aru-aviamettelecom%3Acore.surface-based-observations.temp?f=html
       - https://wmo-im.github.io/wis2-guide/
     reliability: high
     automation: high
-    last_verified: '2026-09-05'
+    last_verified: '2026-09-06'
     notes:
-      en: Use WIS2 as the primary machine path; keep IGRA/Wyoming as independent fallback and archive paths.
-      ru: Для машинного приёма использовать WIS2 как основной путь; IGRA/Wyoming держать как независимый резерв и архив.
+      en: Subscribe to the exact topic published by the WIS2 GDC; download the data payload from links in the notification. Keep IGRA/Wyoming as independent fallback and archive paths.
+      ru: Подписываться на точную тему из WIS2 GDC, а полезную нагрузку скачивать по ссылке из уведомления. IGRA/Wyoming держать как независимый резерв и архив.
 
   - id: noaa-ncei-igra
     provider: NOAA/NCEI
@@ -74,7 +83,12 @@ sources:
       - name: IGRA product page
         url: https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive
         protocol: https
-        role: documentation and download
+        role: documentation and dataset overview
+        healthcheck: true
+      - name: IGRA direct data tree
+        url: https://www.ncei.noaa.gov/pub/data/igra/data/
+        protocol: https
+        role: direct station/profile download
         healthcheck: true
     software:
       - name: Siphon IGRAUpperAir
@@ -84,7 +98,7 @@ sources:
       - https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive
     reliability: high
     automation: high
-    last_verified: '2026-09-05'
+    last_verified: '2026-09-06'
     notes:
       en: Strong independent fallback and archive for radiosondes; not a substitute for event-driven WIS2 reception.
       ru: Сильный независимый резерв и архив аэрологии; не заменяет событийный оперативный приём через WIS2.
@@ -125,7 +139,7 @@ sources:
       - https://weather.uwyo.edu/upperair/sounding.html
     reliability: medium
     automation: medium
-    last_verified: '2026-09-05'
+    last_verified: '2026-09-06'
     notes:
       en: Useful fallback and convenience service; do not make it the sole critical ingest path.
       ru: Полезный резерв и удобный интерфейс; не использовать как единственный критический канал приёма.
@@ -148,7 +162,7 @@ sources:
     archive: long-term reference archive
     access:
       level: registration
-      auth: data access may require registration
+      auth: free registration is required before access to the file archive
       terms: GRUAN data policy
     protocols: [https]
     formats: [NetCDF]
@@ -156,7 +170,7 @@ sources:
       - name: GRUAN
         url: https://www.gruan.org/
         protocol: https
-        role: documentation and data access
+        role: documentation and registered data access
         healthcheck: true
     software:
       - name: xarray
@@ -166,10 +180,10 @@ sources:
       - https://www.gruan.org/
     reliability: high
     automation: medium
-    last_verified: '2026-09-05'
+    last_verified: '2026-09-06'
     notes:
-      en: Best suited to reference validation, homogenization and uncertainty-aware research.
-      ru: Лучше всего подходит для эталонной верификации, гомогенизации и исследований с учётом неопределённостей.
+      en: Best suited to reference validation, homogenization and uncertainty-aware research. Do not describe the file archive as anonymous access.
+      ru: Лучше всего подходит для эталонной верификации, гомогенизации и исследований с учётом неопределённостей. Файловый архив не следует описывать как анонимный доступ.
 
   - id: ucar-cdaac
     provider: UCAR/COSMIC
@@ -189,15 +203,20 @@ sources:
     archive: large multi-mission archive
     access:
       level: open
-      auth: many products are anonymous; service requirements may vary
+      auth: anonymous access to data.cosmic.ucar.edu for current public GNSS-RO archive
       terms: UCAR/COSMIC data terms
     protocols: [https]
     formats: [NetCDF, BUFR, native]
     endpoints:
-      - name: CDAAC
+      - name: CDAAC public GNSS-RO archive
+        url: https://data.cosmic.ucar.edu/gnss-ro/
+        protocol: https
+        role: no-login multi-mission data tree
+        healthcheck: true
+      - name: CDAAC documentation
         url: https://cdaac-www.cosmic.ucar.edu/cdaac/
         protocol: https
-        role: catalog and download
+        role: documentation and product descriptions
         healthcheck: true
     software:
       - name: xarray
@@ -208,9 +227,10 @@ sources:
         url: https://github.com/ecmwf/eccodes
     documentation:
       - https://cdaac-www.cosmic.ucar.edu/cdaac/
+      - https://data.cosmic.ucar.edu/gnss-ro/
     reliability: high
     automation: high
-    last_verified: '2026-09-05'
+    last_verified: '2026-09-06'
     notes:
       en: Complements radiosondes with global satellite-derived vertical information; do not mix retrievals with direct in-situ soundings.
       ru: Дополняет радиозонды глобальной спутниковой вертикальной информацией; не смешивать retrieval-профили с прямыми in-situ зондированиями.
@@ -232,32 +252,29 @@ sources:
     typical_latency: near-real-time
     archive: archives through partner services
     access:
-      level: open
-      auth: WIS2 core/open subsets where published; some products may have separate rules
-      terms: EUMETNET and WMO terms
-    protocols: [mqtt, https, wis2]
+      level: restricted
+      auth: public visualization exists; third-party data use depends on EUMETNET/member licensing and product-specific rights
+      terms: EUMETNET/member data policy; no assumption of unrestricted commercial reuse
+    protocols: [https, ftp]
     formats: [BUFR, NetCDF, provider-dependent]
     endpoints:
       - name: E-PROFILE
         url: https://e-profile.eu/
         protocol: https
-        role: documentation
+        role: programme information and visualization entry point
         healthcheck: true
     software:
-      - name: wis2downloader
-        role: WIS2 receiving where available
-        url: https://github.com/World-Meteorological-Organization/wis2downloader
       - name: ecCodes
-        role: BUFR decoding
+        role: BUFR decoding where BUFR is supplied
         url: https://github.com/ecmwf/eccodes
     documentation:
       - https://e-profile.eu/
     reliability: high
-    automation: high
-    last_verified: '2026-09-05'
+    automation: medium
+    last_verified: '2026-09-06'
     notes:
-      en: Valuable for filling temporal gaps between radiosonde launches with frequent wind/profile observations.
-      ru: Полезен для заполнения временных промежутков между радиозондами частыми профилями ветра и другими вертикальными наблюдениями.
+      en: Valuable for filling temporal gaps between radiosonde launches, but there is no single unrestricted public machine endpoint covering every E-PROFILE product. Resolve product rights and provider before operational ingest.
+      ru: Полезен для заполнения промежутков между радиозондами, но единого неограниченного публичного machine endpoint для всех продуктов E-PROFILE нет. Перед оперативным приёмом нужно определить конкретный продукт, поставщика и права.
 
   - id: eumetnet-amdar
     provider: EUMETNET / WMO
@@ -295,7 +312,7 @@ sources:
       - https://community.wmo.int/en/activity-areas/aircraft-based-observations
     reliability: high
     automation: medium
-    last_verified: '2026-09-05'
+    last_verified: '2026-09-06'
     notes:
       en: Operationally valuable high-frequency profiles, but access rights must be checked before automated use.
       ru: Очень ценные частые оперативные профили, но перед автоматическим использованием необходимо проверить права доступа.
