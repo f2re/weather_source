@@ -9,19 +9,34 @@ from .adapters import FetchError, fetch, probe
 from .catalog import CatalogueError, get_source, load_recipes, load_sources, validate_runtime_contract
 
 
+def _safe_fetch_command(source_id: str, recipe: dict) -> str:
+    if recipe["adapter"] == "unavailable":
+        return f"python -m weather_source example {source_id}"
+    suffix = " --allow-external" if recipe["adapter"] == "external" else ""
+    return f"python -m weather_source fetch {source_id}{suffix}"
+
+
 def _print_source(source: dict, recipe: dict) -> None:
     print(f"{source['id']} — {source['name']['ru']}")
     print(f"Поставщик: {source['provider']}")
-    print(f"Статус доступа: {recipe['status']} | adapter: {recipe['adapter']} | verified: {recipe['verified']}")
+    print(
+        f"Статус доступа: {recipe['status']} | adapter: {recipe['adapter']} | "
+        f"verified: {recipe['verified']} | verdict: {recipe.get('verdict', 'unknown')}"
+    )
     print(f"Каталог: tier={source['tier']} operational={source['operational']} access={source['access']['level']}")
     print(f"Описание: {source['summary']['ru']}")
     print(f"Практический пример: {recipe['example_ru']}")
-    if recipe.get('env'):
-        print("Переменные окружения: " + ", ".join(recipe['env']))
-    if recipe.get('reason_ru'):
-        print("Ограничение: " + recipe['reason_ru'])
-    if recipe.get('fallback'):
-        print("Резерв: " + recipe['fallback'])
+    print(f"Команда: {_safe_fetch_command(source['id'], recipe)}")
+    if recipe.get("env"):
+        print("Переменные окружения: " + ", ".join(recipe["env"]))
+    if recipe.get("issues_ru"):
+        print("Аудит:")
+        for issue in recipe["issues_ru"]:
+            print("  - " + issue)
+    if recipe.get("reason_ru"):
+        print("Ограничение: " + recipe["reason_ru"])
+    if recipe.get("fallback"):
+        print("Резерв: " + recipe["fallback"])
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -90,10 +105,14 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "example":
             print(recipe["example_ru"])
-            if recipe.get("command"):
-                print("\nКоманда/код:\n" + recipe["command"])
+            print("\nWeather Source CLI:\n" + _safe_fetch_command(args.source_id, recipe))
+            command = recipe.get("request", {}).get("command")
+            if command:
+                print("\nОфициальный/специализированный клиент:\n" + command)
             if recipe.get("env"):
                 print("\nТребуется: " + ", ".join(recipe["env"]))
+            if recipe.get("reason_ru"):
+                print("\nОграничение: " + recipe["reason_ru"])
             if recipe.get("fallback"):
                 print("\nFallback: " + recipe["fallback"])
             return 0
