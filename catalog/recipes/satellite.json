@@ -1,0 +1,80 @@
+{
+  "sources": {
+    "noaa-goes": {
+      "status": "public",
+      "adapter": "s3_latest",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "Карточка не называла актуальные публичные buckets.",
+        "В 2026 году GOES-East — GOES-19 (`noaa-goes19`), GOES-West — GOES-18 (`noaa-goes18`)."
+      ],
+      "example_ru": "Из публичного GOES-19 S3 bucket получить самый свежий GLM Level-2 Lightning Cluster/Flash/Group product текущего UTC-часа.",
+      "request": {
+        "bucket": "noaa-goes19",
+        "prefix": "GLM-L2-LCFA/{utc:%Y}/{utc:%j}/{utc:%H}/",
+        "suffix": ".nc",
+        "max_bytes": 8388608
+      },
+      "probe": {"url": "https://noaa-goes19.s3.amazonaws.com/?list-type=2&max-keys=1"},
+      "fallback": "eumetsat-data-store"
+    },
+    "eumetsat-data-store": {
+      "status": "credentials",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Просмотр коллекций доступен без регистрации, но программная загрузка через EUMDAC использует consumer key/secret. В карточке это нужно отделять от простого browsing."],
+      "example_ru": "Официальным EUMDAC авторизоваться, выбрать MTG FCI Level 1c collection `EO:EUM:DAT:0665`, найти продукт в небольшом историческом интервале и скачать первый продукт.",
+      "env": ["EUMETSAT_CONSUMER_KEY", "EUMETSAT_CONSUMER_SECRET"],
+      "request": {
+        "command": "python -c \"import os,datetime,shutil,eumdac; t=eumdac.AccessToken((os.environ['EUMETSAT_CONSUMER_KEY'],os.environ['EUMETSAT_CONSUMER_SECRET'])); ds=eumdac.DataStore(t); c=ds.get_collection('EO:EUM:DAT:0665'); p=next(iter(c.search(dtstart=datetime.datetime(2024,7,24,19,30),dtend=datetime.datetime(2024,7,24,19,40)))); f=p.open(); out=open(f.name,'wb'); shutil.copyfileobj(f,out); out.close(); f.close(); print(p)\""
+      },
+      "probe": {"url": "https://api.eumetsat.int/data/browse/collections"},
+      "fallback": "noaa-goes"
+    },
+    "nasa-earthdata-lance": {
+      "status": "credentials",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["LANCE/LAADS web pages открыты, но scripted HTTPS downloads требуют Earthdata/LAADS token или Earthdata Login. Нельзя маркировать скачивание как anonymous."],
+      "example_ru": "Через earthaccess найти один near-real-time VIIRS 375 m active-fire granule `VNP14IMGTDL_NRT` и скачать его с Earthdata Login.",
+      "env": ["EARTHDATA_USERNAME", "EARTHDATA_PASSWORD"],
+      "request": {
+        "command": "python -c \"import earthaccess; earthaccess.login(strategy='environment'); r=earthaccess.search_data(short_name='VNP14IMGTDL_NRT',count=1); print(r); earthaccess.download(r,'nasa-lance')\""
+      },
+      "probe": {"url": "https://nrt3.modaps.eosdis.nasa.gov/archive/allData/"},
+      "fallback": "noaa-goes"
+    },
+    "nasa-gpm-imerg": {
+      "status": "credentials",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": ["Карточка перечисляла портал GES DISC, но не давала воспроизводимого granule search/download. Стандартные GES DISC downloads используют Earthdata Login."],
+      "example_ru": "Через earthaccess найти один IMERG Early half-hour granule (`GPM_3IMERGHHE`) за фиксированную дату и скачать HDF5.",
+      "env": ["EARTHDATA_USERNAME", "EARTHDATA_PASSWORD"],
+      "request": {
+        "command": "python -c \"import earthaccess; earthaccess.login(strategy='environment'); r=earthaccess.search_data(short_name='GPM_3IMERGHHE',temporal=('2026-08-01T00:00:00Z','2026-08-01T00:30:00Z'),count=1); print(r); earthaccess.download(r,'nasa-imerg')\""
+      },
+      "probe": {"url": "https://gis.earthdata.nasa.gov/image/rest/services/GESDISC/GPM_3IMERGHHE/ImageServer?f=json"},
+      "fallback": "jaxa-gsmap"
+    },
+    "jaxa-gsmap": {
+      "status": "credentials",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "Binary/CSV GSMaP_NRT/NOW выдаются после бесплатной регистрации на password-protected FTP, а не как anonymous HTTPS API.",
+        "JAXA объявила миграцию G-Portal и смену Web/SFTP/CSW domains в октябре 2026; endpoint нельзя хардкодить навечно."
+      ],
+      "example_ru": "Использовать FTP-реквизиты из письма GSMaP registration, открыть `/now/latest/`, выбрать самый свежий `.dat.gz` и скачать его.",
+      "env": ["JAXA_GSMAP_HOST", "JAXA_GSMAP_USER", "JAXA_GSMAP_PASSWORD"],
+      "request": {"command": "python -m weather_source.providers jaxa-gsmap"},
+      "probe": {"url": "https://sharaku.eorc.jaxa.jp/GSMaP/"},
+      "fallback": "nasa-gpm-imerg"
+    }
+  }
+}
