@@ -72,6 +72,31 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `s3_latest`  
+**Recipe:** `catalog/recipes/radar.json`
+
+Найти последний Level II volume станции KTLX за текущую UTC-дату в актуальном публичном S3 bucket. Полный volume обычно требует --full.
+
+```bash
+python -m weather_source describe noaa-nexrad
+python -m weather_source probe noaa-nexrad
+python -m weather_source fetch noaa-nexrad
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- В каталоге не указан рабочий S3 bucket.
+- Старый bucket noaa-nexrad-level2 прекращён 2025-09-01; актуальный Level II bucket — unidata-nexrad-level2.
+
+**Резервный источник:** `iowa-mesonet`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -133,6 +158,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 
 - [https://www.ncei.noaa.gov/products/radar/next-generation-weather-radar](https://www.ncei.noaa.gov/products/radar/next-generation-weather-radar)
 - [https://www.noaa.gov/information-technology/open-data-dissemination](https://www.noaa.gov/information-technology/open-data-dissemination)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `s3_latest`  
+**Recipe:** `catalog/recipes/radar.json`
+
+```bash
+python -m weather_source probe noaa-nexrad
+python -m weather_source fetch noaa-nexrad
+```
+
+Fallback: `iowa-mesonet`.
 
 ### Agent note
 

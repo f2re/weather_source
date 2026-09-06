@@ -73,6 +73,31 @@
 - Для оперативного контура учитывать: `tier=specialized`, `operational=true`, `access.level=registration`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `html_latest`  
+**Recipe:** `catalog/recipes/specialized.json`
+
+Из публичного HTTPS-каталога MADIS `point/raob/netcdf` скачать последний текущий radiosonde NetCDF-файл.
+
+```bash
+python -m weather_source describe noaa-madis
+python -m weather_source probe noaa-madis
+python -m weather_source fetch noaa-madis
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Карточка всё ещё перечисляет FTP как основной протокол, но NWS прекратил FTP на `madis-data.ncep.noaa.gov` 21 апреля 2026 года; эквивалентный путь теперь HTTPS.
+- Для unrestricted public1 radiosonde существует прямой operational NetCDF file tree, поэтому регистрация не нужна для этого конкретного потока.
+
+**Резервный источник:** `wmo-wis2`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -134,6 +159,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 - [https://madis.ncep.noaa.gov/madis_datasets.shtml](https://madis.ncep.noaa.gov/madis_datasets.shtml)
 - [https://madis.ncep.noaa.gov/madis_restrictions.shtml](https://madis.ncep.noaa.gov/madis_restrictions.shtml)
 - [https://madis.ncep.noaa.gov/data_application.shtml](https://madis.ncep.noaa.gov/data_application.shtml)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `html_latest`  
+**Recipe:** `catalog/recipes/specialized.json`
+
+```bash
+python -m weather_source probe noaa-madis
+python -m weather_source fetch noaa-madis
+```
+
+Fallback: `wmo-wis2`.
 
 ### Agent note
 

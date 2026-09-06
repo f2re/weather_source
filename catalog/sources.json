@@ -1100,26 +1100,34 @@
     },
     {
       "access": {
-        "auth": "anonymous WIS2 core access where published",
+        "auth": "everyone/everyone on public WIS2 Global Brokers for core-data subscription",
         "level": "open",
         "terms": "WMO Unified Data Policy and publisher terms"
       },
-      "archive": "WIS2 cache retention; long-term archive via other services",
+      "archive": "WIS2 cache retention; long-term archive via IGRA/NCEI and other services",
       "automation": "high",
       "categories": [
         "upper-air"
       ],
       "coverage": "Russia",
       "documentation": [
+        "https://wis2-gdc.weather.gc.ca/collections/wis2-discovery-metadata/items/urn%3Awmo%3Amd%3Aru-aviamettelecom%3Acore.surface-based-observations.temp?f=html",
         "https://wmo-im.github.io/wis2-guide/"
       ],
       "endpoints": [
         {
           "healthcheck": false,
-          "name": "WIS2 topic",
-          "protocol": "wis2",
-          "role": "subscription topic",
-          "url": "wis2://cache/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp"
+          "name": "WIS2 Global Broker (CMA)",
+          "protocol": "mqtt",
+          "role": "subscribe to cache/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp",
+          "url": "mqtts://gb.wis.cma.cn:8883"
+        },
+        {
+          "healthcheck": true,
+          "name": "WIS2 Global Discovery Catalogue record",
+          "protocol": "https",
+          "role": "authoritative discovery metadata and generated subscription examples",
+          "url": "https://wis2-gdc.weather.gc.ca/collections/wis2-discovery-metadata/items/urn%3Awmo%3Amd%3Aru-aviamettelecom%3Acore.surface-based-observations.temp?f=html"
         },
         {
           "healthcheck": true,
@@ -1133,14 +1141,14 @@
         "BUFR"
       ],
       "id": "ru-aviamettelecom-wis2-temp",
-      "last_verified": "2026-09-05",
+      "last_verified": "2026-09-06",
       "name": {
         "en": "Russian upper-air TEMP via WIS2",
         "ru": "Российская аэрология TEMP через WIS2"
       },
       "notes": {
-        "en": "Use WIS2 as the primary machine path; keep IGRA/Wyoming as independent fallback and archive paths.",
-        "ru": "Для машинного приёма использовать WIS2 как основной путь; IGRA/Wyoming держать как независимый резерв и архив."
+        "en": "Subscribe to the exact topic published by the WIS2 GDC; download the data payload from links in the notification. Keep IGRA/Wyoming as independent fallback and archive paths.",
+        "ru": "Подписываться на точную тему из WIS2 GDC, а полезную нагрузку скачивать по ссылке из уведомления. IGRA/Wyoming держать как независимый резерв и архив."
       },
       "official": true,
       "operational": true,
@@ -1158,14 +1166,19 @@
           "url": "https://github.com/World-Meteorological-Organization/wis2downloader"
         },
         {
+          "name": "pywis-pubsub",
+          "role": "WIS2 MQTT subscriber utilities",
+          "url": "https://github.com/World-Meteorological-Organization/pywis-pubsub"
+        },
+        {
           "name": "ecCodes",
           "role": "BUFR decoding",
           "url": "https://github.com/ecmwf/eccodes"
         }
       ],
       "summary": {
-        "en": "Russian radiosonde/TEMP observations published in the WIS2 ecosystem.",
-        "ru": "Российские радиозондовые наблюдения TEMP, публикуемые в экосистеме WIS2."
+        "en": "Russian radiosonde/TEMP observations published as WMO core data in WIS2.",
+        "ru": "Российские радиозондовые наблюдения TEMP, публикуемые как основные данные WMO в WIS2."
       },
       "tier": "primary",
       "typical_latency": "minutes after publication",
@@ -1193,8 +1206,15 @@
           "healthcheck": true,
           "name": "IGRA product page",
           "protocol": "https",
-          "role": "documentation and download",
+          "role": "documentation and dataset overview",
           "url": "https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive"
+        },
+        {
+          "healthcheck": true,
+          "name": "IGRA direct data tree",
+          "protocol": "https",
+          "role": "direct station/profile download",
+          "url": "https://www.ncei.noaa.gov/pub/data/igra/data/"
         }
       ],
       "formats": [
@@ -1203,7 +1223,7 @@
         "BUFR-source"
       ],
       "id": "noaa-ncei-igra",
-      "last_verified": "2026-09-05",
+      "last_verified": "2026-09-06",
       "name": {
         "en": "Integrated Global Radiosonde Archive (IGRA) 2",
         "ru": "NOAA IGRA 2 — глобальная аэрология"
@@ -1263,7 +1283,7 @@
         "HTML-derived tabular"
       ],
       "id": "wyoming-upperair",
-      "last_verified": "2026-09-05",
+      "last_verified": "2026-09-06",
       "name": {
         "en": "Upper Air Soundings",
         "ru": "University of Wyoming — аэрологические зондирования"
@@ -1296,7 +1316,7 @@
     },
     {
       "access": {
-        "auth": "data access may require registration",
+        "auth": "free registration is required before access to the file archive",
         "level": "registration",
         "terms": "GRUAN data policy"
       },
@@ -1316,7 +1336,7 @@
           "healthcheck": true,
           "name": "GRUAN",
           "protocol": "https",
-          "role": "documentation and data access",
+          "role": "documentation and registered data access",
           "url": "https://www.gruan.org/"
         }
       ],
@@ -1324,14 +1344,14 @@
         "NetCDF"
       ],
       "id": "gruan",
-      "last_verified": "2026-09-05",
+      "last_verified": "2026-09-06",
       "name": {
         "en": "GCOS Reference Upper-Air Network",
         "ru": "GRUAN — эталонная аэрология"
       },
       "notes": {
-        "en": "Best suited to reference validation, homogenization and uncertainty-aware research.",
-        "ru": "Лучше всего подходит для эталонной верификации, гомогенизации и исследований с учётом неопределённостей."
+        "en": "Best suited to reference validation, homogenization and uncertainty-aware research. Do not describe the file archive as anonymous access.",
+        "ru": "Лучше всего подходит для эталонной верификации, гомогенизации и исследований с учётом неопределённостей. Файловый архив не следует описывать как анонимный доступ."
       },
       "official": true,
       "operational": false,
@@ -1357,7 +1377,7 @@
     },
     {
       "access": {
-        "auth": "many products are anonymous; service requirements may vary",
+        "auth": "anonymous access to data.cosmic.ucar.edu for current public GNSS-RO archive",
         "level": "open",
         "terms": "UCAR/COSMIC data terms"
       },
@@ -1369,14 +1389,22 @@
       ],
       "coverage": "global",
       "documentation": [
-        "https://cdaac-www.cosmic.ucar.edu/cdaac/"
+        "https://cdaac-www.cosmic.ucar.edu/cdaac/",
+        "https://data.cosmic.ucar.edu/gnss-ro/"
       ],
       "endpoints": [
         {
           "healthcheck": true,
-          "name": "CDAAC",
+          "name": "CDAAC public GNSS-RO archive",
           "protocol": "https",
-          "role": "catalog and download",
+          "role": "no-login multi-mission data tree",
+          "url": "https://data.cosmic.ucar.edu/gnss-ro/"
+        },
+        {
+          "healthcheck": true,
+          "name": "CDAAC documentation",
+          "protocol": "https",
+          "role": "documentation and product descriptions",
           "url": "https://cdaac-www.cosmic.ucar.edu/cdaac/"
         }
       ],
@@ -1386,7 +1414,7 @@
         "native"
       ],
       "id": "ucar-cdaac",
-      "last_verified": "2026-09-05",
+      "last_verified": "2026-09-06",
       "name": {
         "en": "CDAAC GNSS Radio Occultation",
         "ru": "UCAR CDAAC — GNSS radio occultation"
@@ -1424,12 +1452,12 @@
     },
     {
       "access": {
-        "auth": "WIS2 core/open subsets where published; some products may have separate rules",
-        "level": "open",
-        "terms": "EUMETNET and WMO terms"
+        "auth": "public visualization exists; third-party data use depends on EUMETNET/member licensing and product-specific rights",
+        "level": "restricted",
+        "terms": "EUMETNET/member data policy; no assumption of unrestricted commercial reuse"
       },
       "archive": "archives through partner services",
-      "automation": "high",
+      "automation": "medium",
       "categories": [
         "upper-air",
         "profiler",
@@ -1444,7 +1472,7 @@
           "healthcheck": true,
           "name": "E-PROFILE",
           "protocol": "https",
-          "role": "documentation",
+          "role": "programme information and visualization entry point",
           "url": "https://e-profile.eu/"
         }
       ],
@@ -1454,33 +1482,27 @@
         "provider-dependent"
       ],
       "id": "eumetnet-eprofile",
-      "last_verified": "2026-09-05",
+      "last_verified": "2026-09-06",
       "name": {
         "en": "E-PROFILE",
         "ru": "EUMETNET E-PROFILE"
       },
       "notes": {
-        "en": "Valuable for filling temporal gaps between radiosonde launches with frequent wind/profile observations.",
-        "ru": "Полезен для заполнения временных промежутков между радиозондами частыми профилями ветра и другими вертикальными наблюдениями."
+        "en": "Valuable for filling temporal gaps between radiosonde launches, but there is no single unrestricted public machine endpoint covering every E-PROFILE product. Resolve product rights and provider before operational ingest.",
+        "ru": "Полезен для заполнения промежутков между радиозондами, но единого неограниченного публичного machine endpoint для всех продуктов E-PROFILE нет. Перед оперативным приёмом нужно определить конкретный продукт, поставщика и права."
       },
       "official": true,
       "operational": true,
       "protocols": [
-        "mqtt",
         "https",
-        "wis2"
+        "ftp"
       ],
       "provider": "EUMETNET",
       "reliability": "high",
       "software": [
         {
-          "name": "wis2downloader",
-          "role": "WIS2 receiving where available",
-          "url": "https://github.com/World-Meteorological-Organization/wis2downloader"
-        },
-        {
           "name": "ecCodes",
-          "role": "BUFR decoding",
+          "role": "BUFR decoding where BUFR is supplied",
           "url": "https://github.com/ecmwf/eccodes"
         }
       ],
@@ -1521,7 +1543,7 @@
         "BUFR"
       ],
       "id": "eumetnet-amdar",
-      "last_verified": "2026-09-05",
+      "last_verified": "2026-09-06",
       "name": {
         "en": "AMDAR aircraft observations",
         "ru": "AMDAR — самолётные наблюдения"

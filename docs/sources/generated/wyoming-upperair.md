@@ -2,7 +2,7 @@
 
 > **Русская версия ниже является самостоятельной технической карточкой.** English reference follows after it.
 
-`wyoming-upperair` · ⚪ **агрегатор / aggregator** · оперативный / operational · проверено / verified **2026-09-05**
+`wyoming-upperair` · ⚪ **агрегатор / aggregator** · оперативный / operational · проверено / verified **2026-09-06**
 
 ---
 
@@ -68,6 +68,38 @@
 - Для оперативного контура учитывать: `tier=aggregator`, `operational=true`, `access.level=open`, `automation=medium`, `reliability=medium`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+Воспроизвести документированный Siphon example: GSO, 2024-09-27 00 UTC, сохранить радиозондовый профиль CSV.
+
+```bash
+python -m weather_source describe wyoming-upperair
+python -m weather_source probe wyoming-upperair
+python -m weather_source fetch wyoming-upperair --allow-external
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- В каталоге указана веб-страница; Siphon использует отдельный CGI endpoint и является более устойчивым клиентским слоем.
+
+**Резервный источник:** `noaa-ncei-igra`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -c "from datetime import datetime; from siphon.simplewebservice.wyoming import WyomingUpperAir; df=WyomingUpperAir.request_data(datetime(2024,9,27,0),'GSO'); df.to_csv('wyoming-GSO-2024092700.csv',index=False); print(df[['pressure','height','temperature','dewpoint']].head())"
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -125,6 +157,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://weather.uwyo.edu/upperair/sounding.html](https://weather.uwyo.edu/upperair/sounding.html)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+```bash
+python -m weather_source probe wyoming-upperair
+python -m weather_source fetch wyoming-upperair --allow-external
+```
+
+Fallback: `noaa-ncei-igra`.
 
 ### Agent note
 

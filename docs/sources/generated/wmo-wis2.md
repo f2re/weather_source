@@ -73,6 +73,31 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `wis2`  
+**Recipe:** `catalog/recipes/core.json`
+
+Подписаться на французский WIS2 Global Broker и получить первое core-data уведомление с последующим скачиванием payload.
+
+```bash
+python -m weather_source describe wmo-wis2
+python -m weather_source probe wmo-wis2
+python -m weather_source fetch wmo-wis2
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Каталог заявлял MQTT, но содержал только документацию и не содержал рабочего Global Broker.
+- Для core data используются публичные Global Brokers с everyone/everyone; уведомление содержит ссылку на payload.
+
+**Резервный источник:** `eccc-datamart`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -134,6 +159,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 
 - [https://wmo-im.github.io/wis2-guide/](https://wmo-im.github.io/wis2-guide/)
 - [https://docs.wis2box.wis.wmo.int/](https://docs.wis2box.wis.wmo.int/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `wis2`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe wmo-wis2
+python -m weather_source fetch wmo-wis2
+```
+
+Fallback: `eccc-datamart`.
 
 ### Agent note
 

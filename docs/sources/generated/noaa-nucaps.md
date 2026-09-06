@@ -72,6 +72,31 @@
 - Для оперативного контура учитывать: `tier=specialized`, `operational=true`, `access.level=registration`, `automation=medium`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `s3_latest`  
+**Recipe:** `catalog/recipes/specialized.json`
+
+В публичном NOAA-20 NODD bucket найти последний NUCAPS EDR NetCDF текущего UTC-дня. Полный большой объект требует `--full` при превышении лимита.
+
+```bash
+python -m weather_source describe noaa-nucaps
+python -m weather_source probe noaa-nucaps
+python -m weather_source fetch noaa-nucaps
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Карточка указывала STAR/OSPO pages и registration, но NOAA JPSS/NUCAPS EDR также распространяется через публичный NODD AWS bucket без AWS account.
+- Нужно явно различать NUCAPS retrieval и radiosonde in-situ профиль.
+
+**Резервный источник:** `ucar-cdaac`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -132,6 +157,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 
 - [https://www.star.nesdis.noaa.gov/jpss/soundings.php](https://www.star.nesdis.noaa.gov/jpss/soundings.php)
 - [https://www.ospo.noaa.gov/products/atmosphere/soundings/heap/nucaps/index.html](https://www.ospo.noaa.gov/products/atmosphere/soundings/heap/nucaps/index.html)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `s3_latest`  
+**Recipe:** `catalog/recipes/specialized.json`
+
+```bash
+python -m weather_source probe noaa-nucaps
+python -m weather_source fetch noaa-nucaps
+```
+
+Fallback: `ucar-cdaac`.
 
 ### Agent note
 

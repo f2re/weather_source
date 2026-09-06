@@ -71,6 +71,30 @@ AMQP делает Datamart особенно удобным для событий
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `html_latest`  
+**Recipe:** `catalog/recipes/core.json`
+
+Из официального `/today/observations/swob-ml/latest/` выбрать и скачать последний SWOB XML.
+
+```bash
+python -m weather_source describe eccc-datamart
+python -m weather_source probe eccc-datamart
+python -m weather_source fetch eccc-datamart
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Корень Datamart не доказывал получение данных. Для текущих данных есть `/today/`; ECCC рекомендует AMQP/Sarracenia для событийного приёма.
+
+**Резервный источник:** `eccc-geomet`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -130,6 +154,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://eccc-msc.github.io/open-data/](https://eccc-msc.github.io/open-data/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `html_latest`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe eccc-datamart
+python -m weather_source fetch eccc-datamart
+```
+
+Fallback: `eccc-geomet`.
 
 ### Agent note
 

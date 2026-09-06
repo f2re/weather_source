@@ -71,6 +71,41 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=false`, `access.level=registration`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** нужны бесплатные/договорные учётные данные (`credentials`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/archives.json`
+
+Официальным CDS API скачать минимальный ERA5 pressure-level GRIB: geopotential, 1000 hPa, 2024-03-01 13:00 UTC.
+
+```bash
+python -m weather_source describe copernicus-cds
+python -m weather_source probe copernicus-cds
+python -m weather_source fetch copernicus-cds --allow-external
+```
+
+**Требуемые переменные окружения:** `CDSAPI_KEY`.
+
+**Что исправлено или обнаружено аудитом:**
+
+- CDS требует бесплатный аккаунт/personal access token и предварительное принятие Terms конкретного dataset.
+- Landing page не является проверкой API retrieval; нужен реальный `cdsapi.Client().retrieve`.
+
+**Резервный источник:** `noaa-ncei-igra`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -c "import os,cdsapi; c=cdsapi.Client(url='https://cds.climate.copernicus.eu/api',key=os.environ['CDSAPI_KEY']); c.retrieve('reanalysis-era5-pressure-levels',{'product_type':['reanalysis'],'variable':['geopotential'],'year':['2024'],'month':['03'],'day':['01'],'time':['13:00'],'pressure_level':['1000'],'data_format':'grib'},'era5-1000hpa-z-2024030113.grib')"
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -130,6 +165,21 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://cds.climate.copernicus.eu/how-to-api](https://cds.climate.copernicus.eu/how-to-api)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `credentials` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/archives.json`
+
+```bash
+python -m weather_source probe copernicus-cds
+python -m weather_source fetch copernicus-cds --allow-external
+```
+
+Required environment: `CDSAPI_KEY`.
+
+Fallback: `noaa-ncei-igra`.
 
 ### Agent note
 

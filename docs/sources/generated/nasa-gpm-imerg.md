@@ -71,6 +71,40 @@
 - Для оперативного контура учитывать: `tier=specialized`, `operational=true`, `access.level=registration`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** нужны бесплатные/договорные учётные данные (`credentials`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/satellite.json`
+
+Через earthaccess найти один IMERG Early half-hour granule (`GPM_3IMERGHHE`) за фиксированную дату и скачать HDF5.
+
+```bash
+python -m weather_source describe nasa-gpm-imerg
+python -m weather_source probe nasa-gpm-imerg
+python -m weather_source fetch nasa-gpm-imerg --allow-external
+```
+
+**Требуемые переменные окружения:** `EARTHDATA_USERNAME`, `EARTHDATA_PASSWORD`.
+
+**Что исправлено или обнаружено аудитом:**
+
+- Карточка перечисляла портал GES DISC, но не давала воспроизводимого granule search/download. Стандартные GES DISC downloads используют Earthdata Login.
+
+**Резервный источник:** `jaxa-gsmap`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -c "import earthaccess; earthaccess.login(strategy='environment'); r=earthaccess.search_data(short_name='GPM_3IMERGHHE',temporal=('2026-08-01T00:00:00Z','2026-08-01T00:30:00Z'),count=1); print(r); earthaccess.download(r,'nasa-imerg')"
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -130,6 +164,21 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://gpm.nasa.gov/data/imerg](https://gpm.nasa.gov/data/imerg)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `credentials` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/satellite.json`
+
+```bash
+python -m weather_source probe nasa-gpm-imerg
+python -m weather_source fetch nasa-gpm-imerg --allow-external
+```
+
+Required environment: `EARTHDATA_USERNAME`, `EARTHDATA_PASSWORD`.
+
+Fallback: `jaxa-gsmap`.
 
 ### Agent note
 

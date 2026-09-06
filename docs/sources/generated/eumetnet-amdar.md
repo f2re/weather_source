@@ -2,7 +2,7 @@
 
 > **Русская версия ниже является самостоятельной технической карточкой.** English reference follows after it.
 
-`eumetnet-amdar` · 🔵 **специализированный / specialized** · оперативный / operational · проверено / verified **2026-09-05**
+`eumetnet-amdar` · 🔵 **специализированный / specialized** · оперативный / operational · проверено / verified **2026-09-06**
 
 ---
 
@@ -69,6 +69,32 @@
 - Для оперативного контура учитывать: `tier=specialized`, `operational=true`, `access.level=restricted`, `automation=medium`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** ✅ подтверждено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** доступ ограничен правами участника/лицензией (`restricted`)  
+**Runtime-адаптер:** `unavailable`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+При наличии прав получать AMDAR BUFR через выделенный WIS2/GTS/национальный канал и декодировать ecCodes; без прав использовать открытые aircraft subsets только там, где они явно опубликованы как core/open.
+
+```bash
+python -m weather_source describe eumetnet-amdar
+python -m weather_source probe eumetnet-amdar
+python -m weather_source example eumetnet-amdar
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Самолётные наблюдения неоднородны по правам: наличие WMO/BUFR описания не означает unrestricted public access к EUMETNET AMDAR feed.
+
+**Почему нет автоматического public fetch:** Публичный неограниченный EUMETNET AMDAR endpoint не подтверждён; права зависят от программы и авиакомпаний.
+
+**Резервный источник:** `noaa-madis`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -126,6 +152,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://community.wmo.int/en/activity-areas/aircraft-based-observations](https://community.wmo.int/en/activity-areas/aircraft-based-observations)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `ok` · **verified:** `2026-09-06`  
+**Runtime access:** `restricted` · **adapter:** `unavailable`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+```bash
+python -m weather_source probe eumetnet-amdar
+python -m weather_source example eumetnet-amdar
+```
+
+Fallback: `noaa-madis`.
 
 ### Agent note
 

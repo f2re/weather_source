@@ -1,0 +1,1053 @@
+{
+  "source_count": 47,
+  "sources": {
+    "aemet-opendata": {
+      "adapter": "external",
+      "env": [
+        "AEMET_API_KEY"
+      ],
+      "example_ru": "Запросить `/api/observacion/convencional/todas`, извлечь поле `datos` и скачать текущие наблюдения.",
+      "fallback": "wmo-wis2",
+      "fetch_command": "python -m weather_source fetch aemet-opendata --allow-external",
+      "issues_ru": [
+        "AEMET OpenData требует API key и возвращает метаданные со вторым URL `datos`; один GET к landing page не является получением наблюдений."
+      ],
+      "probe": {
+        "url": "https://opendata.aemet.es/dist/"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "command": "python -m weather_source.providers aemet"
+      },
+      "status": "credentials",
+      "verdict": "ok",
+      "verified": "2026-09-06"
+    },
+    "argo-gdac": {
+      "adapter": "external",
+      "example_ru": "Получить реальные Argo-профили небольшого района через argopy и сохранить NetCDF; QC-флаги остаются в наборе.",
+      "fallback": "copernicus-marine",
+      "fetch_command": "python -m weather_source fetch argo-gdac --allow-external",
+      "issues_ru": [
+        "В каталоге был только корень GDAC; не было воспроизводимого запроса реальных профилей и проверки QC."
+      ],
+      "probe": {
+        "url": "https://data-argo.ifremer.fr/ar_index_global_prof.txt"
+      },
+      "recipe_file": "catalog/recipes/ocean.json",
+      "request": {
+        "command": "python -c \"from argopy import DataFetcher; ds=DataFetcher(src='erddap').region([-75,-65,20,30,0,1000,'2025-01-01','2025-02-01']).to_xarray(); ds.to_netcdf('argo-sample.nc'); print(ds)\""
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "blitzortung": {
+      "adapter": "unavailable",
+      "example_ru": "Для участника использовать предоставленный проектом participant/raw access согласно личным правам. Для публичной автоматизации вместо Blitzortung использовать NOAA GLM (`noaa-goes`) или MTG-LI через EUMETSAT.",
+      "fallback": "noaa-goes",
+      "fetch_command": "python -m weather_source example blitzortung",
+      "issues_ru": [
+        "Raw lightning data не является unrestricted public API: проект разрешает raw access участникам или отдельно одобренным пользователям и ограничивает внешние проекты."
+      ],
+      "reason_ru": "Blitzortung не документирует unrestricted public raw-data API; raw access предназначен участникам или отдельно разрешённым проектам.",
+      "recipe_file": "catalog/recipes/aggregators.json",
+      "status": "restricted",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "bom-open-data": {
+      "adapter": "ftp",
+      "example_ru": "Скачать XML-файл оперативных наблюдений NSW с официального anonymous FTP BOM.",
+      "fallback": "wmo-wis2",
+      "fetch_command": "python -m weather_source fetch bom-open-data",
+      "issues_ru": [
+        "BOM действительно предоставляет anonymous FTP, но доступ не означает свободную коммерческую лицензию.",
+        "Anonymous products разрешены для личного использования/внутри организации и не должны автоматически маркироваться как unrestricted redistribution."
+      ],
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "host": "ftp.bom.gov.au",
+        "max_bytes": 8388608,
+        "path": "/anon/gen/fwo/IDN60920.xml"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "copernicus-ads": {
+      "adapter": "external",
+      "env": [
+        "CDSAPI_KEY"
+      ],
+      "example_ru": "Через CDS API Atmosphere Data Store скачать небольшой CAMS analysis: total aerosol optical depth 670 nm, 2021-03-24 00 UTC, область 69–70N / 17–18W, NetCDF ZIP.",
+      "fallback": "nasa-earthdata-lance",
+      "fetch_command": "python -m weather_source fetch copernicus-ads --allow-external",
+      "issues_ru": [
+        "Программный доступ требует учётную запись/API token и принятие условий ADS.",
+        "Предыдущий recipe только создавал `cdsapi.Client` и не получал данных; теперь он выполняет реальный минимальный CAMS retrieval."
+      ],
+      "probe": {
+        "url": "https://ads.atmosphere.copernicus.eu/datasets/cams-global-atmospheric-composition-forecasts?tab=overview"
+      },
+      "recipe_file": "catalog/recipes/nwp.json",
+      "request": {
+        "command": "python -c \"import os,cdsapi; c=cdsapi.Client(url='https://ads.atmosphere.copernicus.eu/api',key=os.environ['CDSAPI_KEY']); c.retrieve('cams-global-atmospheric-composition-forecasts',{'date':'2021-03-24','time':['00:00'],'leadtime_hour':'0','area':[70,-18,69,-17],'type':'analysis','variable':'total_aerosol_optical_depth_670nm','format':'netcdf_zip'},'cams-aod670-2021032400.zip')\""
+      },
+      "status": "credentials",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "copernicus-cds": {
+      "adapter": "external",
+      "env": [
+        "CDSAPI_KEY"
+      ],
+      "example_ru": "Официальным CDS API скачать минимальный ERA5 pressure-level GRIB: geopotential, 1000 hPa, 2024-03-01 13:00 UTC.",
+      "fallback": "noaa-ncei-igra",
+      "fetch_command": "python -m weather_source fetch copernicus-cds --allow-external",
+      "issues_ru": [
+        "CDS требует бесплатный аккаунт/personal access token и предварительное принятие Terms конкретного dataset.",
+        "Landing page не является проверкой API retrieval; нужен реальный `cdsapi.Client().retrieve`."
+      ],
+      "probe": {
+        "url": "https://cds.climate.copernicus.eu/api"
+      },
+      "recipe_file": "catalog/recipes/archives.json",
+      "request": {
+        "command": "python -c \"import os,cdsapi; c=cdsapi.Client(url='https://cds.climate.copernicus.eu/api',key=os.environ['CDSAPI_KEY']); c.retrieve('reanalysis-era5-pressure-levels',{'product_type':['reanalysis'],'variable':['geopotential'],'year':['2024'],'month':['03'],'day':['01'],'time':['13:00'],'pressure_level':['1000'],'data_format':'grib'},'era5-1000hpa-z-2024030113.grib')\""
+      },
+      "status": "credentials",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "copernicus-marine": {
+      "adapter": "external",
+      "env": [
+        "COPERNICUSMARINE_SERVICE_USERNAME",
+        "COPERNICUSMARINE_SERVICE_PASSWORD"
+      ],
+      "example_ru": "Через официальный Copernicus Marine Toolbox получить однодневный фрагмент sea-surface height `zos` глобальной физической модели на небольшом районе 29–30E, 59–60N.",
+      "fallback": "noaa-ndbc",
+      "fetch_command": "python -m weather_source fetch copernicus-marine --allow-external",
+      "issues_ru": [
+        "Для реального получения данных нужны бесплатные учётные данные Copernicus Marine; портал сам по себе не является endpoint загрузки.",
+        "Предыдущий пример не ограничивал время и мог запросить избыточный объём. Теперь зафиксирован минимальный spatial/time subset по документированному dataset id и переменной `zos`."
+      ],
+      "probe": {
+        "url": "https://data.marine.copernicus.eu/"
+      },
+      "recipe_file": "catalog/recipes/ocean.json",
+      "request": {
+        "command": "python -c \"import copernicusmarine; copernicusmarine.subset(dataset_id='cmems_mod_glo_phy_anfc_0.083deg_P1D-m', variables=['zos'], minimum_longitude=29, maximum_longitude=30, minimum_latitude=59, maximum_latitude=60, start_datetime='2026-09-05T00:00:00', end_datetime='2026-09-05T00:00:00', output_filename='copernicus-marine-zos-20260905.nc')\""
+      },
+      "status": "credentials",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "doe-arm-sonde": {
+      "adapter": "unavailable",
+      "env": [
+        "ARM_USERNAME"
+      ],
+      "example_ru": "После создания бесплатного ARM User Profile открыть Data Discovery, выбрать SONDE/SONDEWNPN datastream и скачать NetCDF. Репозиторий не имитирует anonymous URL вместо реального авторизованного workflow.",
+      "fallback": "gruan",
+      "fetch_command": "python -m weather_source example doe-arm-sonde",
+      "issues_ru": [
+        "ARM данные бесплатны, но ARM прямо требует бесплатный User Profile для доступа. Публичный стабильный anonymous download API для SONDE не подтверждён."
+      ],
+      "reason_ru": "ARM требует бесплатный user account для data access; стабильный публичный machine download endpoint без авторизации не подтверждён.",
+      "recipe_file": "catalog/recipes/specialized.json",
+      "status": "credentials",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "dwd-open-data": {
+      "adapter": "html_latest",
+      "example_ru": "Найти и скачать последний оперативный DWD TEMP radiosonde text-файл; BUFR-поток доступен соседним каталогом `radiosonde/bufr/`.",
+      "fallback": "wmo-wis2",
+      "fetch_command": "python -m weather_source fetch dwd-open-data",
+      "issues_ru": [
+        "Корень opendata.dwd.de не проверял конкретный поток. В оперативном дереве есть реальные radiosonde BUFR/TXT файлы."
+      ],
+      "probe": {
+        "url": "https://opendata.dwd.de/weather/weather_reports/radiosonde/txt/"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "max_bytes": 2097152,
+        "pattern": "gda01-temp-.*\\.txt$",
+        "url": "https://opendata.dwd.de/weather/weather_reports/radiosonde/txt/"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "eccc-datamart": {
+      "adapter": "html_latest",
+      "example_ru": "Из официального `/today/observations/swob-ml/latest/` выбрать и скачать последний SWOB XML.",
+      "fallback": "eccc-geomet",
+      "fetch_command": "python -m weather_source fetch eccc-datamart",
+      "issues_ru": [
+        "Корень Datamart не доказывал получение данных. Для текущих данных есть `/today/`; ECCC рекомендует AMQP/Sarracenia для событийного приёма."
+      ],
+      "probe": {
+        "url": "https://dd.weather.gc.ca/today/observations/swob-ml/latest/"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "max_bytes": 2097152,
+        "pattern": "\\.xml$",
+        "url": "https://dd.weather.gc.ca/today/observations/swob-ml/latest/"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "eccc-geomet": {
+      "adapter": "http",
+      "example_ru": "Получить одну актуальную Surface Weather Observation из OGC API collection `swob-realtime` в JSON.",
+      "fallback": "eccc-datamart",
+      "fetch_command": "python -m weather_source fetch eccc-geomet",
+      "issues_ru": [
+        "Каталог указывал только API root; теперь пример подтверждает получение численных/атрибутивных данных, а не WMS-картинки."
+      ],
+      "probe": {
+        "url": "https://api.weather.gc.ca/collections/swob-realtime/items?f=json&limit=1"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "filename": "eccc-swob-realtime.json",
+        "max_bytes": 2097152,
+        "params": {
+          "f": "json",
+          "limit": 1
+        },
+        "url": "https://api.weather.gc.ca/collections/swob-realtime/items"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "ecmwf-open-data": {
+      "adapter": "external",
+      "example_ru": "Официальным ecmwf-opendata скачать из последнего доступного IFS-прогноза 2m temperature на шаге 24 в GRIB2.",
+      "fallback": "noaa-nomads",
+      "fetch_command": "python -m weather_source fetch ecmwf-open-data --allow-external",
+      "issues_ru": [
+        "В каталоге была только страница документации, хотя ECMWF поддерживает официальный ecmwf-opendata клиент."
+      ],
+      "probe": {
+        "url": "https://data.ecmwf.int/forecasts/"
+      },
+      "recipe_file": "catalog/recipes/nwp.json",
+      "request": {
+        "command": "python -c \"from ecmwf.opendata import Client; r=Client(source='ecmwf').retrieve(type='fc', step=24, param='2t', target='ecmwf-2t.grib2'); print(r.datetime)\""
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "eumetnet-amdar": {
+      "adapter": "unavailable",
+      "example_ru": "При наличии прав получать AMDAR BUFR через выделенный WIS2/GTS/национальный канал и декодировать ecCodes; без прав использовать открытые aircraft subsets только там, где они явно опубликованы как core/open.",
+      "fallback": "noaa-madis",
+      "fetch_command": "python -m weather_source example eumetnet-amdar",
+      "issues_ru": [
+        "Самолётные наблюдения неоднородны по правам: наличие WMO/BUFR описания не означает unrestricted public access к EUMETNET AMDAR feed."
+      ],
+      "reason_ru": "Публичный неограниченный EUMETNET AMDAR endpoint не подтверждён; права зависят от программы и авиакомпаний.",
+      "recipe_file": "catalog/recipes/upper-air.json",
+      "status": "restricted",
+      "verdict": "ok",
+      "verified": "2026-09-06"
+    },
+    "eumetnet-eprofile": {
+      "adapter": "unavailable",
+      "example_ru": "Использовать E-PROFILE как сеть/каталог и получать конкретный профиль через национального поставщика, WIS2 или лицензированный EUMETNET-канал после проверки прав конкретного продукта.",
+      "fallback": "fmi-open-data",
+      "fetch_command": "python -m weather_source example eumetnet-eprofile",
+      "issues_ru": [
+        "Сеть и продукты E-PROFILE существуют, но текущая карточка ошибочно превращала это в гарантированный anonymous WIS2 feed. Политика EUMETNET ограничивает часть третьестороннего использования и не подтверждает единый unrestricted bulk/API endpoint."
+      ],
+      "reason_ru": "Нет одного гарантированного unrestricted machine endpoint для всей E-PROFILE сети; доступ зависит от конкретного продукта, поставщика и лицензии.",
+      "recipe_file": "catalog/recipes/upper-air.json",
+      "status": "restricted",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "eumetsat-data-store": {
+      "adapter": "external",
+      "env": [
+        "EUMETSAT_CONSUMER_KEY",
+        "EUMETSAT_CONSUMER_SECRET"
+      ],
+      "example_ru": "Официальным EUMDAC авторизоваться, выбрать MTG FCI Level 1c collection `EO:EUM:DAT:0665`, найти продукт в небольшом историческом интервале и скачать первый продукт.",
+      "fallback": "noaa-goes",
+      "fetch_command": "python -m weather_source fetch eumetsat-data-store --allow-external",
+      "issues_ru": [
+        "Просмотр коллекций доступен без регистрации, но программная загрузка через EUMDAC использует consumer key/secret. В карточке это нужно отделять от простого browsing."
+      ],
+      "probe": {
+        "url": "https://api.eumetsat.int/data/browse/collections"
+      },
+      "recipe_file": "catalog/recipes/satellite.json",
+      "request": {
+        "command": "python -c \"import os,datetime,shutil,eumdac; t=eumdac.AccessToken((os.environ['EUMETSAT_CONSUMER_KEY'],os.environ['EUMETSAT_CONSUMER_SECRET'])); ds=eumdac.DataStore(t); c=ds.get_collection('EO:EUM:DAT:0665'); p=next(iter(c.search(dtstart=datetime.datetime(2024,7,24,19,30),dtend=datetime.datetime(2024,7,24,19,40)))); f=p.open(); out=open(f.name,'wb'); shutil.copyfileobj(f,out); out.close(); f.close(); print(p)\""
+      },
+      "status": "credentials",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "fmi-open-data": {
+      "adapter": "http",
+      "example_ru": "Получить последние sounding observations FMI через официальный WFS stored query в multipointcoverage.",
+      "fallback": "wmo-wis2",
+      "fetch_command": "python -m weather_source fetch fmi-open-data",
+      "issues_ru": [
+        "Общая WFS-ссылка не показывала, какой stored query нужен для аэрологии."
+      ],
+      "probe": {
+        "url": "https://opendata.fmi.fi/wfs?request=GetFeature&storedquery_id=fmi::observations::weather::sounding::multipointcoverage"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "filename": "fmi-soundings.xml",
+        "max_bytes": 8388608,
+        "params": {
+          "request": "GetFeature",
+          "storedquery_id": "fmi::observations::weather::sounding::multipointcoverage"
+        },
+        "url": "https://opendata.fmi.fi/wfs"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "gruan": {
+      "adapter": "unavailable",
+      "example_ru": "После бесплатной регистрации использовать File archive для RS41-GDP.1/RS92-GDP.2. Репозиторий намеренно не имитирует anonymous API, которого GRUAN не документирует.",
+      "fallback": "noaa-ncei-igra",
+      "fetch_command": "python -m weather_source example gruan",
+      "issues_ru": [
+        "GRUAN products open, но Lead Centre прямо требует зарегистрироваться перед доступом к file archive. Публичный стабильный machine API без этого шага не подтверждён."
+      ],
+      "reason_ru": "Перед доступом к опубликованным файлам GRUAN требуется регистрация на сайте; стабильный публичный machine endpoint, который можно безопасно зашить в автоматический клиент, не подтверждён.",
+      "recipe_file": "catalog/recipes/upper-air.json",
+      "status": "manual",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "iowa-mesonet": {
+      "adapter": "http",
+      "example_ru": "Скачать воспроизводимый суточный CSV ASOS станции DSM за 2026-09-05 через официальный IEM CGI backend.",
+      "fallback": "noaa-aviationweather",
+      "fetch_command": "python -m weather_source fetch iowa-mesonet",
+      "issues_ru": [
+        "Карточка указывала только портал IEM; официальный API-документ прямо перечисляет scriptable CGI services, включая ASOS/METAR."
+      ],
+      "probe": {
+        "url": "https://mesonet.agron.iastate.edu/api/"
+      },
+      "recipe_file": "catalog/recipes/aggregators.json",
+      "request": {
+        "filename": "iem-DSM-20260905.csv",
+        "max_bytes": 4194304,
+        "params": {
+          "data": "all",
+          "day1": 5,
+          "day2": 6,
+          "direct": "no",
+          "elev": "yes",
+          "format": "onlycomma",
+          "latlon": "yes",
+          "missing": "M",
+          "month1": 9,
+          "month2": 9,
+          "network": "IA_ASOS",
+          "report_type": 3,
+          "station": "DSM",
+          "trace": "T",
+          "tz": "Etc/UTC",
+          "year1": 2026,
+          "year2": 2026
+        },
+        "url": "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "jaxa-gsmap": {
+      "adapter": "external",
+      "env": [
+        "JAXA_GSMAP_HOST",
+        "JAXA_GSMAP_USER",
+        "JAXA_GSMAP_PASSWORD"
+      ],
+      "example_ru": "Использовать FTP-реквизиты из письма GSMaP registration, открыть `/now/latest/`, выбрать самый свежий `.dat.gz` и скачать его.",
+      "fallback": "nasa-gpm-imerg",
+      "fetch_command": "python -m weather_source fetch jaxa-gsmap --allow-external",
+      "issues_ru": [
+        "Binary/CSV GSMaP_NRT/NOW выдаются после бесплатной регистрации на password-protected FTP, а не как anonymous HTTPS API.",
+        "JAXA объявила миграцию G-Portal и смену Web/SFTP/CSW domains в октябре 2026; endpoint нельзя хардкодить навечно."
+      ],
+      "probe": {
+        "url": "https://sharaku.eorc.jaxa.jp/GSMaP/"
+      },
+      "recipe_file": "catalog/recipes/satellite.json",
+      "request": {
+        "command": "python -m weather_source.providers jaxa-gsmap"
+      },
+      "status": "credentials",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "jma-data": {
+      "adapter": "http",
+      "example_ru": "Получить официальный регулярный XML feed JMA как проверяемый публичный machine endpoint. Для бинарных продуктов использовать отдельные продуктовые каналы/WIS2.",
+      "fallback": "wmo-wis2",
+      "fetch_command": "python -m weather_source fetch jma-data",
+      "issues_ru": [
+        "`www.data.jma.go.jp` — широкий портал; machine access зависит от продукта. Нельзя обещать единый JMA API для BUFR/GRIB/radar/satellite."
+      ],
+      "probe": {
+        "url": "https://www.data.jma.go.jp/developer/xml/feed/regular.xml"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "filename": "jma-regular.xml",
+        "max_bytes": 4194304,
+        "url": "https://www.data.jma.go.jp/developer/xml/feed/regular.xml"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "knmi-open-data": {
+      "adapter": "external",
+      "env": [
+        "KNMI_API_KEY"
+      ],
+      "example_ru": "Через KNMI Open Data API получить список последних файлов актуального 10-minute dataset, запросить temporaryDownloadUrl и скачать NetCDF.",
+      "fallback": "fmi-open-data",
+      "fetch_command": "python -m weather_source fetch knmi-open-data --allow-external",
+      "issues_ru": [
+        "Старые KNMI dataset IDs были выведены из эксплуатации; актуальный dataset — `10-minute-in-situ-meteorological-observations` v1.0. Open Data API требует Authorization key."
+      ],
+      "probe": {
+        "url": "https://developer.dataplatform.knmi.nl/"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "command": "python -m weather_source.providers knmi"
+      },
+      "status": "credentials",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "met-norway-api": {
+      "adapter": "http",
+      "example_ru": "Получить открытый Locationforecast 2.0 compact для Осло; обязательный идентифицирующий User-Agent добавляет клиент Weather Source.",
+      "fallback": "smhi-open-data",
+      "fetch_command": "python -m weather_source fetch met-norway-api",
+      "issues_ru": [
+        "Каталог смешивал anonymous Locationforecast и credentialed Frost и поэтому ошибочно маркировал весь источник как registration."
+      ],
+      "probe": {
+        "url": "https://api.met.no/weatherapi/locationforecast/2.0/status"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "filename": "met-norway-oslo.json",
+        "max_bytes": 4194304,
+        "params": {
+          "lat": "59.9139",
+          "lon": "10.7522"
+        },
+        "url": "https://api.met.no/weatherapi/locationforecast/2.0/compact"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "meteofrance-open-data": {
+      "adapter": "external",
+      "example_ru": "Автоматически найти последний доступный 3-часовой SYNOP CSV Météo-France в `donnees_libres/Txt/Synop/`.",
+      "fallback": "wmo-wis2",
+      "fetch_command": "python -m weather_source fetch meteofrance-open-data --allow-external",
+      "issues_ru": [
+        "`meteo.data.gouv.fr` — каталог; для части данных существуют прямые anonymous files. Из-за разных схем нельзя считать весь портал одинаково open/API."
+      ],
+      "probe": {
+        "url": "https://donneespubliques.meteofrance.fr/donnees_libres/Txt/Synop/postesSynop.csv"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "command": "python -m weather_source.providers meteofrance-synop"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "meteostat": {
+      "adapter": "external",
+      "example_ru": "Скачать anonymous hourly Parquet за предыдущий полностью завершённый год с `data.meteostat.net`.",
+      "fallback": "iowa-mesonet",
+      "fetch_command": "python -m weather_source fetch meteostat --allow-external",
+      "issues_ru": [
+        "Карточка описывала API/library patterns, но не фиксировала самый простой официальный bulk interface: годовые Parquet-файлы без регистрации."
+      ],
+      "probe": {
+        "ok_statuses": [
+          200,
+          206
+        ],
+        "url": "https://data.meteostat.net/hourly/2024.parquet"
+      },
+      "recipe_file": "catalog/recipes/aggregators.json",
+      "request": {
+        "command": "python -m weather_source.providers meteostat-bulk"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "meteoswiss-open-data": {
+      "adapter": "external",
+      "example_ru": "Через официальный STAC collection MeteoSwiss получить один реальный downloadable asset автоматической сети SMN.",
+      "fallback": "fmi-open-data",
+      "fetch_command": "python -m weather_source fetch meteoswiss-open-data --allow-external",
+      "issues_ru": [
+        "Карточка не отражала текущую STAC-раздачу `data.geo.admin.ch`. Портал документации недостаточен для автоматизации."
+      ],
+      "probe": {
+        "url": "https://data.geo.admin.ch/api/stac/v1/collections/ch.meteoschweiz.ogd-smn"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "command": "python -m weather_source.providers meteoswiss-stac"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "metoffice-datahub": {
+      "adapter": "http",
+      "env": [
+        "METOFFICE_API_KEY"
+      ],
+      "example_ru": "Получить Site-Specific Global Spot three-hourly forecast для Лондона через Weather DataHub с API key.",
+      "fallback": "met-norway-api",
+      "fetch_command": "python -m weather_source fetch metoffice-datahub",
+      "issues_ru": [
+        "DataHub landing page не является API endpoint. Конкретный продукт/подписка определяют доступ и квоту."
+      ],
+      "probe": {
+        "url": "https://datahub.metoffice.gov.uk/"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "filename": "metoffice-london-three-hourly.json",
+        "headers": {
+          "apikey": "${METOFFICE_API_KEY}"
+        },
+        "max_bytes": 4194304,
+        "params": {
+          "datasource": "BD1",
+          "excludeParameterMetadata": "true",
+          "includeLocationName": "true",
+          "latitude": "51.5074",
+          "longitude": "-0.1278"
+        },
+        "url": "https://data.hub.api.metoffice.gov.uk/sitespecific/v0/point/three-hourly"
+      },
+      "status": "credentials",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "nasa-earthdata-lance": {
+      "adapter": "external",
+      "env": [
+        "EARTHDATA_USERNAME",
+        "EARTHDATA_PASSWORD"
+      ],
+      "example_ru": "Через earthaccess найти один near-real-time VIIRS 375 m active-fire granule `VNP14IMGTDL_NRT` и скачать его с Earthdata Login.",
+      "fallback": "noaa-goes",
+      "fetch_command": "python -m weather_source fetch nasa-earthdata-lance --allow-external",
+      "issues_ru": [
+        "LANCE/LAADS web pages открыты, но scripted HTTPS downloads требуют Earthdata/LAADS token или Earthdata Login. Нельзя маркировать скачивание как anonymous."
+      ],
+      "probe": {
+        "url": "https://nrt3.modaps.eosdis.nasa.gov/archive/allData/"
+      },
+      "recipe_file": "catalog/recipes/satellite.json",
+      "request": {
+        "command": "python -c \"import earthaccess; earthaccess.login(strategy='environment'); r=earthaccess.search_data(short_name='VNP14IMGTDL_NRT',count=1); print(r); earthaccess.download(r,'nasa-lance')\""
+      },
+      "status": "credentials",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "nasa-gpm-imerg": {
+      "adapter": "external",
+      "env": [
+        "EARTHDATA_USERNAME",
+        "EARTHDATA_PASSWORD"
+      ],
+      "example_ru": "Через earthaccess найти один IMERG Early half-hour granule (`GPM_3IMERGHHE`) за фиксированную дату и скачать HDF5.",
+      "fallback": "jaxa-gsmap",
+      "fetch_command": "python -m weather_source fetch nasa-gpm-imerg --allow-external",
+      "issues_ru": [
+        "Карточка перечисляла портал GES DISC, но не давала воспроизводимого granule search/download. Стандартные GES DISC downloads используют Earthdata Login."
+      ],
+      "probe": {
+        "url": "https://gis.earthdata.nasa.gov/image/rest/services/GESDISC/GPM_3IMERGHHE/ImageServer?f=json"
+      },
+      "recipe_file": "catalog/recipes/satellite.json",
+      "request": {
+        "command": "python -c \"import earthaccess; earthaccess.login(strategy='environment'); r=earthaccess.search_data(short_name='GPM_3IMERGHHE',temporal=('2026-08-01T00:00:00Z','2026-08-01T00:30:00Z'),count=1); print(r); earthaccess.download(r,'nasa-imerg')\""
+      },
+      "status": "credentials",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "noaa-aviationweather": {
+      "adapter": "http",
+      "example_ru": "Получить последние METAR для KJFK непосредственно из официального AviationWeather Data API в JSON.",
+      "fallback": "wmo-wis2",
+      "fetch_command": "python -m weather_source fetch noaa-aviationweather",
+      "issues_ru": [
+        "В основном каталоге указан только URL документации, хотя существует прямой Data API.",
+        "Health-check landing page не доказывал получение METAR."
+      ],
+      "probe": {
+        "params": {
+          "format": "json",
+          "ids": "KJFK"
+        },
+        "url": "https://aviationweather.gov/api/data/metar"
+      },
+      "recipe_file": "catalog/recipes/surface.json",
+      "request": {
+        "filename": "KJFK-metar.json",
+        "max_bytes": 1048576,
+        "params": {
+          "format": "json",
+          "ids": "KJFK"
+        },
+        "url": "https://aviationweather.gov/api/data/metar"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "noaa-goes": {
+      "adapter": "s3_latest",
+      "example_ru": "Из публичного GOES-19 S3 bucket получить самый свежий GLM Level-2 Lightning Cluster/Flash/Group product текущего UTC-часа.",
+      "fallback": "eumetsat-data-store",
+      "fetch_command": "python -m weather_source fetch noaa-goes",
+      "issues_ru": [
+        "Карточка не называла актуальные публичные buckets.",
+        "В 2026 году GOES-East — GOES-19 (`noaa-goes19`), GOES-West — GOES-18 (`noaa-goes18`)."
+      ],
+      "probe": {
+        "url": "https://noaa-goes19.s3.amazonaws.com/?list-type=2&max-keys=1"
+      },
+      "recipe_file": "catalog/recipes/satellite.json",
+      "request": {
+        "bucket": "noaa-goes19",
+        "max_bytes": 8388608,
+        "prefix": "GLM-L2-LCFA/{utc:%Y}/{utc:%j}/{utc:%H}/",
+        "suffix": ".nc"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "noaa-madis": {
+      "adapter": "html_latest",
+      "example_ru": "Из публичного HTTPS-каталога MADIS `point/raob/netcdf` скачать последний текущий radiosonde NetCDF-файл.",
+      "fallback": "wmo-wis2",
+      "fetch_command": "python -m weather_source fetch noaa-madis",
+      "issues_ru": [
+        "Карточка всё ещё перечисляет FTP как основной протокол, но NWS прекратил FTP на `madis-data.ncep.noaa.gov` 21 апреля 2026 года; эквивалентный путь теперь HTTPS.",
+        "Для unrestricted public1 radiosonde существует прямой operational NetCDF file tree, поэтому регистрация не нужна для этого конкретного потока."
+      ],
+      "probe": {
+        "url": "https://madis-data.ncep.noaa.gov/madisPublic1/data/point/raob/netcdf/"
+      },
+      "recipe_file": "catalog/recipes/specialized.json",
+      "request": {
+        "max_bytes": 8388608,
+        "pattern": "\\.gz$",
+        "url": "https://madis-data.ncep.noaa.gov/madisPublic1/data/point/raob/netcdf/"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "noaa-mrms": {
+      "adapter": "html_latest",
+      "example_ru": "В официальном MRMS operational tree найти и скачать последний CompositeReflectivity GRIB2.gz; большие продукты требуют --full.",
+      "fallback": "noaa-nexrad",
+      "fetch_command": "python -m weather_source fetch noaa-mrms",
+      "issues_ru": [
+        "Каталог содержит operational file tree, но не конкретный воспроизводимый продукт; также отсутствовал публичный bucket noaa-mrms-pds."
+      ],
+      "probe": {
+        "url": "https://mrms.ncep.noaa.gov/data/2D/CompositeReflectivity/"
+      },
+      "recipe_file": "catalog/recipes/radar.json",
+      "request": {
+        "max_bytes": 8388608,
+        "pattern": "\\.grib2\\.gz$",
+        "url": "https://mrms.ncep.noaa.gov/data/2D/CompositeReflectivity/"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "noaa-ncei-igra": {
+      "adapter": "external",
+      "example_ru": "Воспроизвести официальный пример Siphon: скачать sounding IGRA2 станции USM00070026 за 2014-09-10 00 UTC и сохранить таблицу CSV.",
+      "fallback": "wyoming-upperair",
+      "fetch_command": "python -m weather_source fetch noaa-ncei-igra --allow-external",
+      "issues_ru": [
+        "Карточка указывала product landing page, хотя есть прямое HTTPS file tree и готовый Siphon IGRAUpperAir."
+      ],
+      "probe": {
+        "url": "https://www.ncei.noaa.gov/pub/data/igra/data/"
+      },
+      "recipe_file": "catalog/recipes/upper-air.json",
+      "request": {
+        "command": "python -c \"from datetime import datetime; from siphon.simplewebservice.igra2 import IGRAUpperAir; df,h=IGRAUpperAir.request_data(datetime(2014,9,10,0),'USM00070026'); df.to_csv('igra-USM00070026-2014091000.csv',index=False); print(h.to_dict('records'))\""
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "noaa-ncei-upperair-bufr": {
+      "adapter": "html_latest",
+      "example_ru": "Найти последний monthly raw NWSTG upper-air BUFR archive в прямом NCEI каталоге. Полная загрузка намеренно требует `--full`.",
+      "fallback": "noaa-ncei-igra",
+      "fetch_command": "python -m weather_source fetch noaa-ncei-upperair-bufr",
+      "issues_ru": [
+        "В каталоге был metadata landing page, но NCEI публикует прямой HTTPS archive.",
+        "Файлы архива крупные monthly tar.gz; автоматический клиент не должен скачивать их как health-check."
+      ],
+      "probe": {
+        "url": "https://www.ncei.noaa.gov/data/nws-global-upper-air-bufr/archive/"
+      },
+      "recipe_file": "catalog/recipes/specialized.json",
+      "request": {
+        "max_bytes": 8388608,
+        "pattern": "\\.tar\\.gz$",
+        "url": "https://www.ncei.noaa.gov/data/nws-global-upper-air-bufr/archive/"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "noaa-ndbc": {
+      "adapter": "http",
+      "example_ru": "Скачать официальный realtime2 текстовый поток буя 46042 (последние наблюдения).",
+      "fallback": "eccc-datamart",
+      "fetch_command": "python -m weather_source fetch noaa-ndbc",
+      "issues_ru": [
+        "Каталог ссылался на портал, но не содержал прямой operational-файл станции."
+      ],
+      "probe": {
+        "url": "https://www.ndbc.noaa.gov/data/realtime2/46042.txt"
+      },
+      "recipe_file": "catalog/recipes/ocean.json",
+      "request": {
+        "filename": "46042.txt",
+        "max_bytes": 1048576,
+        "url": "https://www.ndbc.noaa.gov/data/realtime2/46042.txt"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "noaa-nexrad": {
+      "adapter": "s3_latest",
+      "example_ru": "Найти последний Level II volume станции KTLX за текущую UTC-дату в актуальном публичном S3 bucket. Полный volume обычно требует --full.",
+      "fallback": "iowa-mesonet",
+      "fetch_command": "python -m weather_source fetch noaa-nexrad",
+      "issues_ru": [
+        "В каталоге не указан рабочий S3 bucket.",
+        "Старый bucket noaa-nexrad-level2 прекращён 2025-09-01; актуальный Level II bucket — unidata-nexrad-level2."
+      ],
+      "probe": {
+        "url": "https://unidata-nexrad-level2.s3.amazonaws.com/?list-type=2&max-keys=1"
+      },
+      "recipe_file": "catalog/recipes/radar.json",
+      "request": {
+        "bucket": "unidata-nexrad-level2",
+        "max_bytes": 8388608,
+        "prefix": "{utc:%Y}/{utc:%m}/{utc:%d}/KTLX/"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "noaa-nodd": {
+      "adapter": "s3_latest",
+      "example_ru": "Проверить реальный публичный NODD bucket GFS и скачать небольшой последний index-файл из текущего 00 UTC цикла.",
+      "fallback": "noaa-nomads",
+      "fetch_command": "python -m weather_source fetch noaa-nodd",
+      "issues_ru": [
+        "NODD — программа распространения, а не один dataset; каталог не содержал ни одного реального bucket."
+      ],
+      "probe": {
+        "url": "https://noaa-gfs-bdp-pds.s3.amazonaws.com/?list-type=2&max-keys=1"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "bucket": "noaa-gfs-bdp-pds",
+        "max_bytes": 2097152,
+        "prefix": "gfs.{utc:%Y%m%d}/00/atmos/",
+        "suffix": ".idx"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "noaa-nomads": {
+      "adapter": "external",
+      "example_ru": "Автоматически перебрать последние доступные GFS-циклы NOMADS и скачать небольшой GRIB2-фрагмент TMP 2 m для 29–31E, 59–61N.",
+      "fallback": "noaa-nodd",
+      "fetch_command": "python -m weather_source fetch noaa-nomads --allow-external",
+      "issues_ru": [
+        "Корневой URL NOMADS не является рабочим примером получения данных.",
+        "Для выборочного GFS правильнее использовать GRIB Filter; код должен учитывать задержку публикации текущего цикла."
+      ],
+      "probe": {
+        "url": "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25.pl"
+      },
+      "recipe_file": "catalog/recipes/nwp.json",
+      "request": {
+        "command": "python -m weather_source.providers nomads-gfs"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "noaa-nucaps": {
+      "adapter": "s3_latest",
+      "example_ru": "В публичном NOAA-20 NODD bucket найти последний NUCAPS EDR NetCDF текущего UTC-дня. Полный большой объект требует `--full` при превышении лимита.",
+      "fallback": "ucar-cdaac",
+      "fetch_command": "python -m weather_source fetch noaa-nucaps",
+      "issues_ru": [
+        "Карточка указывала STAR/OSPO pages и registration, но NOAA JPSS/NUCAPS EDR также распространяется через публичный NODD AWS bucket без AWS account.",
+        "Нужно явно различать NUCAPS retrieval и radiosonde in-situ профиль."
+      ],
+      "probe": {
+        "url": "https://noaa-nesdis-n20-pds.s3.amazonaws.com/?list-type=2&prefix=NUCAPS-EDR/&max-keys=1"
+      },
+      "recipe_file": "catalog/recipes/specialized.json",
+      "request": {
+        "bucket": "noaa-nesdis-n20-pds",
+        "max_bytes": 8388608,
+        "prefix": "NUCAPS-EDR/{utc:%Y}/{utc:%m}/{utc:%d}/",
+        "suffix": ".nc"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "ogimet": {
+      "adapter": "http",
+      "example_ru": "Через документированный `getsynop` CGI получить CSV SYNOP из WMO block 26 за фиксированный 6-часовой интервал 2026-08-24.",
+      "fallback": "wmo-wis2",
+      "fetch_command": "python -m weather_source fetch ogimet",
+      "issues_ru": [
+        "Карточка недооценивала автоматизацию: OGIMET документирует `getsynop` CGI, возвращающий CSV без HTML.",
+        "Сам OGIMET прямо пишет, что его данные не должны использоваться в critical mission; источник остаётся только fallback/диагностикой."
+      ],
+      "probe": {
+        "url": "https://www.ogimet.com/getsynop_help.phtml.en"
+      },
+      "recipe_file": "catalog/recipes/aggregators.json",
+      "request": {
+        "filename": "ogimet-block26-2026082400-06.csv",
+        "max_bytes": 4194304,
+        "params": {
+          "begin": "202608240000",
+          "block": "26",
+          "end": "202608240600",
+          "header": "yes",
+          "lang": "eng"
+        },
+        "url": "https://www.ogimet.com/cgi-bin/getsynop"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "open-meteo": {
+      "adapter": "http",
+      "example_ru": "Получить однодневный прогноз температуры и осадков для Санкт-Петербурга через публичный Open-Meteo Forecast API.",
+      "fallback": "ecmwf-open-data",
+      "fetch_command": "python -m weather_source fetch open-meteo",
+      "issues_ru": [
+        "Это нормализующий агрегатор, а не первичный источник; необходимо сохранять имя модели/источника из ответа и не использовать как доказательство наблюдения."
+      ],
+      "probe": {
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=59.93&longitude=30.31&hourly=temperature_2m&forecast_days=1"
+      },
+      "recipe_file": "catalog/recipes/aggregators.json",
+      "request": {
+        "filename": "open-meteo-spb.json",
+        "max_bytes": 2097152,
+        "params": {
+          "forecast_days": 1,
+          "hourly": "temperature_2m,precipitation",
+          "latitude": 59.93,
+          "longitude": 30.31
+        },
+        "url": "https://api.open-meteo.com/v1/forecast"
+      },
+      "status": "public",
+      "verdict": "ok",
+      "verified": "2026-09-06"
+    },
+    "ru-aviamettelecom-wis2-temp": {
+      "adapter": "wis2",
+      "example_ru": "Подписаться на точную российскую TEMP-тему из WIS2 GDC через публичный CMA Global Broker и сохранить первый пришедший BUFR payload.",
+      "fallback": "noaa-ncei-igra",
+      "fetch_command": "python -m weather_source fetch ru-aviamettelecom-wis2-temp",
+      "issues_ru": [
+        "Старый `wis2://cache/...` был записан как URL, хотя это не рабочий URI загрузки.",
+        "Актуальная WIS2 GDC запись публикует точную MQTT-тему `cache/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp` и конфигурацию Global Broker. Payload берётся из WIS2 notification."
+      ],
+      "recipe_file": "catalog/recipes/upper-air.json",
+      "request": {
+        "broker": "gb.wis.cma.cn",
+        "max_bytes": 8388608,
+        "password": "everyone",
+        "port": 8883,
+        "topic": "cache/a/wis2/ru-aviamettelecom/data/core/weather/surface-based-observations/temp",
+        "username": "everyone"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "smhi-open-data": {
+      "adapter": "http",
+      "example_ru": "Получить актуальный прогноз SMHI SNOW для точки 16E 58N через `snow1g/version/1`.",
+      "fallback": "fmi-open-data",
+      "fetch_command": "python -m weather_source fetch smhi-open-data",
+      "issues_ru": [
+        "Старый прогнозный API `pmp3g/version/2` прекращён 2026-03-31. Для новых интеграций используется SNOW `snow1g/version/1`."
+      ],
+      "probe": {
+        "url": "https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/16/lat/58/data.json"
+      },
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "filename": "smhi-snow-16E-58N.json",
+        "max_bytes": 4194304,
+        "url": "https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/16/lat/58/data.json"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "ucar-cdaac": {
+      "adapter": "external",
+      "example_ru": "Скачать небольшой COSMIC-2 NRT Level-2 пакет для последнего опубликованного дня через `data.cosmic.ucar.edu` (по умолчанию avnPrf, а не гигабайтный atmPrf).",
+      "fallback": "noaa-ncei-igra",
+      "fetch_command": "python -m weather_source fetch ucar-cdaac --allow-external",
+      "issues_ru": [
+        "Старый CDAAC landing не показывает новый anonymous data host `data.cosmic.ucar.edu/gnss-ro/`. NRT Level 2 публикуется в `atmPrf`, `wetPf2` и BUFR."
+      ],
+      "probe": {
+        "url": "https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level2/"
+      },
+      "recipe_file": "catalog/recipes/upper-air.json",
+      "request": {
+        "command": "python -m weather_source.providers cdaac-avnprf"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "wmo-wis2": {
+      "adapter": "wis2",
+      "example_ru": "Подписаться на французский WIS2 Global Broker и получить первое core-data уведомление с последующим скачиванием payload.",
+      "fallback": "eccc-datamart",
+      "fetch_command": "python -m weather_source fetch wmo-wis2",
+      "issues_ru": [
+        "Каталог заявлял MQTT, но содержал только документацию и не содержал рабочего Global Broker.",
+        "Для core data используются публичные Global Brokers с everyone/everyone; уведомление содержит ссылку на payload."
+      ],
+      "recipe_file": "catalog/recipes/core.json",
+      "request": {
+        "broker": "globalbroker.meteo.fr",
+        "max_bytes": 8388608,
+        "password": "everyone",
+        "port": 8883,
+        "topic": "origin/a/wis2/+/data/core/#",
+        "username": "everyone"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    },
+    "woudc-ozonesonde": {
+      "adapter": "http",
+      "example_ru": "Получить один опубликованный WOUDC data-record через официальный OGC API; для realtime ozone notifications использовать broker.woudc.org:8883 и documented WIS2 topic.",
+      "fallback": "gruan",
+      "fetch_command": "python -m weather_source fetch woudc-ozonesonde",
+      "issues_ru": [
+        "Карточка уже упоминала WOUDC API, но не давала конкретного OGC API запроса и не фиксировала официальный WIS2 MQTT broker/topic."
+      ],
+      "probe": {
+        "url": "https://api.woudc.org/collections/discovery_metadata/items/OzoneSonde?f=json&lang=en"
+      },
+      "recipe_file": "catalog/recipes/specialized.json",
+      "request": {
+        "filename": "woudc-data-record.json",
+        "max_bytes": 2097152,
+        "params": {
+          "f": "json",
+          "limit": 1
+        },
+        "url": "https://api.woudc.org/collections/data-records/items"
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06",
+      "wis2": {
+        "broker": "broker.woudc.org",
+        "password": "everyone",
+        "port": 8883,
+        "topic": "origin/a/wis2/org-woudc/data/core/atmospheric-composition/experimental/observations/gases/ozone",
+        "username": "everyone"
+      }
+    },
+    "wyoming-upperair": {
+      "adapter": "external",
+      "example_ru": "Воспроизвести документированный Siphon example: GSO, 2024-09-27 00 UTC, сохранить радиозондовый профиль CSV.",
+      "fallback": "noaa-ncei-igra",
+      "fetch_command": "python -m weather_source fetch wyoming-upperair --allow-external",
+      "issues_ru": [
+        "В каталоге указана веб-страница; Siphon использует отдельный CGI endpoint и является более устойчивым клиентским слоем."
+      ],
+      "probe": {
+        "url": "https://weather.uwyo.edu/upperair/sounding.html"
+      },
+      "recipe_file": "catalog/recipes/upper-air.json",
+      "request": {
+        "command": "python -c \"from datetime import datetime; from siphon.simplewebservice.wyoming import WyomingUpperAir; df=WyomingUpperAir.request_data(datetime(2024,9,27,0),'GSO'); df.to_csv('wyoming-GSO-2024092700.csv',index=False); print(df[['pressure','height','temperature','dewpoint']].head())\""
+      },
+      "status": "public",
+      "verdict": "corrected",
+      "verified": "2026-09-06"
+    }
+  },
+  "verified": "2026-09-06"
+}

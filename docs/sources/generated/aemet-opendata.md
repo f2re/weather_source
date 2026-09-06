@@ -69,6 +69,40 @@ API испанской AEMET для наблюдений прогнозов кл
 - Для оперативного контура учитывать: `tier=secondary`, `operational=true`, `access.level=registration`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** ✅ подтверждено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** нужны бесплатные/договорные учётные данные (`credentials`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/core.json`
+
+Запросить `/api/observacion/convencional/todas`, извлечь поле `datos` и скачать текущие наблюдения.
+
+```bash
+python -m weather_source describe aemet-opendata
+python -m weather_source probe aemet-opendata
+python -m weather_source fetch aemet-opendata --allow-external
+```
+
+**Требуемые переменные окружения:** `AEMET_API_KEY`.
+
+**Что исправлено или обнаружено аудитом:**
+
+- AEMET OpenData требует API key и возвращает метаданные со вторым URL `datos`; один GET к landing page не является получением наблюдений.
+
+**Резервный источник:** `wmo-wis2`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -m weather_source.providers aemet
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -126,6 +160,21 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://opendata.aemet.es/centrodedescargas/inicio](https://opendata.aemet.es/centrodedescargas/inicio)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `ok` · **verified:** `2026-09-06`  
+**Runtime access:** `credentials` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe aemet-opendata
+python -m weather_source fetch aemet-opendata --allow-external
+```
+
+Required environment: `AEMET_API_KEY`.
+
+Fallback: `wmo-wis2`.
 
 ### Agent note
 

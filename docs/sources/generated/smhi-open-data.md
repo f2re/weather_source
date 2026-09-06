@@ -70,6 +70,30 @@
 - Для оперативного контура учитывать: `tier=secondary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+Получить актуальный прогноз SMHI SNOW для точки 16E 58N через `snow1g/version/1`.
+
+```bash
+python -m weather_source describe smhi-open-data
+python -m weather_source probe smhi-open-data
+python -m weather_source fetch smhi-open-data
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Старый прогнозный API `pmp3g/version/2` прекращён 2026-03-31. Для новых интеграций используется SNOW `snow1g/version/1`.
+
+**Резервный источник:** `fmi-open-data`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -128,6 +152,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://opendata.smhi.se/](https://opendata.smhi.se/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe smhi-open-data
+python -m weather_source fetch smhi-open-data
+```
+
+Fallback: `fmi-open-data`.
 
 ### Agent note
 

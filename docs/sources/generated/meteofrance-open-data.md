@@ -70,6 +70,38 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/core.json`
+
+Автоматически найти последний доступный 3-часовой SYNOP CSV Météo-France в `donnees_libres/Txt/Synop/`.
+
+```bash
+python -m weather_source describe meteofrance-open-data
+python -m weather_source probe meteofrance-open-data
+python -m weather_source fetch meteofrance-open-data --allow-external
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- `meteo.data.gouv.fr` — каталог; для части данных существуют прямые anonymous files. Из-за разных схем нельзя считать весь портал одинаково open/API.
+
+**Резервный источник:** `wmo-wis2`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -m weather_source.providers meteofrance-synop
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -128,6 +160,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://meteo.data.gouv.fr/](https://meteo.data.gouv.fr/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe meteofrance-open-data
+python -m weather_source fetch meteofrance-open-data --allow-external
+```
+
+Fallback: `wmo-wis2`.
 
 ### Agent note
 

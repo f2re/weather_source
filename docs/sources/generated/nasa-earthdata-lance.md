@@ -73,6 +73,40 @@
 - Для оперативного контура учитывать: `tier=specialized`, `operational=true`, `access.level=registration`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** нужны бесплатные/договорные учётные данные (`credentials`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/satellite.json`
+
+Через earthaccess найти один near-real-time VIIRS 375 m active-fire granule `VNP14IMGTDL_NRT` и скачать его с Earthdata Login.
+
+```bash
+python -m weather_source describe nasa-earthdata-lance
+python -m weather_source probe nasa-earthdata-lance
+python -m weather_source fetch nasa-earthdata-lance --allow-external
+```
+
+**Требуемые переменные окружения:** `EARTHDATA_USERNAME`, `EARTHDATA_PASSWORD`.
+
+**Что исправлено или обнаружено аудитом:**
+
+- LANCE/LAADS web pages открыты, но scripted HTTPS downloads требуют Earthdata/LAADS token или Earthdata Login. Нельзя маркировать скачивание как anonymous.
+
+**Резервный источник:** `noaa-goes`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -c "import earthaccess; earthaccess.login(strategy='environment'); r=earthaccess.search_data(short_name='VNP14IMGTDL_NRT',count=1); print(r); earthaccess.download(r,'nasa-lance')"
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -134,6 +168,21 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 
 - [https://www.earthdata.nasa.gov/data/tools/lance](https://www.earthdata.nasa.gov/data/tools/lance)
 - [https://earthaccess.readthedocs.io/](https://earthaccess.readthedocs.io/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `credentials` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/satellite.json`
+
+```bash
+python -m weather_source probe nasa-earthdata-lance
+python -m weather_source fetch nasa-earthdata-lance --allow-external
+```
+
+Required environment: `EARTHDATA_USERNAME`, `EARTHDATA_PASSWORD`.
+
+Fallback: `noaa-goes`.
 
 ### Agent note
 

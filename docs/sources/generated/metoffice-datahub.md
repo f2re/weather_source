@@ -69,6 +69,32 @@ API-доступ к выбранным наблюдениям и прогноз�
 - Для оперативного контура учитывать: `tier=secondary`, `operational=true`, `access.level=free-tier`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** нужны бесплатные/договорные учётные данные (`credentials`)  
+**Runtime-адаптер:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+Получить Site-Specific Global Spot three-hourly forecast для Лондона через Weather DataHub с API key.
+
+```bash
+python -m weather_source describe metoffice-datahub
+python -m weather_source probe metoffice-datahub
+python -m weather_source fetch metoffice-datahub
+```
+
+**Требуемые переменные окружения:** `METOFFICE_API_KEY`.
+
+**Что исправлено или обнаружено аудитом:**
+
+- DataHub landing page не является API endpoint. Конкретный продукт/подписка определяют доступ и квоту.
+
+**Резервный источник:** `met-norway-api`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -126,6 +152,21 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://datahub.metoffice.gov.uk/](https://datahub.metoffice.gov.uk/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `credentials` · **adapter:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe metoffice-datahub
+python -m weather_source fetch metoffice-datahub
+```
+
+Required environment: `METOFFICE_API_KEY`.
+
+Fallback: `met-norway-api`.
 
 ### Agent note
 

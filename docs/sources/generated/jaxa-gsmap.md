@@ -70,6 +70,41 @@
 - Для оперативного контура учитывать: `tier=specialized`, `operational=true`, `access.level=registration`, `automation=medium`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** нужны бесплатные/договорные учётные данные (`credentials`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/satellite.json`
+
+Использовать FTP-реквизиты из письма GSMaP registration, открыть `/now/latest/`, выбрать самый свежий `.dat.gz` и скачать его.
+
+```bash
+python -m weather_source describe jaxa-gsmap
+python -m weather_source probe jaxa-gsmap
+python -m weather_source fetch jaxa-gsmap --allow-external
+```
+
+**Требуемые переменные окружения:** `JAXA_GSMAP_HOST`, `JAXA_GSMAP_USER`, `JAXA_GSMAP_PASSWORD`.
+
+**Что исправлено или обнаружено аудитом:**
+
+- Binary/CSV GSMaP_NRT/NOW выдаются после бесплатной регистрации на password-protected FTP, а не как anonymous HTTPS API.
+- JAXA объявила миграцию G-Portal и смену Web/SFTP/CSW domains в октябре 2026; endpoint нельзя хардкодить навечно.
+
+**Резервный источник:** `nasa-gpm-imerg`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -m weather_source.providers jaxa-gsmap
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -128,6 +163,21 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://sharaku.eorc.jaxa.jp/GSMaP/](https://sharaku.eorc.jaxa.jp/GSMaP/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `credentials` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/satellite.json`
+
+```bash
+python -m weather_source probe jaxa-gsmap
+python -m weather_source fetch jaxa-gsmap --allow-external
+```
+
+Required environment: `JAXA_GSMAP_HOST`, `JAXA_GSMAP_USER`, `JAXA_GSMAP_PASSWORD`.
+
+Fallback: `nasa-gpm-imerg`.
 
 ### Agent note
 

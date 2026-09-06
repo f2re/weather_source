@@ -71,6 +71,30 @@ WFS/API-доступ к наблюдениям аэрологии радиоло
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+Получить последние sounding observations FMI через официальный WFS stored query в multipointcoverage.
+
+```bash
+python -m weather_source describe fmi-open-data
+python -m weather_source probe fmi-open-data
+python -m weather_source fetch fmi-open-data
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Общая WFS-ссылка не показывала, какой stored query нужен для аэрологии.
+
+**Резервный источник:** `wmo-wis2`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -130,6 +154,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://en.ilmatieteenlaitos.fi/open-data](https://en.ilmatieteenlaitos.fi/open-data)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe fmi-open-data
+python -m weather_source fetch fmi-open-data
+```
+
+Fallback: `wmo-wis2`.
 
 ### Agent note
 

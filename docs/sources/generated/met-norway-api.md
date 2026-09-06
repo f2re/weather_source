@@ -71,6 +71,30 @@
 - Для оперативного контура учитывать: `tier=secondary`, `operational=true`, `access.level=registration`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+Получить открытый Locationforecast 2.0 compact для Осло; обязательный идентифицирующий User-Agent добавляет клиент Weather Source.
+
+```bash
+python -m weather_source describe met-norway-api
+python -m weather_source probe met-norway-api
+python -m weather_source fetch met-norway-api
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Каталог смешивал anonymous Locationforecast и credentialed Frost и поэтому ошибочно маркировал весь источник как registration.
+
+**Резервный источник:** `smhi-open-data`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -130,6 +154,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 
 - [https://api.met.no/](https://api.met.no/)
 - [https://frost.met.no/](https://frost.met.no/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe met-norway-api
+python -m weather_source fetch met-norway-api
+```
+
+Fallback: `smhi-open-data`.
 
 ### Agent note
 

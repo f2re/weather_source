@@ -2,7 +2,7 @@
 
 > **Русская версия ниже является самостоятельной технической карточкой.** English reference follows after it.
 
-`eumetnet-eprofile` · 🔵 **специализированный / specialized** · оперативный / operational · проверено / verified **2026-09-05**
+`eumetnet-eprofile` · 🔵 **специализированный / specialized** · оперативный / operational · проверено / verified **2026-09-06**
 
 ---
 
@@ -18,7 +18,7 @@
 
 ### Что можно получить и когда использовать
 
-Полезен для заполнения временных промежутков между радиозондами частыми профилями ветра и другими вертикальными наблюдениями.
+Полезен для заполнения промежутков между радиозондами, но единого неограниченного публичного machine endpoint для всех продуктов E-PROFILE нет. Перед оперативным приёмом нужно определить конкретный продукт, поставщика и права.
 
 Эта карточка подходит для выбора источника по покрытию, оперативности, способу автоматизации и нативным форматам. Для критического приёма предпочтительны официальные машинные endpoints и сохранение исходного сообщения/файла.
 
@@ -31,31 +31,30 @@
 | Типичная задержка | near-real-time |
 | Архив | archives through partner services |
 | Надёжность | `high` |
-| Удобство автоматизации | `high` |
-| Протоколы | `mqtt`, `https`, `wis2` |
+| Удобство автоматизации | `medium` |
+| Протоколы | `https`, `ftp` |
 | Форматы | `BUFR`, `NetCDF`, `provider-dependent` |
 
 ### Доступ и ограничения
 
-- **Уровень доступа:** открытый без регистрации (`open`).
-- **Авторизация:** WIS2 core/open subsets where published; some products may have separate rules.
-- **Лицензия/условия:** EUMETNET and WMO terms.
+- **Уровень доступа:** ограниченный доступ (`restricted`).
+- **Авторизация:** public visualization exists; third-party data use depends on EUMETNET/member licensing and product-specific rights.
+- **Лицензия/условия:** EUMETNET/member data policy; no assumption of unrestricted commercial reuse.
 
 ### Точки доступа
 
 | Endpoint | Протокол | Назначение | Health-check | URL |
 |---|---|---|---:|---|
-| E-PROFILE | `https` | documentation | да | [открыть / open](https://e-profile.eu/) |
+| E-PROFILE | `https` | programme information and visualization entry point | да | [открыть / open](https://e-profile.eu/) |
 
 ### ПО, библиотеки и декодеры
 
-- [wis2downloader](https://github.com/World-Meteorological-Organization/wis2downloader) — WIS2 receiving where available.
-- [ecCodes](https://github.com/ecmwf/eccodes) — BUFR decoding.
+- [ecCodes](https://github.com/ecmwf/eccodes) — BUFR decoding where BUFR is supplied.
 - **Быстрый выбор декодера по формату:** ecCodes / pybufrkit, xarray / netCDF4.
 
 ### Рекомендуемый алгоритм автоматического приёма
 
-1. Подписаться на нужную WIS2/MQTT-тему, принимать уведомления и скачивать payload по canonical/cache HTTPS-ссылке.
+1. Забирать данные напрямую с официального HTTPS/FTP-файлового дерева, не парся HTML-визуализатор.
 2. Сохранять исходный файл вместе с временем получения, URL/идентификатором продукта и контрольной суммой.
 3. Декодировать нативный формат стандартными средствами: ecCodes / pybufrkit, xarray / netCDF4.
 4. Контролировать не только доступность endpoint, но и свежесть данных; для критического контура держать независимый fallback.
@@ -67,8 +66,34 @@
 ### Для ИИ-агента
 
 - Источник истины для этой карточки: `catalog/sources/upper-air.yaml` → `id: eumetnet-eprofile`.
-- Для оперативного контура учитывать: `tier=specialized`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
+- Для оперативного контура учитывать: `tier=specialized`, `operational=true`, `access.level=restricted`, `automation=medium`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
+
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** доступ ограничен правами участника/лицензией (`restricted`)  
+**Runtime-адаптер:** `unavailable`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+Использовать E-PROFILE как сеть/каталог и получать конкретный профиль через национального поставщика, WIS2 или лицензированный EUMETNET-канал после проверки прав конкретного продукта.
+
+```bash
+python -m weather_source describe eumetnet-eprofile
+python -m weather_source probe eumetnet-eprofile
+python -m weather_source example eumetnet-eprofile
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Сеть и продукты E-PROFILE существуют, но текущая карточка ошибочно превращала это в гарантированный anonymous WIS2 feed. Политика EUMETNET ограничивает часть третьестороннего использования и не подтверждает единый unrestricted bulk/API endpoint.
+
+**Почему нет автоматического public fetch:** Нет одного гарантированного unrestricted machine endpoint для всей E-PROFILE сети; доступ зависит от конкретного продукта, поставщика и лицензии.
+
+**Резервный источник:** `fmi-open-data`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
 
 ---
 
@@ -84,7 +109,7 @@ European network of radar wind profilers, weather-radar vertical wind profiles, 
 
 ### What it provides and when to use it
 
-Valuable for filling temporal gaps between radiosonde launches with frequent wind/profile observations.
+Valuable for filling temporal gaps between radiosonde launches, but there is no single unrestricted public machine endpoint covering every E-PROFILE product. Resolve product rights and provider before operational ingest.
 
 Use this record to select the feed by geographic coverage, latency, machine access, native formats and operational suitability.
 
@@ -97,30 +122,29 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 | Typical latency | near-real-time |
 | Archive | archives through partner services |
 | Reliability | `high` |
-| Automation | `high` |
-| Protocols | `mqtt`, `https`, `wis2` |
+| Automation | `medium` |
+| Protocols | `https`, `ftp` |
 | Formats | `BUFR`, `NetCDF`, `provider-dependent` |
 
 ### Access and restrictions
 
-- **Access level:** `open`.
-- **Authentication:** WIS2 core/open subsets where published; some products may have separate rules.
-- **Terms/licensing:** EUMETNET and WMO terms.
+- **Access level:** `restricted`.
+- **Authentication:** public visualization exists; third-party data use depends on EUMETNET/member licensing and product-specific rights.
+- **Terms/licensing:** EUMETNET/member data policy; no assumption of unrestricted commercial reuse.
 
 ### Endpoints
 
 | Endpoint | Protocol | Role | Health check | URL |
 |---|---|---|---:|---|
-| E-PROFILE | `https` | documentation | yes | [открыть / open](https://e-profile.eu/) |
+| E-PROFILE | `https` | programme information and visualization entry point | yes | [открыть / open](https://e-profile.eu/) |
 
 ### Software and decoders
 
-- [wis2downloader](https://github.com/World-Meteorological-Organization/wis2downloader) — WIS2 receiving where available.
-- [ecCodes](https://github.com/ecmwf/eccodes) — BUFR decoding.
+- [ecCodes](https://github.com/ecmwf/eccodes) — BUFR decoding where BUFR is supplied.
 
 ### Recommended ingestion flow
 
-1. Subscribe to the required WIS2/MQTT topic, consume notifications, then download payloads from canonical/cache HTTPS links.
+1. Fetch the official HTTPS/FTP file tree directly; do not scrape rendered product viewers.
 2. Preserve the raw payload together with receive time, source URL/product identifier and checksum.
 3. Decode native payloads with standards-aware tools such as ecCodes / pybufrkit, xarray / netCDF4.
 4. Monitor data freshness, not just endpoint reachability, and configure an independent fallback for critical ingestion.
@@ -128,6 +152,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://e-profile.eu/](https://e-profile.eu/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `restricted` · **adapter:** `unavailable`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+```bash
+python -m weather_source probe eumetnet-eprofile
+python -m weather_source example eumetnet-eprofile
+```
+
+Fallback: `fmi-open-data`.
 
 ### Agent note
 

@@ -71,6 +71,30 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `http`  
+**Recipe:** `catalog/recipes/ocean.json`
+
+Скачать официальный realtime2 текстовый поток буя 46042 (последние наблюдения).
+
+```bash
+python -m weather_source describe noaa-ndbc
+python -m weather_source probe noaa-ndbc
+python -m weather_source fetch noaa-ndbc
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Каталог ссылался на портал, но не содержал прямой operational-файл станции.
+
+**Резервный источник:** `eccc-datamart`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -130,6 +154,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://www.ndbc.noaa.gov/data_access.shtml](https://www.ndbc.noaa.gov/data_access.shtml)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `http`  
+**Recipe:** `catalog/recipes/ocean.json`
+
+```bash
+python -m weather_source probe noaa-ndbc
+python -m weather_source fetch noaa-ndbc
+```
+
+Fallback: `eccc-datamart`.
 
 ### Agent note
 

@@ -70,6 +70,30 @@ OGC-сервисы канадских метеорологических и эк
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+Получить одну актуальную Surface Weather Observation из OGC API collection `swob-realtime` в JSON.
+
+```bash
+python -m weather_source describe eccc-geomet
+python -m weather_source probe eccc-geomet
+python -m weather_source fetch eccc-geomet
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Каталог указывал только API root; теперь пример подтверждает получение численных/атрибутивных данных, а не WMS-картинки.
+
+**Резервный источник:** `eccc-datamart`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -128,6 +152,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://eccc-msc.github.io/open-data/msc-geomet/readme_en/](https://eccc-msc.github.io/open-data/msc-geomet/readme_en/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe eccc-geomet
+python -m weather_source fetch eccc-geomet
+```
+
+Fallback: `eccc-datamart`.
 
 ### Agent note
 

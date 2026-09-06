@@ -70,6 +70,30 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `s3_latest`  
+**Recipe:** `catalog/recipes/core.json`
+
+Проверить реальный публичный NODD bucket GFS и скачать небольшой последний index-файл из текущего 00 UTC цикла.
+
+```bash
+python -m weather_source describe noaa-nodd
+python -m weather_source probe noaa-nodd
+python -m weather_source fetch noaa-nodd
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- NODD — программа распространения, а не один dataset; каталог не содержал ни одного реального bucket.
+
+**Резервный источник:** `noaa-nomads`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -128,6 +152,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://www.noaa.gov/information-technology/open-data-dissemination](https://www.noaa.gov/information-technology/open-data-dissemination)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `s3_latest`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe noaa-nodd
+python -m weather_source fetch noaa-nodd
+```
+
+Fallback: `noaa-nomads`.
 
 ### Agent note
 

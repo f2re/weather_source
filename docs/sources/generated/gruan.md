@@ -2,7 +2,7 @@
 
 > **Русская версия ниже является самостоятельной технической карточкой.** English reference follows after it.
 
-`gruan` · 🔵 **специализированный / specialized** · неоперативный / non-operational · проверено / verified **2026-09-05**
+`gruan` · 🔵 **специализированный / specialized** · неоперативный / non-operational · проверено / verified **2026-09-06**
 
 ---
 
@@ -18,7 +18,7 @@
 
 ### Что можно получить и когда использовать
 
-Лучше всего подходит для эталонной верификации, гомогенизации и исследований с учётом неопределённостей.
+Лучше всего подходит для эталонной верификации, гомогенизации и исследований с учётом неопределённостей. Файловый архив не следует описывать как анонимный доступ.
 
 Эта карточка подходит для выбора источника по покрытию, оперативности, способу автоматизации и нативным форматам. Для критического приёма предпочтительны официальные машинные endpoints и сохранение исходного сообщения/файла.
 
@@ -38,14 +38,14 @@
 ### Доступ и ограничения
 
 - **Уровень доступа:** бесплатный после регистрации (`registration`).
-- **Авторизация:** data access may require registration.
+- **Авторизация:** free registration is required before access to the file archive.
 - **Лицензия/условия:** GRUAN data policy.
 
 ### Точки доступа
 
 | Endpoint | Протокол | Назначение | Health-check | URL |
 |---|---|---|---:|---|
-| GRUAN | `https` | documentation and data access | да | [открыть / open](https://www.gruan.org/) |
+| GRUAN | `https` | documentation and registered data access | да | [открыть / open](https://www.gruan.org/) |
 
 ### ПО, библиотеки и декодеры
 
@@ -69,6 +69,32 @@
 - Для оперативного контура учитывать: `tier=specialized`, `operational=false`, `access.level=registration`, `automation=medium`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный стабильный machine endpoint не подтверждён (`manual`)  
+**Runtime-адаптер:** `unavailable`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+После бесплатной регистрации использовать File archive для RS41-GDP.1/RS92-GDP.2. Репозиторий намеренно не имитирует anonymous API, которого GRUAN не документирует.
+
+```bash
+python -m weather_source describe gruan
+python -m weather_source probe gruan
+python -m weather_source example gruan
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- GRUAN products open, но Lead Centre прямо требует зарегистрироваться перед доступом к file archive. Публичный стабильный machine API без этого шага не подтверждён.
+
+**Почему нет автоматического public fetch:** Перед доступом к опубликованным файлам GRUAN требуется регистрация на сайте; стабильный публичный machine endpoint, который можно безопасно зашить в автоматический клиент, не подтверждён.
+
+**Резервный источник:** `noaa-ncei-igra`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -83,7 +109,7 @@ Reference-quality upper-air observations with documented corrections and uncerta
 
 ### What it provides and when to use it
 
-Best suited to reference validation, homogenization and uncertainty-aware research.
+Best suited to reference validation, homogenization and uncertainty-aware research. Do not describe the file archive as anonymous access.
 
 Use this record to select the feed by geographic coverage, latency, machine access, native formats and operational suitability.
 
@@ -103,14 +129,14 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Access and restrictions
 
 - **Access level:** `registration`.
-- **Authentication:** data access may require registration.
+- **Authentication:** free registration is required before access to the file archive.
 - **Terms/licensing:** GRUAN data policy.
 
 ### Endpoints
 
 | Endpoint | Protocol | Role | Health check | URL |
 |---|---|---|---:|---|
-| GRUAN | `https` | documentation and data access | yes | [открыть / open](https://www.gruan.org/) |
+| GRUAN | `https` | documentation and registered data access | yes | [открыть / open](https://www.gruan.org/) |
 
 ### Software and decoders
 
@@ -126,6 +152,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://www.gruan.org/](https://www.gruan.org/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `manual` · **adapter:** `unavailable`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+```bash
+python -m weather_source probe gruan
+python -m weather_source example gruan
+```
+
+Fallback: `noaa-ncei-igra`.
 
 ### Agent note
 

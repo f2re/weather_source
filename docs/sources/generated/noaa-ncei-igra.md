@@ -2,7 +2,7 @@
 
 > **Русская версия ниже является самостоятельной технической карточкой.** English reference follows after it.
 
-`noaa-ncei-igra` · 🟡 **резервный/региональный / secondary** · оперативный / operational · проверено / verified **2026-09-05**
+`noaa-ncei-igra` · 🟡 **резервный/региональный / secondary** · оперативный / operational · проверено / verified **2026-09-06**
 
 ---
 
@@ -45,7 +45,8 @@
 
 | Endpoint | Протокол | Назначение | Health-check | URL |
 |---|---|---|---:|---|
-| IGRA product page | `https` | documentation and download | да | [открыть / open](https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive) |
+| IGRA product page | `https` | documentation and dataset overview | да | [открыть / open](https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive) |
+| IGRA direct data tree | `https` | direct station/profile download | да | [открыть / open](https://www.ncei.noaa.gov/pub/data/igra/data/) |
 
 ### ПО, библиотеки и декодеры
 
@@ -68,6 +69,38 @@
 - Источник истины для этой карточки: `catalog/sources/upper-air.yaml` → `id: noaa-ncei-igra`.
 - Для оперативного контура учитывать: `tier=secondary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
+
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+Воспроизвести официальный пример Siphon: скачать sounding IGRA2 станции USM00070026 за 2014-09-10 00 UTC и сохранить таблицу CSV.
+
+```bash
+python -m weather_source describe noaa-ncei-igra
+python -m weather_source probe noaa-ncei-igra
+python -m weather_source fetch noaa-ncei-igra --allow-external
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Карточка указывала product landing page, хотя есть прямое HTTPS file tree и готовый Siphon IGRAUpperAir.
+
+**Резервный источник:** `wyoming-upperair`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -c "from datetime import datetime; from siphon.simplewebservice.igra2 import IGRAUpperAir; df,h=IGRAUpperAir.request_data(datetime(2014,9,10,0),'USM00070026'); df.to_csv('igra-USM00070026-2014091000.csv',index=False); print(h.to_dict('records'))"
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
 
 ---
 
@@ -110,7 +143,8 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 
 | Endpoint | Protocol | Role | Health check | URL |
 |---|---|---|---:|---|
-| IGRA product page | `https` | documentation and download | yes | [открыть / open](https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive) |
+| IGRA product page | `https` | documentation and dataset overview | yes | [открыть / open](https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive) |
+| IGRA direct data tree | `https` | direct station/profile download | yes | [открыть / open](https://www.ncei.noaa.gov/pub/data/igra/data/) |
 
 ### Software and decoders
 
@@ -126,6 +160,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive](https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+```bash
+python -m weather_source probe noaa-ncei-igra
+python -m weather_source fetch noaa-ncei-igra --allow-external
+```
+
+Fallback: `wyoming-upperair`.
 
 ### Agent note
 

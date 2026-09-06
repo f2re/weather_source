@@ -69,6 +69,41 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=registration`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** нужны бесплатные/договорные учётные данные (`credentials`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/nwp.json`
+
+Через CDS API Atmosphere Data Store скачать небольшой CAMS analysis: total aerosol optical depth 670 nm, 2021-03-24 00 UTC, область 69–70N / 17–18W, NetCDF ZIP.
+
+```bash
+python -m weather_source describe copernicus-ads
+python -m weather_source probe copernicus-ads
+python -m weather_source fetch copernicus-ads --allow-external
+```
+
+**Требуемые переменные окружения:** `CDSAPI_KEY`.
+
+**Что исправлено или обнаружено аудитом:**
+
+- Программный доступ требует учётную запись/API token и принятие условий ADS.
+- Предыдущий recipe только создавал `cdsapi.Client` и не получал данных; теперь он выполняет реальный минимальный CAMS retrieval.
+
+**Резервный источник:** `nasa-earthdata-lance`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -c "import os,cdsapi; c=cdsapi.Client(url='https://ads.atmosphere.copernicus.eu/api',key=os.environ['CDSAPI_KEY']); c.retrieve('cams-global-atmospheric-composition-forecasts',{'date':'2021-03-24','time':['00:00'],'leadtime_hour':'0','area':[70,-18,69,-17],'type':'analysis','variable':'total_aerosol_optical_depth_670nm','format':'netcdf_zip'},'cams-aod670-2021032400.zip')"
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -126,6 +161,21 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://ads.atmosphere.copernicus.eu/](https://ads.atmosphere.copernicus.eu/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `credentials` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/nwp.json`
+
+```bash
+python -m weather_source probe copernicus-ads
+python -m weather_source fetch copernicus-ads --allow-external
+```
+
+Required environment: `CDSAPI_KEY`.
+
+Fallback: `nasa-earthdata-lance`.
 
 ### Agent note
 

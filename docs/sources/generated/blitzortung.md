@@ -68,6 +68,32 @@
 - Для оперативного контура учитывать: `tier=aggregator`, `operational=true`, `access.level=restricted`, `automation=low`, `reliability=medium`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** доступ ограничен правами участника/лицензией (`restricted`)  
+**Runtime-адаптер:** `unavailable`  
+**Recipe:** `catalog/recipes/aggregators.json`
+
+Для участника использовать предоставленный проектом participant/raw access согласно личным правам. Для публичной автоматизации вместо Blitzortung использовать NOAA GLM (`noaa-goes`) или MTG-LI через EUMETSAT.
+
+```bash
+python -m weather_source describe blitzortung
+python -m weather_source probe blitzortung
+python -m weather_source example blitzortung
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Raw lightning data не является unrestricted public API: проект разрешает raw access участникам или отдельно одобренным пользователям и ограничивает внешние проекты.
+
+**Почему нет автоматического public fetch:** Blitzortung не документирует unrestricted public raw-data API; raw access предназначен участникам или отдельно разрешённым проектам.
+
+**Резервный источник:** `noaa-goes`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -125,6 +151,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://www.blitzortung.org/](https://www.blitzortung.org/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `restricted` · **adapter:** `unavailable`  
+**Recipe:** `catalog/recipes/aggregators.json`
+
+```bash
+python -m weather_source probe blitzortung
+python -m weather_source example blitzortung
+```
+
+Fallback: `noaa-goes`.
 
 ### Agent note
 

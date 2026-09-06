@@ -72,6 +72,31 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `s3_latest`  
+**Recipe:** `catalog/recipes/satellite.json`
+
+Из публичного GOES-19 S3 bucket получить самый свежий GLM Level-2 Lightning Cluster/Flash/Group product текущего UTC-часа.
+
+```bash
+python -m weather_source describe noaa-goes
+python -m weather_source probe noaa-goes
+python -m weather_source fetch noaa-goes
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Карточка не называла актуальные публичные buckets.
+- В 2026 году GOES-East — GOES-19 (`noaa-goes19`), GOES-West — GOES-18 (`noaa-goes18`).
+
+**Резервный источник:** `eumetsat-data-store`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -132,6 +157,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 
 - [https://www.goes-r.gov/products/overview.html](https://www.goes-r.gov/products/overview.html)
 - [https://www.noaa.gov/information-technology/open-data-dissemination](https://www.noaa.gov/information-technology/open-data-dissemination)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `s3_latest`  
+**Recipe:** `catalog/recipes/satellite.json`
+
+```bash
+python -m weather_source probe noaa-goes
+python -m weather_source fetch noaa-goes
+```
+
+Fallback: `eumetsat-data-store`.
 
 ### Agent note
 

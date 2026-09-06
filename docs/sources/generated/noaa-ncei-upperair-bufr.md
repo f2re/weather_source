@@ -72,6 +72,31 @@
 - Для оперативного контура учитывать: `tier=secondary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `html_latest`  
+**Recipe:** `catalog/recipes/specialized.json`
+
+Найти последний monthly raw NWSTG upper-air BUFR archive в прямом NCEI каталоге. Полная загрузка намеренно требует `--full`.
+
+```bash
+python -m weather_source describe noaa-ncei-upperair-bufr
+python -m weather_source probe noaa-ncei-upperair-bufr
+python -m weather_source fetch noaa-ncei-upperair-bufr
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- В каталоге был metadata landing page, но NCEI публикует прямой HTTPS archive.
+- Файлы архива крупные monthly tar.gz; автоматический клиент не должен скачивать их как health-check.
+
+**Резервный источник:** `noaa-ncei-igra`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -132,6 +157,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 
 - [https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc%3AC01500](https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc%3AC01500)
 - [https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive](https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `html_latest`  
+**Recipe:** `catalog/recipes/specialized.json`
+
+```bash
+python -m weather_source probe noaa-ncei-upperair-bufr
+python -m weather_source fetch noaa-ncei-upperair-bufr
+```
+
+Fallback: `noaa-ncei-igra`.
 
 ### Agent note
 

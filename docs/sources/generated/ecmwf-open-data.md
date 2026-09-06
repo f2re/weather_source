@@ -71,6 +71,38 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/nwp.json`
+
+Официальным ecmwf-opendata скачать из последнего доступного IFS-прогноза 2m temperature на шаге 24 в GRIB2.
+
+```bash
+python -m weather_source describe ecmwf-open-data
+python -m weather_source probe ecmwf-open-data
+python -m weather_source fetch ecmwf-open-data --allow-external
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- В каталоге была только страница документации, хотя ECMWF поддерживает официальный ecmwf-opendata клиент.
+
+**Резервный источник:** `noaa-nomads`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -c "from ecmwf.opendata import Client; r=Client(source='ecmwf').retrieve(type='fc', step=24, param='2t', target='ecmwf-2t.grib2'); print(r.datetime)"
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -130,6 +162,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://www.ecmwf.int/en/forecasts/datasets/open-data](https://www.ecmwf.int/en/forecasts/datasets/open-data)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/nwp.json`
+
+```bash
+python -m weather_source probe ecmwf-open-data
+python -m weather_source fetch ecmwf-open-data --allow-external
+```
+
+Fallback: `noaa-nomads`.
 
 ### Agent note
 

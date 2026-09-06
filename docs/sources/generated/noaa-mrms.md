@@ -73,6 +73,30 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `html_latest`  
+**Recipe:** `catalog/recipes/radar.json`
+
+В официальном MRMS operational tree найти и скачать последний CompositeReflectivity GRIB2.gz; большие продукты требуют --full.
+
+```bash
+python -m weather_source describe noaa-mrms
+python -m weather_source probe noaa-mrms
+python -m weather_source fetch noaa-mrms
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Каталог содержит operational file tree, но не конкретный воспроизводимый продукт; также отсутствовал публичный bucket noaa-mrms-pds.
+
+**Резервный источник:** `noaa-nexrad`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -134,6 +158,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 
 - [https://www.nssl.noaa.gov/projects/mrms/](https://www.nssl.noaa.gov/projects/mrms/)
 - [https://mrms.ncep.noaa.gov/data/](https://mrms.ncep.noaa.gov/data/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `html_latest`  
+**Recipe:** `catalog/recipes/radar.json`
+
+```bash
+python -m weather_source probe noaa-mrms
+python -m weather_source fetch noaa-mrms
+```
+
+Fallback: `noaa-nexrad`.
 
 ### Agent note
 

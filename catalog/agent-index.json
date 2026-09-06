@@ -593,8 +593,8 @@
       "provider": "Aviamettelecom of Roshydromet / WMO",
       "reliability": "high",
       "summary": {
-        "en": "Russian radiosonde/TEMP observations published in the WIS2 ecosystem.",
-        "ru": "Российские радиозондовые наблюдения TEMP, публикуемые в экосистеме WIS2."
+        "en": "Russian radiosonde/TEMP observations published as WMO core data in WIS2.",
+        "ru": "Российские радиозондовые наблюдения TEMP, публикуемые как основные данные WMO в WIS2."
       },
       "tier": "primary"
     },
@@ -725,8 +725,8 @@
       "tier": "specialized"
     },
     {
-      "access_level": "open",
-      "automation": "high",
+      "access_level": "restricted",
+      "automation": "medium",
       "card": "docs/sources/generated/eumetnet-eprofile.md",
       "categories": [
         "upper-air",
@@ -747,9 +747,8 @@
       "official": true,
       "operational": true,
       "protocols": [
-        "mqtt",
         "https",
-        "wis2"
+        "ftp"
       ],
       "provider": "EUMETNET",
       "reliability": "high",

@@ -69,6 +69,30 @@
 - Для оперативного контура учитывать: `tier=aggregator`, `operational=true`, `access.level=free-tier`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** ✅ подтверждено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `http`  
+**Recipe:** `catalog/recipes/aggregators.json`
+
+Получить однодневный прогноз температуры и осадков для Санкт-Петербурга через публичный Open-Meteo Forecast API.
+
+```bash
+python -m weather_source describe open-meteo
+python -m weather_source probe open-meteo
+python -m weather_source fetch open-meteo
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Это нормализующий агрегатор, а не первичный источник; необходимо сохранять имя модели/источника из ответа и не использовать как доказательство наблюдения.
+
+**Резервный источник:** `ecmwf-open-data`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -126,6 +150,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://open-meteo.com/en/docs](https://open-meteo.com/en/docs)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `ok` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `http`  
+**Recipe:** `catalog/recipes/aggregators.json`
+
+```bash
+python -m weather_source probe open-meteo
+python -m weather_source fetch open-meteo
+```
+
+Fallback: `ecmwf-open-data`.
 
 ### Agent note
 

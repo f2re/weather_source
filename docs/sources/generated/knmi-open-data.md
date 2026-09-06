@@ -69,6 +69,40 @@ API-ключ бесплатный но его необходимо получи�
 - Для оперативного контура учитывать: `tier=secondary`, `operational=true`, `access.level=registration`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** нужны бесплатные/договорные учётные данные (`credentials`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/core.json`
+
+Через KNMI Open Data API получить список последних файлов актуального 10-minute dataset, запросить temporaryDownloadUrl и скачать NetCDF.
+
+```bash
+python -m weather_source describe knmi-open-data
+python -m weather_source probe knmi-open-data
+python -m weather_source fetch knmi-open-data --allow-external
+```
+
+**Требуемые переменные окружения:** `KNMI_API_KEY`.
+
+**Что исправлено или обнаружено аудитом:**
+
+- Старые KNMI dataset IDs были выведены из эксплуатации; актуальный dataset — `10-minute-in-situ-meteorological-observations` v1.0. Open Data API требует Authorization key.
+
+**Резервный источник:** `fmi-open-data`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -m weather_source.providers knmi
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -126,6 +160,21 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://developer.dataplatform.knmi.nl/](https://developer.dataplatform.knmi.nl/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `credentials` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe knmi-open-data
+python -m weather_source fetch knmi-open-data --allow-external
+```
+
+Required environment: `KNMI_API_KEY`.
+
+Fallback: `fmi-open-data`.
 
 ### Agent note
 

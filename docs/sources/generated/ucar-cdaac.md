@@ -2,7 +2,7 @@
 
 > **Русская версия ниже является самостоятельной технической карточкой.** English reference follows after it.
 
-`ucar-cdaac` · 🔵 **специализированный / specialized** · оперативный / operational · проверено / verified **2026-09-05**
+`ucar-cdaac` · 🔵 **специализированный / specialized** · оперативный / operational · проверено / verified **2026-09-06**
 
 ---
 
@@ -38,14 +38,15 @@
 ### Доступ и ограничения
 
 - **Уровень доступа:** открытый без регистрации (`open`).
-- **Авторизация:** many products are anonymous; service requirements may vary.
+- **Авторизация:** anonymous access to data.cosmic.ucar.edu for current public GNSS-RO archive.
 - **Лицензия/условия:** UCAR/COSMIC data terms.
 
 ### Точки доступа
 
 | Endpoint | Протокол | Назначение | Health-check | URL |
 |---|---|---|---:|---|
-| CDAAC | `https` | catalog and download | да | [открыть / open](https://cdaac-www.cosmic.ucar.edu/cdaac/) |
+| CDAAC public GNSS-RO archive | `https` | no-login multi-mission data tree | да | [открыть / open](https://data.cosmic.ucar.edu/gnss-ro/) |
+| CDAAC documentation | `https` | documentation and product descriptions | да | [открыть / open](https://cdaac-www.cosmic.ucar.edu/cdaac/) |
 
 ### ПО, библиотеки и декодеры
 
@@ -63,12 +64,45 @@
 ### Официальная документация
 
 - [https://cdaac-www.cosmic.ucar.edu/cdaac/](https://cdaac-www.cosmic.ucar.edu/cdaac/)
+- [https://data.cosmic.ucar.edu/gnss-ro/](https://data.cosmic.ucar.edu/gnss-ro/)
 
 ### Для ИИ-агента
 
 - Источник истины для этой карточки: `catalog/sources/upper-air.yaml` → `id: ucar-cdaac`.
 - Для оперативного контура учитывать: `tier=specialized`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
+
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+Скачать небольшой COSMIC-2 NRT Level-2 пакет для последнего опубликованного дня через `data.cosmic.ucar.edu` (по умолчанию avnPrf, а не гигабайтный atmPrf).
+
+```bash
+python -m weather_source describe ucar-cdaac
+python -m weather_source probe ucar-cdaac
+python -m weather_source fetch ucar-cdaac --allow-external
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Старый CDAAC landing не показывает новый anonymous data host `data.cosmic.ucar.edu/gnss-ro/`. NRT Level 2 публикуется в `atmPrf`, `wetPf2` и BUFR.
+
+**Резервный источник:** `noaa-ncei-igra`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -m weather_source.providers cdaac-avnprf
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
 
 ---
 
@@ -104,14 +138,15 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Access and restrictions
 
 - **Access level:** `open`.
-- **Authentication:** many products are anonymous; service requirements may vary.
+- **Authentication:** anonymous access to data.cosmic.ucar.edu for current public GNSS-RO archive.
 - **Terms/licensing:** UCAR/COSMIC data terms.
 
 ### Endpoints
 
 | Endpoint | Protocol | Role | Health check | URL |
 |---|---|---|---:|---|
-| CDAAC | `https` | catalog and download | yes | [открыть / open](https://cdaac-www.cosmic.ucar.edu/cdaac/) |
+| CDAAC public GNSS-RO archive | `https` | no-login multi-mission data tree | yes | [открыть / open](https://data.cosmic.ucar.edu/gnss-ro/) |
+| CDAAC documentation | `https` | documentation and product descriptions | yes | [открыть / open](https://cdaac-www.cosmic.ucar.edu/cdaac/) |
 
 ### Software and decoders
 
@@ -128,6 +163,20 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://cdaac-www.cosmic.ucar.edu/cdaac/](https://cdaac-www.cosmic.ucar.edu/cdaac/)
+- [https://data.cosmic.ucar.edu/gnss-ro/](https://data.cosmic.ucar.edu/gnss-ro/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/upper-air.json`
+
+```bash
+python -m weather_source probe ucar-cdaac
+python -m weather_source fetch ucar-cdaac --allow-external
+```
+
+Fallback: `noaa-ncei-igra`.
 
 ### Agent note
 

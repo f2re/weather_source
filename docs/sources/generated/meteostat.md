@@ -70,6 +70,38 @@ Open-source интерфейс к историческим и недавним �
 - Для оперативного контура учитывать: `tier=aggregator`, `operational=false`, `access.level=open`, `automation=high`, `reliability=medium`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/aggregators.json`
+
+Скачать anonymous hourly Parquet за предыдущий полностью завершённый год с `data.meteostat.net`.
+
+```bash
+python -m weather_source describe meteostat
+python -m weather_source probe meteostat
+python -m weather_source fetch meteostat --allow-external
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Карточка описывала API/library patterns, но не фиксировала самый простой официальный bulk interface: годовые Parquet-файлы без регистрации.
+
+**Резервный источник:** `iowa-mesonet`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -m weather_source.providers meteostat-bulk
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -128,6 +160,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://dev.meteostat.net/](https://dev.meteostat.net/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/aggregators.json`
+
+```bash
+python -m weather_source probe meteostat
+python -m weather_source fetch meteostat --allow-external
+```
+
+Fallback: `iowa-mesonet`.
 
 ### Agent note
 

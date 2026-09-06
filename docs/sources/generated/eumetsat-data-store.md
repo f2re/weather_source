@@ -71,6 +71,40 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=registration`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** нужны бесплатные/договорные учётные данные (`credentials`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/satellite.json`
+
+Официальным EUMDAC авторизоваться, выбрать MTG FCI Level 1c collection `EO:EUM:DAT:0665`, найти продукт в небольшом историческом интервале и скачать первый продукт.
+
+```bash
+python -m weather_source describe eumetsat-data-store
+python -m weather_source probe eumetsat-data-store
+python -m weather_source fetch eumetsat-data-store --allow-external
+```
+
+**Требуемые переменные окружения:** `EUMETSAT_CONSUMER_KEY`, `EUMETSAT_CONSUMER_SECRET`.
+
+**Что исправлено или обнаружено аудитом:**
+
+- Просмотр коллекций доступен без регистрации, но программная загрузка через EUMDAC использует consumer key/secret. В карточке это нужно отделять от простого browsing.
+
+**Резервный источник:** `noaa-goes`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -c "import os,datetime,shutil,eumdac; t=eumdac.AccessToken((os.environ['EUMETSAT_CONSUMER_KEY'],os.environ['EUMETSAT_CONSUMER_SECRET'])); ds=eumdac.DataStore(t); c=ds.get_collection('EO:EUM:DAT:0665'); p=next(iter(c.search(dtstart=datetime.datetime(2024,7,24,19,30),dtend=datetime.datetime(2024,7,24,19,40)))); f=p.open(); out=open(f.name,'wb'); shutil.copyfileobj(f,out); out.close(); f.close(); print(p)"
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -130,6 +164,21 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://user.eumetsat.int/resources/user-guides/eumetsat-data-access-client-eumdac-guide](https://user.eumetsat.int/resources/user-guides/eumetsat-data-access-client-eumdac-guide)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `credentials` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/satellite.json`
+
+```bash
+python -m weather_source probe eumetsat-data-store
+python -m weather_source fetch eumetsat-data-store --allow-external
+```
+
+Required environment: `EUMETSAT_CONSUMER_KEY`, `EUMETSAT_CONSUMER_SECRET`.
+
+Fallback: `noaa-goes`.
 
 ### Agent note
 

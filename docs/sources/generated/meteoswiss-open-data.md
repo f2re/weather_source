@@ -70,6 +70,38 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/core.json`
+
+Через официальный STAC collection MeteoSwiss получить один реальный downloadable asset автоматической сети SMN.
+
+```bash
+python -m weather_source describe meteoswiss-open-data
+python -m weather_source probe meteoswiss-open-data
+python -m weather_source fetch meteoswiss-open-data --allow-external
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Карточка не отражала текущую STAC-раздачу `data.geo.admin.ch`. Портал документации недостаточен для автоматизации.
+
+**Резервный источник:** `fmi-open-data`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -m weather_source.providers meteoswiss-stac
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -128,6 +160,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html](https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe meteoswiss-open-data
+python -m weather_source fetch meteoswiss-open-data --allow-external
+```
+
+Fallback: `fmi-open-data`.
 
 ### Agent note
 

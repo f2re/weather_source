@@ -71,6 +71,39 @@ NOMADS удобен для выборочных запросов; для мас�
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/nwp.json`
+
+Автоматически перебрать последние доступные GFS-циклы NOMADS и скачать небольшой GRIB2-фрагмент TMP 2 m для 29–31E, 59–61N.
+
+```bash
+python -m weather_source describe noaa-nomads
+python -m weather_source probe noaa-nomads
+python -m weather_source fetch noaa-nomads --allow-external
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Корневой URL NOMADS не является рабочим примером получения данных.
+- Для выборочного GFS правильнее использовать GRIB Filter; код должен учитывать задержку публикации текущего цикла.
+
+**Резервный источник:** `noaa-nodd`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -m weather_source.providers nomads-gfs
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -130,6 +163,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://nomads.ncep.noaa.gov/](https://nomads.ncep.noaa.gov/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/nwp.json`
+
+```bash
+python -m weather_source probe noaa-nomads
+python -m weather_source fetch noaa-nomads --allow-external
+```
+
+Fallback: `noaa-nodd`.
 
 ### Agent note
 

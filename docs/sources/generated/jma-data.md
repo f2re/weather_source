@@ -70,6 +70,30 @@
 - Для оперативного контура учитывать: `tier=secondary`, `operational=true`, `access.level=open`, `automation=medium`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+Получить официальный регулярный XML feed JMA как проверяемый публичный machine endpoint. Для бинарных продуктов использовать отдельные продуктовые каналы/WIS2.
+
+```bash
+python -m weather_source describe jma-data
+python -m weather_source probe jma-data
+python -m weather_source fetch jma-data
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- `www.data.jma.go.jp` — широкий портал; machine access зависит от продукта. Нельзя обещать единый JMA API для BUFR/GRIB/radar/satellite.
+
+**Резервный источник:** `wmo-wis2`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -128,6 +152,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 
 - [https://www.jma.go.jp/jma/indexe.html](https://www.jma.go.jp/jma/indexe.html)
 - [https://www.data.jma.go.jp/](https://www.data.jma.go.jp/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `http`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe jma-data
+python -m weather_source fetch jma-data
+```
+
+Fallback: `wmo-wis2`.
 
 ### Agent note
 

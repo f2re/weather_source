@@ -68,6 +68,31 @@
 - Для оперативного контура учитывать: `tier=aggregator`, `operational=true`, `access.level=open`, `automation=low`, `reliability=medium`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `http`  
+**Recipe:** `catalog/recipes/aggregators.json`
+
+Через документированный `getsynop` CGI получить CSV SYNOP из WMO block 26 за фиксированный 6-часовой интервал 2026-08-24.
+
+```bash
+python -m weather_source describe ogimet
+python -m weather_source probe ogimet
+python -m weather_source fetch ogimet
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Карточка недооценивала автоматизацию: OGIMET документирует `getsynop` CGI, возвращающий CSV без HTML.
+- Сам OGIMET прямо пишет, что его данные не должны использоваться в critical mission; источник остаётся только fallback/диагностикой.
+
+**Резервный источник:** `wmo-wis2`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -125,6 +150,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://www.ogimet.com/](https://www.ogimet.com/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `http`  
+**Recipe:** `catalog/recipes/aggregators.json`
+
+```bash
+python -m weather_source probe ogimet
+python -m weather_source fetch ogimet
+```
+
+Fallback: `wmo-wis2`.
 
 ### Agent note
 

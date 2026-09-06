@@ -73,6 +73,30 @@
 - Для оперативного контура учитывать: `tier=specialized`, `operational=false`, `access.level=open`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `http`  
+**Recipe:** `catalog/recipes/specialized.json`
+
+Получить один опубликованный WOUDC data-record через официальный OGC API; для realtime ozone notifications использовать broker.woudc.org:8883 и documented WIS2 topic.
+
+```bash
+python -m weather_source describe woudc-ozonesonde
+python -m weather_source probe woudc-ozonesonde
+python -m weather_source fetch woudc-ozonesonde
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- Карточка уже упоминала WOUDC API, но не давала конкретного OGC API запроса и не фиксировала официальный WIS2 MQTT broker/topic.
+
+**Резервный источник:** `gruan`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -134,6 +158,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 - [https://api.woudc.org/?f=html](https://api.woudc.org/?f=html)
 - [https://woudc.org/en/data/data-use-policy](https://woudc.org/en/data/data-use-policy)
 - [https://woudc.org/archive/Documentation/PDF_files/WOUDC_Guidebooks/o3_guidev2.pdf](https://woudc.org/archive/Documentation/PDF_files/WOUDC_Guidebooks/o3_guidev2.pdf)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `http`  
+**Recipe:** `catalog/recipes/specialized.json`
+
+```bash
+python -m weather_source probe woudc-ozonesonde
+python -m weather_source fetch woudc-ozonesonde
+```
+
+Fallback: `gruan`.
 
 ### Agent note
 

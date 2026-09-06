@@ -72,6 +72,41 @@
 - Для оперативного контура учитывать: `tier=primary`, `operational=true`, `access.level=registration`, `automation=high`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** нужны бесплатные/договорные учётные данные (`credentials`)  
+**Runtime-адаптер:** `external`  
+**Recipe:** `catalog/recipes/ocean.json`
+
+Через официальный Copernicus Marine Toolbox получить однодневный фрагмент sea-surface height `zos` глобальной физической модели на небольшом районе 29–30E, 59–60N.
+
+```bash
+python -m weather_source describe copernicus-marine
+python -m weather_source probe copernicus-marine
+python -m weather_source fetch copernicus-marine --allow-external
+```
+
+**Требуемые переменные окружения:** `COPERNICUSMARINE_SERVICE_USERNAME`, `COPERNICUSMARINE_SERVICE_PASSWORD`.
+
+**Что исправлено или обнаружено аудитом:**
+
+- Для реального получения данных нужны бесплатные учётные данные Copernicus Marine; портал сам по себе не является endpoint загрузки.
+- Предыдущий пример не ограничивал время и мог запросить избыточный объём. Теперь зафиксирован минимальный spatial/time subset по документированному dataset id и переменной `zos`.
+
+**Резервный источник:** `noaa-ndbc`.
+
+<details><summary>Команда официального/специализированного клиента</summary>
+
+```bash
+python -c "import copernicusmarine; copernicusmarine.subset(dataset_id='cmems_mod_glo_phy_anfc_0.083deg_P1D-m', variables=['zos'], minimum_longitude=29, maximum_longitude=30, minimum_latitude=59, maximum_latitude=60, start_datetime='2026-09-05T00:00:00', end_datetime='2026-09-05T00:00:00', output_filename='copernicus-marine-zos-20260905.nc')"
+```
+
+</details>
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -132,6 +167,21 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 
 - [https://help.marine.copernicus.eu/](https://help.marine.copernicus.eu/)
 - [https://data.marine.copernicus.eu/](https://data.marine.copernicus.eu/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `credentials` · **adapter:** `external`  
+**Recipe:** `catalog/recipes/ocean.json`
+
+```bash
+python -m weather_source probe copernicus-marine
+python -m weather_source fetch copernicus-marine --allow-external
+```
+
+Required environment: `COPERNICUSMARINE_SERVICE_USERNAME`, `COPERNICUSMARINE_SERVICE_PASSWORD`.
+
+Fallback: `noaa-ndbc`.
 
 ### Agent note
 

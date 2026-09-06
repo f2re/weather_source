@@ -70,6 +70,31 @@
 - Для оперативного контура учитывать: `tier=secondary`, `operational=true`, `access.level=open`, `automation=medium`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** публичный машинный доступ (`public`)  
+**Runtime-адаптер:** `ftp`  
+**Recipe:** `catalog/recipes/core.json`
+
+Скачать XML-файл оперативных наблюдений NSW с официального anonymous FTP BOM.
+
+```bash
+python -m weather_source describe bom-open-data
+python -m weather_source probe bom-open-data
+python -m weather_source fetch bom-open-data
+```
+
+**Что исправлено или обнаружено аудитом:**
+
+- BOM действительно предоставляет anonymous FTP, но доступ не означает свободную коммерческую лицензию.
+- Anonymous products разрешены для личного использования/внутри организации и не должны автоматически маркироваться как unrestricted redistribution.
+
+**Резервный источник:** `wmo-wis2`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -128,6 +153,19 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 ### Official/reference documentation
 
 - [https://www.bom.gov.au/catalogue/data-feeds.shtml](https://www.bom.gov.au/catalogue/data-feeds.shtml)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `public` · **adapter:** `ftp`  
+**Recipe:** `catalog/recipes/core.json`
+
+```bash
+python -m weather_source probe bom-open-data
+python -m weather_source fetch bom-open-data
+```
+
+Fallback: `wmo-wis2`.
 
 ### Agent note
 

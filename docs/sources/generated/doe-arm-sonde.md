@@ -73,6 +73,34 @@
 - Для оперативного контура учитывать: `tier=specialized`, `operational=false`, `access.level=registration`, `automation=medium`, `reliability=high`.
 - Не выводить доступность только из названия поставщика: проверять endpoint, права, формат, задержку и свежесть.
 
+
+### 🧪 Проверенный пример получения данных
+
+**Аудит:** 🛠 исправлено/уточнено · **проверено:** `2026-09-06`  
+**Реальный режим доступа:** нужны бесплатные/договорные учётные данные (`credentials`)  
+**Runtime-адаптер:** `unavailable`  
+**Recipe:** `catalog/recipes/specialized.json`
+
+После создания бесплатного ARM User Profile открыть Data Discovery, выбрать SONDE/SONDEWNPN datastream и скачать NetCDF. Репозиторий не имитирует anonymous URL вместо реального авторизованного workflow.
+
+```bash
+python -m weather_source describe doe-arm-sonde
+python -m weather_source probe doe-arm-sonde
+python -m weather_source example doe-arm-sonde
+```
+
+**Требуемые переменные окружения:** `ARM_USERNAME`.
+
+**Что исправлено или обнаружено аудитом:**
+
+- ARM данные бесплатны, но ARM прямо требует бесплатный User Profile для доступа. Публичный стабильный anonymous download API для SONDE не подтверждён.
+
+**Почему нет автоматического public fetch:** ARM требует бесплатный user account для data access; стабильный публичный machine download endpoint без авторизации не подтверждён.
+
+**Резервный источник:** `gruan`.
+
+> Клиент сохраняет исходные данные; крупные GRIB/NetCDF/радарные объекты по умолчанию блокируются безопасным лимитом. Для осознанной полной загрузки используйте `--full`, когда это применимо.
+
 ---
 
 ## 🇬🇧 English
@@ -134,6 +162,21 @@ Use this record to select the feed by geographic coverage, latency, machine acce
 - [https://arm.gov/data/vaps/sonde/](https://arm.gov/data/vaps/sonde/)
 - [https://www.arm.gov/publications/tech_reports/handbooks/sonde_handbook.pdf](https://www.arm.gov/publications/tech_reports/handbooks/sonde_handbook.pdf)
 - [https://armgov.svcs.arm.gov/data/](https://armgov.svcs.arm.gov/data/)
+
+### 🧪 Executable retrieval recipe
+
+**Audit verdict:** `corrected` · **verified:** `2026-09-06`  
+**Runtime access:** `credentials` · **adapter:** `unavailable`  
+**Recipe:** `catalog/recipes/specialized.json`
+
+```bash
+python -m weather_source probe doe-arm-sonde
+python -m weather_source example doe-arm-sonde
+```
+
+Required environment: `ARM_USERNAME`.
+
+Fallback: `gruan`.
 
 ### Agent note
 

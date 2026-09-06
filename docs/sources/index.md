@@ -55,3 +55,9 @@
 ## Как читать карточки
 
 Карточка каждого источника содержит отдельную самостоятельную русскую часть и отдельную английскую часть. Для реализации приёмника сначала выбирайте `primary` + `operational`, затем проверяйте доступ, протокол, формат, задержку и fallback.
+
+## Аудит и рабочий код / Audit and executable clients
+
+- [Аудит всех источников](https://github.com/f2re/weather_source/blob/main/docs/audit/source-audit-2026-09-06.md)
+- [Runtime recipes](https://github.com/f2re/weather_source/blob/main/catalog/recipes.json)
+- [Python client package](https://github.com/f2re/weather_source/blob/main/weather_source/)

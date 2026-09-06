@@ -28,3 +28,8 @@ Bilingual operational meteorological data-source knowledge base for humans and A
 7. Do not confuse observed upper-air profiles with NWP model profiles or satellite retrievals.
 
 Catalogue version: 1; sources: 47; reviewed: 2026-09-05
+
+## Executable source access
+- catalog/recipes.json — audited runtime access recipe for every source id
+- weather_source/ — reusable Python transport/adapters
+- docs/audit/source-audit-2026-09-06.md — per-source audit and corrections
