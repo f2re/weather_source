@@ -17,11 +17,16 @@ sources:
     archive: archives exist for many datasets; start dates vary by dataset
     access:
       level: registration
-      auth: free MADIS data application/account for machine access; unrestricted and restricted dataset classes coexist
+      auth: anonymous madisPublic1 HTTPS exists for unrestricted datasets; restricted datasets still require application/rights
       terms: NOAA MADIS data policy; radiosonde, Multi-Agency Profiler, satellite sounding and several other datasets are unrestricted, while aircraft and some mesonet data have restrictions
-    protocols: [https, ftp, opendap, ldm]
+    protocols: [https, opendap, ldm]
     formats: [NetCDF, XML, text]
     endpoints:
+      - name: Public radiosonde NetCDF
+        url: https://madis-data.ncep.noaa.gov/madisPublic1/data/point/raob/netcdf/
+        protocol: https
+        role: anonymous current radiosonde files
+        healthcheck: true
       - name: MADIS home
         url: https://madis.ncep.noaa.gov/
         protocol: https
@@ -30,7 +35,7 @@ sources:
       - name: MADIS data application
         url: https://madis.ncep.noaa.gov/data_application.shtml
         protocol: https
-        role: account and access request
+        role: restricted dataset access request
         healthcheck: true
     software:
       - name: xarray
@@ -45,10 +50,10 @@ sources:
       - https://madis.ncep.noaa.gov/data_application.shtml
     reliability: high
     automation: high
-    last_verified: '2026-09-05'
+    last_verified: '2026-09-06'
     notes:
-      en: Strong supplement for upper-air and profiler data. Check per-dataset rights before redistributing data, especially aircraft observations.
-      ru: Сильный дополнительный источник аэрологии и профайлеров. Перед распространением данных проверять права конкретного набора, особенно для самолётных наблюдений.
+      en: MADIS FTP delivery was retired in April 2026; use HTTPS. Public1 gives anonymous access to unrestricted subsets, while rights still vary for aircraft and some mesonet feeds.
+      ru: FTP-доставка MADIS прекращена в апреле 2026 года; использовать HTTPS. Public1 даёт анонимный доступ к unrestricted-наборам, но права на самолётные и часть mesonet-данных по-прежнему отличаются.
 
   - id: noaa-ncei-upperair-bufr
     provider: NOAA/NCEI
@@ -73,15 +78,15 @@ sources:
     protocols: [https]
     formats: [BUFR]
     endpoints:
-      - name: Global BUFR upper-air dataset
+      - name: Direct NWSTG upper-air BUFR archive
+        url: https://www.ncei.noaa.gov/data/nws-global-upper-air-bufr/archive/
+        protocol: https
+        role: direct monthly archive files
+        healthcheck: true
+      - name: Global BUFR upper-air dataset metadata
         url: https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc%3AC01500
         protocol: https
-        role: metadata and direct-download entry
-        healthcheck: true
-      - name: IGRA raw BUFR overview
-        url: https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive
-        protocol: https
-        role: raw BUFR stream documentation
+        role: metadata
         healthcheck: true
     software:
       - name: ecCodes
@@ -95,10 +100,10 @@ sources:
       - https://www.ncei.noaa.gov/products/weather-balloon/integrated-global-radiosonde-archive
     reliability: high
     automation: high
-    last_verified: '2026-09-05'
+    last_verified: '2026-09-06'
     notes:
-      en: Preserve these raw BUFR messages when high vertical resolution or original metadata are important. For real-time reception, prefer WIS2 where available.
-      ru: Сохранять исходные BUFR, если важны высокое вертикальное разрешение и оригинальные метаданные. Для реального времени при наличии предпочитать WIS2.
+      en: Monthly archives can be large; do not use a full tar.gz download as a health check. For real-time reception, prefer WIS2 where available.
+      ru: Месячные архивы могут быть крупными; нельзя использовать полную загрузку tar.gz как health-check. Для реального времени при наличии предпочитать WIS2.
 
   - id: noaa-nucaps
     provider: NOAA/NESDIS/STAR and OSPO
@@ -114,24 +119,24 @@ sources:
     coverage: global polar-orbiting coverage
     operational: true
     update_cadence: orbital overpasses; production cadence follows JPSS observations and processing
-    typical_latency: operational product stream; public archive latency and access path depend on OSPO/NDE/CLASS distribution
+    typical_latency: near-real-time operational product stream; archive latency depends on CLASS
     archive: long-term Environmental Data Record archive through NOAA CLASS
     access:
-      level: registration
-      auth: archived and operational distribution paths differ; NOAA CLASS/NDE access requirements apply
-      terms: NOAA/NESDIS product and CLASS terms
-    protocols: [https]
+      level: open
+      auth: anonymous NOAA Open Data/NODD object storage for operational NUCAPS EDR; CLASS archive may use separate access workflow
+      terms: NOAA/NESDIS and NOAA Open Data terms
+    protocols: [https, s3]
     formats: [NetCDF, BUFR]
     endpoints:
+      - name: NOAA-20 NUCAPS EDR public object storage
+        url: https://noaa-nesdis-n20-pds.s3.amazonaws.com/?list-type=2&prefix=NUCAPS-EDR/&max-keys=1
+        protocol: s3
+        role: anonymous operational NUCAPS EDR objects
+        healthcheck: true
       - name: NUCAPS product page
         url: https://www.star.nesdis.noaa.gov/jpss/soundings.php
         protocol: https
-        role: product description and data-access links
-        healthcheck: true
-      - name: OSPO HEAP NUCAPS
-        url: https://www.ospo.noaa.gov/products/atmosphere/soundings/heap/nucaps/index.html
-        protocol: https
-        role: operational product documentation
+        role: product description
         healthcheck: true
     software:
       - name: xarray
@@ -144,11 +149,11 @@ sources:
       - https://www.star.nesdis.noaa.gov/jpss/soundings.php
       - https://www.ospo.noaa.gov/products/atmosphere/soundings/heap/nucaps/index.html
     reliability: high
-    automation: medium
-    last_verified: '2026-09-05'
+    automation: high
+    last_verified: '2026-09-06'
     notes:
-      en: NUCAPS standard NetCDF products contain retrieved profiles on 100 vertical points from roughly 1100 hPa to 0.016 hPa. Treat them as satellite retrievals, not radiosonde observations.
-      ru: Стандартные NetCDF-продукты NUCAPS содержат retrieval-профили на 100 вертикальных точках примерно от 1100 до 0.016 гПа. Это спутниковые retrieval-профили, а не радиозонды.
+      en: NUCAPS is a satellite retrieval, not an in-situ radiosonde. Public NODD access removes the need to treat the whole source as registration-only.
+      ru: NUCAPS — спутниковый retrieval, а не in-situ радиозонд. Публичный NODD-путь означает, что источник в целом нельзя описывать только как registration-only.
 
   - id: doe-arm-sonde
     provider: U.S. Department of Energy Atmospheric Radiation Measurement (ARM) User Facility
@@ -168,7 +173,7 @@ sources:
     archive: more than 30 years of ARM atmospheric observations; site and campaign dependent
     access:
       level: registration
-      auth: free ARM user account required for data download
+      auth: free ARM user profile required for data download
       terms: ARM data policy and citation requirements
     protocols: [https]
     formats: [NetCDF, ASCII, MWX]
@@ -181,7 +186,7 @@ sources:
       - name: ARM Data Discovery
         url: https://adc.arm.gov/discovery/
         protocol: https
-        role: search and download
+        role: registered search and download
         healthcheck: true
     software:
       - name: xarray
@@ -196,10 +201,10 @@ sources:
       - https://armgov.svcs.arm.gov/data/
     reliability: high
     automation: medium
-    last_verified: '2026-09-05'
+    last_verified: '2026-09-06'
     notes:
-      en: Valuable validation/research dataset with standardized NetCDF sounding files. It is not intended to replace synoptic real-time WIS2 TEMP reception.
-      ru: Ценный набор для верификации и исследований со стандартизованными NetCDF-зондированиями. Не предназначен для замены синоптического realtime-приёма TEMP через WIS2.
+      en: Free does not mean anonymous: a user profile is required. This is a validation/research source rather than a synoptic WIS2 replacement.
+      ru: Бесплатный доступ не означает анонимный: требуется профиль пользователя. Это источник для исследований и верификации, а не замена синоптическому WIS2.
 
   - id: woudc-ozonesonde
     provider: WMO Global Atmosphere Watch / WOUDC / Environment and Climate Change Canada
@@ -219,16 +224,21 @@ sources:
     archive: long-term global ozone and UV archive
     access:
       level: open
-      auth: anonymous public API and web-accessible archive for published data
+      auth: anonymous public OGC API/archive; WIS2 notifications available for published ozone data
       terms: WOUDC Data Policy and attribution/citation requirements
-    protocols: [https, api]
+    protocols: [https, api, mqtt]
     formats: [CSV, ZIP, JSON, provider-dependent]
     endpoints:
-      - name: WOUDC API
-        url: https://api.woudc.org/?f=html
+      - name: WOUDC OGC API data records
+        url: https://api.woudc.org/collections/data-records/items?f=json&limit=1
         protocol: api
-        role: API and OpenAPI documentation
+        role: machine-readable published data records
         healthcheck: true
+      - name: WOUDC WIS2 broker
+        url: mqtts://broker.woudc.org:8883
+        protocol: mqtt
+        role: ozone data notifications; everyone/everyone credentials
+        healthcheck: false
       - name: Dataset snapshots
         url: https://woudc.org/archive/Summaries/dataset-snapshots/
         protocol: https
@@ -241,13 +251,16 @@ sources:
       - name: pandas
         role: extCSV and tabular processing
         url: https://pandas.pydata.org/
+      - name: paho-mqtt
+        role: WIS2/MQTT notifications
+        url: https://eclipse.dev/paho/files/paho.mqtt.python/html/
     documentation:
       - https://api.woudc.org/?f=html
       - https://woudc.org/en/data/data-use-policy
       - https://woudc.org/archive/Documentation/PDF_files/WOUDC_Guidebooks/o3_guidev2.pdf
     reliability: high
     automation: high
-    last_verified: '2026-09-05'
+    last_verified: '2026-09-06'
     notes:
-      en: Whole-dataset ozonesonde snapshots are distributed as compressed CSV archives and are updated weekly; station-level files are also available in the archive.
-      ru: Полные snapshots озонозондового набора распространяются как сжатые CSV-архивы и обновляются еженедельно; в архиве доступны и отдельные станционные файлы.
+      en: OGC API is suitable for machine discovery/retrieval; weekly snapshots remain useful for bulk archive processing.
+      ru: OGC API подходит для программного поиска/получения; недельные snapshots удобны для пакетной обработки архива.
