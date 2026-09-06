@@ -1,0 +1,21 @@
+{
+  "sources": {
+    "copernicus-cds": {
+      "status": "credentials",
+      "adapter": "external",
+      "verified": "2026-09-06",
+      "verdict": "corrected",
+      "issues_ru": [
+        "CDS требует бесплатный аккаунт/personal access token и предварительное принятие Terms конкретного dataset.",
+        "Landing page не является проверкой API retrieval; нужен реальный `cdsapi.Client().retrieve`."
+      ],
+      "example_ru": "Официальным CDS API скачать минимальный ERA5 pressure-level GRIB: geopotential, 1000 hPa, 2024-03-01 13:00 UTC.",
+      "env": ["CDSAPI_KEY"],
+      "request": {
+        "command": "python -c \"import os,cdsapi; c=cdsapi.Client(url='https://cds.climate.copernicus.eu/api',key=os.environ['CDSAPI_KEY']); c.retrieve('reanalysis-era5-pressure-levels',{'product_type':['reanalysis'],'variable':['geopotential'],'year':['2024'],'month':['03'],'day':['01'],'time':['13:00'],'pressure_level':['1000'],'data_format':'grib'},'era5-1000hpa-z-2024030113.grib')\""
+      },
+      "probe": {"url": "https://cds.climate.copernicus.eu/api"},
+      "fallback": "noaa-ncei-igra"
+    }
+  }
+}
