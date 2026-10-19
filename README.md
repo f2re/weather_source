@@ -19,6 +19,7 @@ For a human:
 - 🌍 [`docs/sources/index.md`](docs/sources/index.md) — bilingual overview, tiers and categories.
 - 📄 `docs/sources/generated/<id>.md` — detailed bilingual technical card for every source, Russian first.
 - 🛰️ [`docs/sources/wmo-wis2.md`](docs/sources/wmo-wis2.md) — implementation-oriented WIS2 guide.
+- 🌡️ [`docs/sources/noaa-observations.md`](docs/sources/noaa-observations.md) — NOAA/NCEP/NCEI observation hierarchy: NWS API, MADIS, GHCNh/GHCNd, USCRN and PREPBUFR.
 - 🤖 [`docs/agent-guide.md`](docs/agent-guide.md) — retrieval and source-selection rules for agents.
 
 For software/AI agents:
@@ -40,14 +41,14 @@ The generated source card adds a practical Russian and English ingestion flow, d
 
 | Data family | Representative primary sources | Native formats | Preferred machine access |
 |---|---|---|---|
-| 🌡️ Surface observations | WIS2, NOAA/NWS, ECCC, DWD, FMI, MeteoSwiss, JMA, BOM | BUFR, text, JSON, CSV | WIS2 MQTT+HTTPS, REST/HTTPS |
-| 🎈 Upper air | WIS2 TEMP, Roshydromet/Aviamettelecom, IGRA, DWD, FMI, Météo-France, MeteoSwiss, ECCC | BUFR, CSV, text, NetCDF | WIS2, HTTPS, WFS |
+| 🌡️ Surface observations | WIS2, MADIS, NWS API, GHCNh, ECCC, DWD, FMI, MeteoSwiss, JMA, BOM | BUFR, NetCDF, PSV/Parquet, JSON, CSV | WIS2 MQTT+HTTPS, REST/HTTPS, direct bulk files |
+| 🎈 Upper air | WIS2 TEMP, Roshydromet/Aviamettelecom, IGRA, MADIS, DWD, FMI, Météo-France, MeteoSwiss, ECCC | BUFR, CSV, text, NetCDF | WIS2, HTTPS, WFS |
 | 📡 Radar | NEXRAD/MRMS, DWD, ECCC, European/national services | Level II/III, GRIB2, ODIM HDF5, GeoTIFF | S3/HTTPS, WCS/OGC |
 | 🛰️ Satellite | EUMETSAT, NOAA/NODD, NASA Earthdata/LANCE, JAXA | NetCDF, HDF5, BUFR, GeoTIFF | Data Store/API, S3, HTTPS |
 | ⚡ Lightning | GOES GLM, MTG LI and documented restricted/community networks | NetCDF/HDF5/BUFR | object storage / Data Store |
 | 🌊 Ocean/marine | Copernicus Marine, NDBC, Argo | NetCDF, CSV, JSON | HTTPS/API/object storage |
 | 🧠 NWP/ensembles | ECMWF Open Data, NOMADS/NODD, DWD, Météo-France, ECCC, JMA | GRIB2, NetCDF | HTTPS/S3/API |
-| 🗃️ Climate/archives | NCEI, CDS/ERA5, IGRA, national archives | NetCDF, GRIB, CSV, BUFR | API/HTTPS |
+| 🗃️ Climate/archives | GHCNh, GHCNd, USCRN, NCEI, CDS/ERA5, IGRA, national archives | PSV/Parquet, CSV, text, NetCDF, GRIB, BUFR | HTTPS/API/bulk files |
 
 ## Operational selection rules
 
@@ -60,7 +61,9 @@ The generated source card adds a practical Russian and English ingestion flow, d
 7. Preserve raw payloads before normalization.
 8. Keep an independent fallback for critical ingestion.
 
-For WMO observations, check **WIS2 core data first**. For upper air, never confuse radiosonde/TEMP, AMDAR, profiler, satellite/GNSS-RO retrieval and NWP model profiles.
+For WMO observations, check **WIS2 core data first**. For NOAA workflows, distinguish operational observations (NWS/MADIS), archival station datasets (GHCNh/GHCNd/USCRN) and assimilation-space products (NCEP dumps/PREPBUFR). GHCNh is the preferred new NCEI hourly/synoptic archive; ISD/Global Hourly should be treated as legacy compatibility. PREPBUFR may contain restricted constituent observations, so rights must be checked before redistribution.
+
+For upper air, never confuse radiosonde/TEMP, AMDAR, profiler, satellite/GNSS-RO retrieval and NWP model profiles.
 
 ## Generated catalogue is committed
 
