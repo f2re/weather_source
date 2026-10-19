@@ -828,6 +828,212 @@
     {
       "access_level": "open",
       "automation": "high",
+      "card": "docs/sources/generated/noaa-ncei-ghcnh.md",
+      "categories": [
+        "surface",
+        "climate",
+        "archive"
+      ],
+      "coverage": "global fixed land stations",
+      "formats": [
+        "PSV",
+        "Parquet"
+      ],
+      "id": "noaa-ncei-ghcnh",
+      "name": {
+        "en": "NOAA/NCEI Global Historical Climatology Network hourly (GHCNh)",
+        "ru": "NOAA/NCEI Global Historical Climatology Network hourly (GHCNh)"
+      },
+      "official": true,
+      "operational": false,
+      "protocols": [
+        "https"
+      ],
+      "provider": "NOAA National Centers for Environmental Information (NCEI)",
+      "reliability": "high",
+      "summary": {
+        "en": "Next-generation global hourly and synoptic land-station archive replacing the legacy Integrated Surface Dataset (ISD), distributed in station/year PSV and Parquet files.",
+        "ru": "Глобальный архив часовых и синоптических наземных наблюдений нового поколения, заменяющий legacy Integrated Surface Dataset (ISD); данные доступны по станциям и годам в PSV и Parquet."
+      },
+      "tier": "primary"
+    },
+    {
+      "access_level": "registration",
+      "automation": "high",
+      "card": "docs/sources/generated/noaa-ncep-madis.md",
+      "categories": [
+        "surface",
+        "upper-air",
+        "aircraft",
+        "marine",
+        "profilers"
+      ],
+      "coverage": "global database with highest density over North America",
+      "formats": [
+        "NetCDF",
+        "CSV",
+        "XML",
+        "text"
+      ],
+      "id": "noaa-ncep-madis",
+      "name": {
+        "en": "NOAA/NCEP MADIS observations",
+        "ru": "NOAA/NCEP MADIS — оперативные наблюдения"
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "ftp",
+        "opendap",
+        "ldm"
+      ],
+      "provider": "NOAA/NWS/NCEP Meteorological Assimilation Data Ingest System (MADIS)",
+      "reliability": "high",
+      "summary": {
+        "en": "Multi-network observation ingest, integration and quality-control system covering surface, mesonet, maritime, radiosonde, profiler, aircraft and other datasets, primarily in netCDF.",
+        "ru": "Система интеграции и контроля качества наблюдений из множества сетей: METAR, mesonet, maritime, радиозонды, профайлеры, самолётные и другие данные, преимущественно в netCDF."
+      },
+      "tier": "primary"
+    },
+    {
+      "access_level": "restricted",
+      "automation": "medium",
+      "card": "docs/sources/generated/noaa-ncep-prepbufr.md",
+      "categories": [
+        "surface",
+        "upper-air",
+        "aircraft",
+        "marine",
+        "gnss-ro",
+        "assimilation"
+      ],
+      "coverage": "global observation streams ingested by NCEP",
+      "formats": [
+        "BUFR",
+        "PREPBUFR"
+      ],
+      "id": "noaa-ncep-prepbufr",
+      "name": {
+        "en": "NCEP GDAS/GFS observation dumps and PREPBUFR",
+        "ru": "NCEP GDAS/GFS — observation dumps и PREPBUFR"
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "ftp"
+      ],
+      "provider": "NOAA/NWS/NCEP",
+      "reliability": "high",
+      "summary": {
+        "en": "NCEP observation-space files used around GDAS/GFS data assimilation, including raw BUFR dumps and quality-controlled PREPBUFR products.",
+        "ru": "Файлы пространства наблюдений NCEP, используемые в контуре ассимиляции GDAS/GFS: исходные BUFR dumps и подготовленные quality-controlled PREPBUFR."
+      },
+      "tier": "specialized"
+    },
+    {
+      "access_level": "open",
+      "automation": "high",
+      "card": "docs/sources/generated/noaa-nws-observations-api.md",
+      "categories": [
+        "surface",
+        "aviation",
+        "api"
+      ],
+      "coverage": "United States and territories; station availability follows NWS/MADIS ingest",
+      "formats": [
+        "JSON",
+        "JSON-LD",
+        "GeoJSON"
+      ],
+      "id": "noaa-nws-observations-api",
+      "name": {
+        "en": "NWS API station observations",
+        "ru": "NWS API — станционные наблюдения"
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "rest"
+      ],
+      "provider": "NOAA/National Weather Service",
+      "reliability": "high",
+      "summary": {
+        "en": "Official JSON-LD API for current and recent station observations, station metadata and station discovery across the United States and territories.",
+        "ru": "Официальный JSON-LD API для текущих и недавних станционных наблюдений, метаданных станций и поиска станций по территории США и зависимым территориям."
+      },
+      "tier": "primary"
+    },
+    {
+      "access_level": "open",
+      "automation": "high",
+      "card": "docs/sources/generated/noaa-uscrn.md",
+      "categories": [
+        "surface",
+        "climate",
+        "reference"
+      ],
+      "coverage": "United States reference-station network",
+      "formats": [
+        "text"
+      ],
+      "id": "noaa-uscrn",
+      "name": {
+        "en": "NOAA U.S. Climate Reference Network (USCRN)",
+        "ru": "NOAA U.S. Climate Reference Network (USCRN)"
+      },
+      "official": true,
+      "operational": true,
+      "protocols": [
+        "https",
+        "ftp"
+      ],
+      "provider": "NOAA/NCEI U.S. Climate Reference Network",
+      "reliability": "high",
+      "summary": {
+        "en": "Reference-quality U.S. climate observing network with 5-minute, hourly and daily products, quality flags and variables including temperature, precipitation, radiation, humidity and soil measurements.",
+        "ru": "Эталонная климатическая сеть США с 5-минутными, часовыми и суточными продуктами, QC-флагами и параметрами температуры, осадков, радиации, влажности и состояния почвы."
+      },
+      "tier": "specialized"
+    },
+    {
+      "access_level": "open",
+      "automation": "high",
+      "card": "docs/sources/generated/noaa-ncei-ghcnd.md",
+      "categories": [
+        "surface",
+        "climate",
+        "archive"
+      ],
+      "coverage": "global land stations",
+      "formats": [
+        "CSV",
+        "gzip",
+        "fixed-width text"
+      ],
+      "id": "noaa-ncei-ghcnd",
+      "name": {
+        "en": "NOAA/NCEI Global Historical Climatology Network daily (GHCNd)",
+        "ru": "NOAA/NCEI Global Historical Climatology Network daily (GHCNd)"
+      },
+      "official": true,
+      "operational": false,
+      "protocols": [
+        "https"
+      ],
+      "provider": "NOAA National Centers for Environmental Information (NCEI)",
+      "reliability": "high",
+      "summary": {
+        "en": "Global quality-controlled daily land-station climate archive with temperature, precipitation, snowfall and other daily elements, available as station files and yearly bulk CSV archives.",
+        "ru": "Глобальный контролируемый архив суточных наземных наблюдений с температурой, осадками, снегом и другими элементами; доступен по станциям и годовыми bulk CSV-архивами."
+      },
+      "tier": "primary"
+    },
+    {
+      "access_level": "open",
+      "automation": "high",
       "card": "docs/sources/generated/noaa-nomads.md",
       "categories": [
         "nwp",

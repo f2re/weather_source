@@ -1,6 +1,6 @@
 # 🌦️ Source catalogue / Каталог источников
 
-**47 источников / sources** · catalogue v1 · reviewed 2026-09-05
+**53 источников / sources** · catalogue v1 · reviewed 2026-10-19
 
 - 🇷🇺 **[Полный русский каталог](index.ru.md)** — описание каждого источника на русском, доступ, протоколы, форматы и практический приём.
 - 🇬🇧 **[Full English catalogue](index.en.md)** — complete English index and the same technical records.
@@ -13,40 +13,44 @@
 
 | Tier | Количество | Назначение |
 |---|---:|---|
-| 🟢 primary | 21 | Основной официальный канал для автоматического/оперативного приёма |
+| 🟢 primary | 25 | Основной официальный канал для автоматического/оперативного приёма |
 | 🟡 secondary | 9 | Резерв, региональная альтернатива или архив |
-| 🔵 specialized | 11 | Специализированные измерения/продукты |
+| 🔵 specialized | 13 | Специализированные измерения/продукты |
 | ⚪ aggregator | 6 | Удобный агрегатор, но не единственный источник критической системы |
 
 ## Категории / Categories
 
-- [Наземные наблюдения / `surface`](categories/surface.md) — **22**
-- [Аэрология и верхняя атмосфера / `upper-air`](categories/upper-air.md) — **22**
+- [Наземные наблюдения / `surface`](categories/surface.md) — **28**
+- [Аэрология и верхняя атмосфера / `upper-air`](categories/upper-air.md) — **24**
 - [Численные модели прогноза / `nwp`](categories/nwp.md) — **19**
 - [Метеорологические радары / `radar`](categories/radar.md) — **15**
+- [Климат и архивы / `climate`](categories/climate.md) — **13**
 - [Спутниковые данные / `satellite`](categories/satellite.md) — **11**
-- [Климат и архивы / `climate`](categories/climate.md) — **10**
-- [archive / `archive`](categories/archive.md) — **8**
+- [archive / `archive`](categories/archive.md) — **10**
+- [Морские наблюдения / `marine`](categories/marine.md) — **6**
+- [Авиационные наблюдения / `aircraft`](categories/aircraft.md) — **5**
 - [Осадки / `precipitation`](categories/precipitation.md) — **5**
-- [Морские наблюдения / `marine`](categories/marine.md) — **4**
 - [Океанографические данные / `ocean`](categories/ocean.md) — **4**
-- [Авиационные наблюдения / `aircraft`](categories/aircraft.md) — **3**
+- [aviation / `aviation`](categories/aviation.md) — **3**
 - [clouds / `clouds`](categories/clouds.md) — **3**
 - [Грозопеленгация и молнии / `lightning`](categories/lightning.md) — **3**
+- [reference / `reference`](categories/reference.md) — **3**
 - [analysis / `analysis`](categories/analysis.md) — **2**
-- [aviation / `aviation`](categories/aviation.md) — **2**
 - [Ансамблевые прогнозы / `ensemble`](categories/ensemble.md) — **2**
 - [profiler / `profiler`](categories/profiler.md) — **2**
 - [Реанализ / `reanalysis`](categories/reanalysis.md) — **2**
-- [reference / `reference`](categories/reference.md) — **2**
 - [severe-weather / `severe-weather`](categories/severe-weather.md) — **2**
 - [waves / `waves`](categories/waves.md) — **2**
 - [aerosol / `aerosol`](categories/aerosol.md) — **1**
 - [air-quality / `air-quality`](categories/air-quality.md) — **1**
+- [API и агрегаторы / `api`](categories/api.md) — **1**
+- [assimilation / `assimilation`](categories/assimilation.md) — **1**
 - [fire / `fire`](categories/fire.md) — **1**
+- [GNSS radio occultation / `gnss-ro`](categories/gnss-ro.md) — **1**
 - [hydrology / `hydrology`](categories/hydrology.md) — **1**
 - [Метаданные / `metadata`](categories/metadata.md) — **1**
 - [ozone / `ozone`](categories/ozone.md) — **1**
+- [Профайлеры / `profilers`](categories/profilers.md) — **1**
 - [profiling / `profiling`](categories/profiling.md) — **1**
 - [radiation / `radiation`](categories/radiation.md) — **1**
 - [research / `research`](categories/research.md) — **1**

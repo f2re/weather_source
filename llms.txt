@@ -27,4 +27,4 @@ Bilingual operational meteorological data-source knowledge base for humans and A
 6. Use an independent fallback for critical pipelines.
 7. Do not confuse observed upper-air profiles with NWP model profiles or satellite retrievals.
 
-Catalogue version: 1; sources: 47; reviewed: 2026-09-05
+Catalogue version: 1; sources: 53; reviewed: 2026-10-19
