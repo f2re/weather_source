@@ -80,3 +80,9 @@ jobs:
 
       - name: Smoke NetCDF reader
         run: python examples/python/netcdf_open.py --help
+
+      - name: Smoke NOAA station observation adapter
+        run: python examples/python/noaa_station_observations.py --help
+
+      - name: Smoke NOAA assimilation observation adapter
+        run: python examples/python/noaa_assimilation_observations.py --help

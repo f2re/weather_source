@@ -1,6 +1,6 @@
 # Климат и архивы / climate
 
-В этой категории **10** источников. / **10** sources in this category.
+В этой категории **13** источников. / **13** sources in this category.
 
 ## 🇷🇺 Русский
 
@@ -12,10 +12,13 @@
 | 🟢 [ECCC MSC GeoMet](../generated/eccc-geomet.md) | OGC-сервисы канадских метеорологических и экологических слоёв. | Наземные наблюдения, Метеорологические радары, Численные модели прогноза, Климат и архивы | открытый без регистрации | wms, wcs, ogc-api, https | GeoTIFF, PNG, JSON, GML, coverage-formats | да |
 | 🟢 [MeteoSwiss Open Government Data](../generated/meteoswiss-open-data.md) | Швейцарские открытые метеорологические и климатические данные включая наблюдения и радиозонды. | Наземные наблюдения, Аэрология и верхняя атмосфера, Климат и архивы | открытый без регистрации | https | CSV, NetCDF, provider-dependent | да |
 | 🟢 [Открытые данные Météo-France](../generated/meteofrance-open-data.md) | Открытые наблюдения аэрология радиолокация и модельные продукты через французские сервисы. | Наземные наблюдения, Аэрология и верхняя атмосфера, Метеорологические радары, Численные модели прогноза, Климат и архивы | открытый без регистрации | https, api | BUFR, GRIB2, CSV, JSON, GeoTIFF, provider-dependent | да |
+| 🟢 [NOAA/NCEI Global Historical Climatology Network daily (GHCNd)](../generated/noaa-ncei-ghcnd.md) | Глобальный контролируемый архив суточных наземных наблюдений с температурой, осадками, снегом и другими элементами; доступен по станциям и годовыми bulk CSV-архивами. | Наземные наблюдения, Климат и архивы, archive | открытый без регистрации | https | CSV, gzip, fixed-width text | нет |
+| 🟢 [NOAA/NCEI Global Historical Climatology Network hourly (GHCNh)](../generated/noaa-ncei-ghcnh.md) | Глобальный архив часовых и синоптических наземных наблюдений нового поколения, заменяющий legacy Integrated Surface Dataset (ISD); данные доступны по станциям и годам в PSV и Parquet. | Наземные наблюдения, Климат и архивы, archive | открытый без регистрации | https | PSV, Parquet | нет |
 | 🟡 [AEMET OpenData](../generated/aemet-opendata.md) | API испанской AEMET для наблюдений прогнозов климатологии и выбранных продуктов. | Наземные наблюдения, Численные модели прогноза, Климат и архивы | бесплатный после регистрации | https, rest | JSON, CSV, text, provider-dependent | да |
 | 🟡 [MET Norway — открытые API](../generated/met-norway-api.md) | Открытые API наблюдений прогнозов и метаданных; Frost предоставляет исторические наблюдения. | Наземные наблюдения, Численные модели прогноза, Климат и архивы | бесплатный после регистрации | https, rest | JSON, GeoJSON, NetCDF, provider-dependent | да |
 | 🟡 [NOAA IGRA 2 — глобальная аэрология](../generated/noaa-ncei-igra.md) | Глобальный архив радиозондов и шар-пилотов с близким к оперативному обновлением для многих действующих станций. | Аэрология и верхняя атмосфера, archive, Климат и архивы | открытый без регистрации | https | fixed-width text, CSV-derived, BUFR-source | да |
 | 🔵 [GRUAN — эталонная аэрология](../generated/gruan.md) | Эталонные верхнеаэрологические наблюдения с документированными поправками и неопределённостями. | Аэрология и верхняя атмосфера, Климат и архивы, reference | бесплатный после регистрации | https | NetCDF | нет |
+| 🔵 [NOAA U.S. Climate Reference Network (USCRN)](../generated/noaa-uscrn.md) | Эталонная климатическая сеть США с 5-минутными, часовыми и суточными продуктами, QC-флагами и параметрами температуры, осадков, радиации, влажности и состояния почвы. | Наземные наблюдения, Климат и архивы, reference | открытый без регистрации | https, ftp | text | да |
 
 ## 🇬🇧 English
 
@@ -27,7 +30,10 @@
 | 🟢 [MSC GeoMet](../generated/eccc-geomet.md) | OGC web services for Canadian meteorological and environmental layers. | surface, radar, nwp, climate | `open` | wms, wcs, ogc-api, https | GeoTIFF, PNG, JSON, GML, coverage-formats | yes |
 | 🟢 [MeteoSwiss Open Government Data](../generated/meteoswiss-open-data.md) | Swiss open weather and climate datasets including observations and radiosonde products. | surface, upper-air, climate | `open` | https | CSV, NetCDF, provider-dependent | yes |
 | 🟢 [Météo-France Open Data](../generated/meteofrance-open-data.md) | Open observations radiosondes radar and model products through French open-data services. | surface, upper-air, radar, nwp, climate | `open` | https, api | BUFR, GRIB2, CSV, JSON, GeoTIFF, provider-dependent | yes |
+| 🟢 [NOAA/NCEI Global Historical Climatology Network daily (GHCNd)](../generated/noaa-ncei-ghcnd.md) | Global quality-controlled daily land-station climate archive with temperature, precipitation, snowfall and other daily elements, available as station files and yearly bulk CSV archives. | surface, climate, archive | `open` | https | CSV, gzip, fixed-width text | no |
+| 🟢 [NOAA/NCEI Global Historical Climatology Network hourly (GHCNh)](../generated/noaa-ncei-ghcnh.md) | Next-generation global hourly and synoptic land-station archive replacing the legacy Integrated Surface Dataset (ISD), distributed in station/year PSV and Parquet files. | surface, climate, archive | `open` | https | PSV, Parquet | no |
 | 🟡 [AEMET OpenData](../generated/aemet-opendata.md) | Spanish State Meteorological Agency API for observations forecasts climatology and selected products. | surface, nwp, climate | `registration` | https, rest | JSON, CSV, text, provider-dependent | yes |
 | 🟡 [MET Norway open APIs](../generated/met-norway-api.md) | Open APIs for observations forecasts and metadata; Frost provides historical observations. | surface, nwp, climate | `registration` | https, rest | JSON, GeoJSON, NetCDF, provider-dependent | yes |
 | 🟡 [Integrated Global Radiosonde Archive (IGRA) 2](../generated/noaa-ncei-igra.md) | Global radiosonde and pilot-balloon archive with near-real-time updates for many active stations. | upper-air, archive, climate | `open` | https | fixed-width text, CSV-derived, BUFR-source | yes |
 | 🔵 [GCOS Reference Upper-Air Network](../generated/gruan.md) | Reference-quality upper-air observations with documented corrections and uncertainties. | upper-air, climate, reference | `registration` | https | NetCDF | no |
+| 🔵 [NOAA U.S. Climate Reference Network (USCRN)](../generated/noaa-uscrn.md) | Reference-quality U.S. climate observing network with 5-minute, hourly and daily products, quality flags and variables including temperature, precipitation, radiation, humidity and soil measurements. | surface, climate, reference | `open` | https, ftp | text | yes |

@@ -20,6 +20,7 @@
 - 📄 `docs/sources/generated/<id>.md` — подробная карточка каждого источника: русский раздел первый и самодостаточный, английский — второй.
 - 🛰️ [`docs/sources/wmo-wis2.md`](docs/sources/wmo-wis2.md) — практическое руководство по WIS2.
 - 🎈 [`docs/sources/aerology.md`](docs/sources/aerology.md) — аэрология и вертикальные профили.
+- 🌡️ [`docs/sources/noaa-observations.md`](docs/sources/noaa-observations.md) — иерархия наблюдений NOAA/NCEP/NCEI: NWS API, MADIS, GHCNh/GHCNd, USCRN и PREPBUFR.
 - 🤖 [`docs/agent-guide.md`](docs/agent-guide.md) — правила поиска и выбора для ИИ-агентов.
 
 Для программы или ИИ-агента:
@@ -41,14 +42,14 @@
 
 | Вид данных | Основные источники | Форматы | Предпочтительный способ |
 |---|---|---|---|
-| 🌡️ Наземные наблюдения | WIS2, NOAA/NWS, ECCC, DWD, FMI, MeteoSwiss, JMA, BOM | BUFR, SYNOP/METAR, JSON, CSV | WIS2 MQTT+HTTPS, REST/HTTPS |
-| 🎈 Аэрология | WIS2 TEMP, Росгидромет/Авиаметтелеком, IGRA, DWD, FMI, Météo-France, MeteoSwiss, ECCC | BUFR, CSV, text, NetCDF | WIS2, HTTPS, WFS |
+| 🌡️ Наземные наблюдения | WIS2, MADIS, NWS API, GHCNh, ECCC, DWD, FMI, MeteoSwiss, JMA, BOM | BUFR, NetCDF, PSV/Parquet, JSON, CSV | WIS2 MQTT+HTTPS, REST/HTTPS, прямые bulk-файлы |
+| 🎈 Аэрология | WIS2 TEMP, Росгидромет/Авиаметтелеком, IGRA, MADIS, DWD, FMI, Météo-France, MeteoSwiss, ECCC | BUFR, CSV, text, NetCDF | WIS2, HTTPS, WFS |
 | 📡 Радиолокация | NEXRAD/MRMS, DWD, ECCC, европейские и национальные сервисы | Level II/III, GRIB2, ODIM HDF5, GeoTIFF | S3/HTTPS, WCS/OGC |
 | 🛰️ Спутники | EUMETSAT, NOAA/NODD, NASA Earthdata/LANCE, JAXA | NetCDF, HDF5, BUFR, GeoTIFF | Data Store/API, S3, HTTPS |
 | ⚡ Молнии | GOES GLM, MTG LI и отдельно помеченные ограниченные/общественные сети | NetCDF/HDF5/BUFR | object storage / Data Store |
 | 🌊 Океан/буи | Copernicus Marine, NDBC, Argo | NetCDF, CSV, JSON | HTTPS/API/object storage |
 | 🧠 Модели/ансамбли | ECMWF Open Data, NOMADS/NODD, DWD, Météo-France, ECCC, JMA | GRIB2, NetCDF | HTTPS/S3/API |
-| 🗃️ Архивы/климат | NCEI, CDS/ERA5, IGRA, национальные архивы | NetCDF, GRIB, CSV, BUFR | API/HTTPS |
+| 🗃️ Архивы/климат | GHCNh, GHCNd, USCRN, NCEI, CDS/ERA5, IGRA, национальные архивы | PSV/Parquet, CSV, text, NetCDF, GRIB, BUFR | HTTPS/API/bulk-файлы |
 
 ## Правила выбора для оперативной системы
 
@@ -61,7 +62,9 @@
 7. Сохранять raw payload до нормализации.
 8. Для критического контура держать независимый fallback.
 
-Для WMO-наблюдений сначала проверять **WIS2 core**. Для аэрологии нельзя смешивать реальные TEMP/радиозонды, AMDAR, профайлеры, спутниковые/GNSS-RO retrievals и модельные NWP-профили.
+Для WMO-наблюдений сначала проверять **WIS2 core**. В контуре NOAA необходимо разделять оперативные наблюдения (NWS/MADIS), архивные станционные наборы (GHCNh/GHCNd/USCRN) и assimilation-space (NCEP dumps/PREPBUFR). Для новых часовых/синоптических архивных конвейеров NCEI предпочтителен GHCNh; ISD/Global Hourly следует считать legacy-совместимостью. PREPBUFR может содержать ограниченные исходные наблюдения, поэтому права нужно проверять до перераспространения.
+
+Для аэрологии нельзя смешивать реальные TEMP/радиозонды, AMDAR, профайлеры, спутниковые/GNSS-RO retrievals и модельные NWP-профили.
 
 ## Каталог теперь должен находиться в `main`
 

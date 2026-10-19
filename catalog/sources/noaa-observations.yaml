@@ -1,0 +1,300 @@
+sources:
+  - id: noaa-ncei-ghcnh
+    provider: NOAA National Centers for Environmental Information (NCEI)
+    name:
+      en: NOAA/NCEI Global Historical Climatology Network hourly (GHCNh)
+      ru: NOAA/NCEI Global Historical Climatology Network hourly (GHCNh)
+    summary:
+      en: "Next-generation global hourly and synoptic land-station archive replacing the legacy Integrated Surface Dataset (ISD), distributed in station/year PSV and Parquet files."
+      ru: "Глобальный архив часовых и синоптических наземных наблюдений нового поколения, заменяющий legacy Integrated Surface Dataset (ISD); данные доступны по станциям и годам в PSV и Parquet."
+    official: true
+    tier: primary
+    categories: [surface, climate, archive]
+    coverage: global fixed land stations
+    operational: false
+    update_cadence: daily dataset updates; station/year and period-of-record files
+    typical_latency: archival / near-current daily updates rather than a real-time feed
+    archive: multi-decadal to century-scale station records depending on station
+    access:
+      level: open
+      auth: "none for bulk HTTPS access"
+      terms: "NOAA/NCEI public-data terms and dataset documentation"
+    protocols: [https]
+    formats: [PSV, Parquet]
+    endpoints:
+      - name: GHCNh product page
+        url: https://www.ncei.noaa.gov/products/global-historical-climatology-network-hourly
+        protocol: https
+        role: product documentation and access entry point
+        healthcheck: true
+      - name: GHCNh station/year access
+        url: https://www.ncei.noaa.gov/oa/global-historical-climatology-network/hourly/access/by-year/
+        protocol: https
+        role: station/year PSV and Parquet bulk files
+        healthcheck: true
+    software:
+      - name: Python csv
+        role: PSV streaming parser
+        url: https://docs.python.org/3/library/csv.html
+      - name: Apache Arrow / PyArrow
+        role: Parquet reader for large-volume workflows
+        url: https://arrow.apache.org/docs/python/
+    documentation:
+      - https://www.ncei.noaa.gov/products/global-historical-climatology-network-hourly
+      - https://www.ncei.noaa.gov/oa/global-historical-climatology-network/hourly/doc/ghcnh_DOCUMENTATION.pdf
+    reliability: high
+    automation: high
+    last_verified: '2026-10-19'
+    notes:
+      en: "Use GHCNh for new NOAA/NCEI hourly station pipelines. Treat ISD/Global Hourly as a legacy compatibility source rather than the preferred target for new ingestion. Preserve provider QC/source attributes when building training or verification datasets."
+      ru: "Для новых конвейеров часовых станционных данных NOAA/NCEI использовать GHCNh. ISD/Global Hourly следует считать legacy-источником совместимости, а не основным новым контуром. При подготовке выборок для ML и верификации сохранять QC- и source-атрибуты поставщика."
+
+  - id: noaa-ncep-madis
+    provider: NOAA/NWS/NCEP Meteorological Assimilation Data Ingest System (MADIS)
+    name:
+      en: NOAA/NCEP MADIS observations
+      ru: NOAA/NCEP MADIS — оперативные наблюдения
+    summary:
+      en: "Multi-network observation ingest, integration and quality-control system covering surface, mesonet, maritime, radiosonde, profiler, aircraft and other datasets, primarily in netCDF."
+      ru: "Система интеграции и контроля качества наблюдений из множества сетей: METAR, mesonet, maritime, радиозонды, профайлеры, самолётные и другие данные, преимущественно в netCDF."
+    official: true
+    tier: primary
+    categories: [surface, upper-air, aircraft, marine, profilers]
+    coverage: global database with highest density over North America
+    operational: true
+    update_cadence: continuous / dataset dependent
+    typical_latency: near-real-time for supported operational feeds
+    archive: saved real-time archive available by dataset and date; access conditions vary
+    access:
+      level: registration
+      auth: "public sample/current files exist, while sustained real-time, archive, FTP, OPeNDAP or viewer access may require a MADIS account/request"
+      terms: "NOAA/NCEP MADIS terms and per-dataset restrictions"
+    protocols: [https, ftp, opendap, ldm]
+    formats: [NetCDF, CSV, XML, text]
+    endpoints:
+      - name: MADIS overview
+        url: https://madis.ncep.noaa.gov/
+        protocol: https
+        role: service documentation
+        healthcheck: true
+      - name: MADIS public sample/current data
+        url: https://madis-data.ncep.noaa.gov/madisPublic1/data/
+        protocol: https
+        role: public sample and current dataset tree
+        healthcheck: true
+      - name: MADIS data application
+        url: https://madis.ncep.noaa.gov/data_application.shtml
+        protocol: https
+        role: access request for sustained real-time or archive services
+        healthcheck: true
+    software:
+      - name: xarray
+        role: netCDF inspection and normalization
+        url: https://github.com/pydata/xarray
+      - name: netCDF4-python
+        role: netCDF reader
+        url: https://github.com/Unidata/netcdf4-python
+    documentation:
+      - https://madis.ncep.noaa.gov/madis_ui.shtml
+      - https://madis.ncep.noaa.gov/madis_datasets.shtml
+      - https://madis.ncep.noaa.gov/madis_sample_data.shtml
+    reliability: high
+    automation: high
+    last_verified: '2026-10-19'
+    notes:
+      en: "MADIS is especially valuable when a normalized multi-network feed with provider and QC flags is needed. Do not assume every MADIS dataset is unrestricted; check dataset-specific rights before redistribution."
+      ru: "MADIS особенно полезен как нормализованный многосетевой источник с флагами поставщика и QC. Нельзя считать все наборы MADIS автоматически неограниченными — права на конкретный dataset необходимо проверять до перераспространения."
+
+  - id: noaa-ncep-prepbufr
+    provider: NOAA/NWS/NCEP
+    name:
+      en: NCEP GDAS/GFS observation dumps and PREPBUFR
+      ru: NCEP GDAS/GFS — observation dumps и PREPBUFR
+    summary:
+      en: "NCEP observation-space files used around GDAS/GFS data assimilation, including raw BUFR dumps and quality-controlled PREPBUFR products."
+      ru: "Файлы пространства наблюдений NCEP, используемые в контуре ассимиляции GDAS/GFS: исходные BUFR dumps и подготовленные quality-controlled PREPBUFR."
+    official: true
+    tier: specialized
+    categories: [surface, upper-air, aircraft, marine, gnss-ro, assimilation]
+    coverage: global observation streams ingested by NCEP
+    operational: true
+    update_cadence: GDAS/GFS cycle cadence
+    typical_latency: operational-cycle dependent
+    archive: rolling NOMADS/NCEP operational product tree; longer retention varies by product
+    access:
+      level: restricted
+      auth: "public server paths exist for many files, but some constituent observations in dumps/PREPBUFR have redistribution restrictions"
+      terms: "NCEP product terms plus restricted-data rules for constituent observations; inspect restrictions before use or redistribution"
+    protocols: [https, ftp]
+    formats: [BUFR, PREPBUFR]
+    endpoints:
+      - name: NCEP GFS/GDAS product inventory
+        url: https://www.nco.ncep.noaa.gov/pmb/products/gfs/
+        protocol: https
+        role: authoritative filenames and product inventory
+        healthcheck: true
+      - name: NCEP observation processing products
+        url: https://nomads.ncep.noaa.gov/pub/data/nccf/com/obsproc/prod/
+        protocol: https
+        role: operational GDAS/GFS observation dump and PREPBUFR tree
+        healthcheck: true
+      - name: NCEP restricted data guidance
+        url: https://www.nco.ncep.noaa.gov/pmb/docs/restricted_data/
+        protocol: https
+        role: redistribution and use restrictions
+        healthcheck: true
+    software:
+      - name: NCEPLIBS-bufr
+        role: NCEP BUFR/PREPBUFR decoding library
+        url: https://github.com/NOAA-EMC/NCEPLIBS-bufr
+    documentation:
+      - https://www.nco.ncep.noaa.gov/pmb/products/gfs/
+      - https://www.nco.ncep.noaa.gov/pmb/docs/restricted_data/
+    reliability: high
+    automation: medium
+    last_verified: '2026-10-19'
+    notes:
+      en: "Use this source for assimilation-space research, observation-impact studies and reproducing NCEP ingest/QC logic, not as a casual substitute for unrestricted station archives. PREPBUFR can contain restricted constituent observations; automated downloaders should require an explicit acknowledgement of those conditions."
+      ru: "Использовать этот источник для исследований observation-space, влияния наблюдений и воспроизведения ingest/QC NCEP, а не как обычную замену открытым станционным архивам. PREPBUFR может содержать ограниченные исходные наблюдения; автоматический downloader должен требовать явного подтверждения условий доступа."
+
+  - id: noaa-nws-observations-api
+    provider: NOAA/National Weather Service
+    name:
+      en: NWS API station observations
+      ru: NWS API — станционные наблюдения
+    summary:
+      en: "Official JSON-LD API for current and recent station observations, station metadata and station discovery across the United States and territories."
+      ru: "Официальный JSON-LD API для текущих и недавних станционных наблюдений, метаданных станций и поиска станций по территории США и зависимым территориям."
+    official: true
+    tier: primary
+    categories: [surface, aviation, api]
+    coverage: United States and territories; station availability follows NWS/MADIS ingest
+    operational: true
+    update_cadence: minutes / station dependent
+    typical_latency: minutes
+    archive: recent operational API history; not a long-term climate archive
+    access:
+      level: open
+      auth: "no API key; descriptive User-Agent requested and reasonable rate limits apply"
+      terms: "NOAA/NWS open-data terms"
+    protocols: [https, rest]
+    formats: [JSON, JSON-LD, GeoJSON]
+    endpoints:
+      - name: NWS API
+        url: https://api.weather.gov/
+        protocol: rest
+        role: observations, stations, forecasts and metadata API
+        healthcheck: true
+      - name: NWS API documentation
+        url: https://www.weather.gov/documentation/services-web-api
+        protocol: https
+        role: API contract and usage guidance
+        healthcheck: true
+    software:
+      - name: requests
+        role: REST client
+        url: https://requests.readthedocs.io/
+    documentation:
+      - https://www.weather.gov/documentation/services-web-api
+    reliability: high
+    automation: high
+    last_verified: '2026-10-19'
+    notes:
+      en: "Excellent low-friction operational fallback for point/station observations in the NWS domain. It is not designed as a global bulk station archive; use GHCNh/GHCNd for historical bulk workflows and WIS2/MADIS for broader operational ingest."
+      ru: "Удобный оперативный fallback для точечных/станционных наблюдений в зоне NWS. Это не глобальный bulk-архив: для истории использовать GHCNh/GHCNd, а для более широкого оперативного ingest — WIS2/MADIS."
+
+  - id: noaa-uscrn
+    provider: NOAA/NCEI U.S. Climate Reference Network
+    name:
+      en: NOAA U.S. Climate Reference Network (USCRN)
+      ru: NOAA U.S. Climate Reference Network (USCRN)
+    summary:
+      en: "Reference-quality U.S. climate observing network with 5-minute, hourly and daily products, quality flags and variables including temperature, precipitation, radiation, humidity and soil measurements."
+      ru: "Эталонная климатическая сеть США с 5-минутными, часовыми и суточными продуктами, QC-флагами и параметрами температуры, осадков, радиации, влажности и состояния почвы."
+    official: true
+    tier: specialized
+    categories: [surface, climate, reference]
+    coverage: United States reference-station network
+    operational: true
+    update_cadence: 5-minute, hourly, daily and monthly products
+    typical_latency: near-real-time to routine product update depending on product
+    archive: full station archive by product/year plus snapshot/update trees
+    access:
+      level: open
+      auth: none
+      terms: "NOAA/NCEI public-data terms; cite dataset documentation where requested"
+    protocols: [https, ftp]
+    formats: [text]
+    endpoints:
+      - name: USCRN products
+        url: https://www.ncei.noaa.gov/access/crn/products.html
+        protocol: https
+        role: product documentation and access directory
+        healthcheck: true
+      - name: USCRN hourly files
+        url: https://www.ncei.noaa.gov/pub/data/uscrn/products/hourly02/
+        protocol: https
+        role: hourly station/year text files
+        healthcheck: true
+    software:
+      - name: Python csv
+        role: whitespace/tabular parser after applying documented headers
+        url: https://docs.python.org/3/library/csv.html
+    documentation:
+      - https://www.ncei.noaa.gov/access/crn/products.html
+    reliability: high
+    automation: high
+    last_verified: '2026-10-19'
+    notes:
+      en: "Prefer USCRN as a reference-quality truth set for U.S. validation, bias diagnostics and sensor/QC experiments rather than for dense spatial coverage."
+      ru: "USCRN особенно полезен как reference-quality факт для валидации в США, диагностики смещений и экспериментов с QC/датчиками; сеть не предназначена для максимальной пространственной плотности."
+
+  - id: noaa-ncei-ghcnd
+    provider: NOAA National Centers for Environmental Information (NCEI)
+    name:
+      en: NOAA/NCEI Global Historical Climatology Network daily (GHCNd)
+      ru: NOAA/NCEI Global Historical Climatology Network daily (GHCNd)
+    summary:
+      en: "Global quality-controlled daily land-station climate archive with temperature, precipitation, snowfall and other daily elements, available as station files and yearly bulk CSV archives."
+      ru: "Глобальный контролируемый архив суточных наземных наблюдений с температурой, осадками, снегом и другими элементами; доступен по станциям и годовыми bulk CSV-архивами."
+    official: true
+    tier: primary
+    categories: [surface, climate, archive]
+    coverage: global land stations
+    operational: false
+    update_cadence: daily updates plus periodic full reconstruction
+    typical_latency: typically daily to recent-month coverage depending on contributing network
+    archive: global long-term daily station archive
+    access:
+      level: open
+      auth: none for HTTPS bulk files
+      terms: "NOAA/NCEI public-data terms and dataset documentation"
+    protocols: [https]
+    formats: [CSV, gzip, fixed-width text]
+    endpoints:
+      - name: GHCNd product page
+        url: https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily
+        protocol: https
+        role: product documentation
+        healthcheck: true
+      - name: GHCNd bulk directory
+        url: https://www.ncei.noaa.gov/pub/data/ghcn/daily/
+        protocol: https
+        role: station files, metadata and yearly bulk CSV archives
+        healthcheck: true
+    software:
+      - name: Python gzip
+        role: streaming decompression for yearly CSV.gz files
+        url: https://docs.python.org/3/library/gzip.html
+      - name: Python csv
+        role: CSV parser
+        url: https://docs.python.org/3/library/csv.html
+    documentation:
+      - https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily
+      - https://www.ncei.noaa.gov/pub/data/ghcn/daily/readme.txt
+    reliability: high
+    automation: high
+    last_verified: '2026-10-19'
+    notes:
+      en: "Use GHCNd for daily verification, climate baselines and ML targets where daily extrema/precipitation are appropriate. Do not use it as a substitute for sub-daily operational observations."
+      ru: "Использовать GHCNd для суточной верификации, климатических базовых рядов и ML-targets, когда нужны суточные экстремумы/осадки. Он не заменяет субсуточные оперативные наблюдения."
