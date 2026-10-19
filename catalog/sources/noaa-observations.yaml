@@ -5,8 +5,8 @@ sources:
       en: NOAA/NCEI Global Historical Climatology Network hourly (GHCNh)
       ru: NOAA/NCEI Global Historical Climatology Network hourly (GHCNh)
     summary:
-      en: Next-generation global hourly and synoptic land-station archive replacing the legacy Integrated Surface Dataset (ISD), distributed in station/year PSV and Parquet files.
-      ru: Глобальный архив часовых и синоптических наземных наблюдений нового поколения, заменяющий legacy Integrated Surface Dataset (ISD); данные доступны по станциям и годам в PSV и Parquet.
+      en: "Next-generation global hourly and synoptic land-station archive replacing the legacy Integrated Surface Dataset (ISD), distributed in station/year PSV and Parquet files."
+      ru: "Глобальный архив часовых и синоптических наземных наблюдений нового поколения, заменяющий legacy Integrated Surface Dataset (ISD); данные доступны по станциям и годам в PSV и Parquet."
     official: true
     tier: primary
     categories: [surface, climate, archive]
@@ -17,8 +17,8 @@ sources:
     archive: multi-decadal to century-scale station records depending on station
     access:
       level: open
-      auth: none for bulk HTTPS access
-      terms: NOAA/NCEI public-data terms and dataset documentation
+      auth: "none for bulk HTTPS access"
+      terms: "NOAA/NCEI public-data terms and dataset documentation"
     protocols: [https]
     formats: [PSV, Parquet]
     endpoints:
@@ -46,8 +46,8 @@ sources:
     automation: high
     last_verified: '2026-10-19'
     notes:
-      en: Use GHCNh for new NOAA/NCEI hourly station pipelines. Treat ISD/Global Hourly as a legacy compatibility source rather than the preferred target for new ingestion. Preserve provider QC/source attributes when building training or verification datasets.
-      ru: Для новых конвейеров часовых станционных данных NOAA/NCEI использовать GHCNh. ISD/Global Hourly следует считать legacy-источником совместимости, а не основным новым контуром. При подготовке выборок для ML и верификации сохранять QC- и source-атрибуты поставщика.
+      en: "Use GHCNh for new NOAA/NCEI hourly station pipelines. Treat ISD/Global Hourly as a legacy compatibility source rather than the preferred target for new ingestion. Preserve provider QC/source attributes when building training or verification datasets."
+      ru: "Для новых конвейеров часовых станционных данных NOAA/NCEI использовать GHCNh. ISD/Global Hourly следует считать legacy-источником совместимости, а не основным новым контуром. При подготовке выборок для ML и верификации сохранять QC- и source-атрибуты поставщика."
 
   - id: noaa-ncep-madis
     provider: NOAA/NWS/NCEP Meteorological Assimilation Data Ingest System (MADIS)
@@ -55,8 +55,8 @@ sources:
       en: NOAA/NCEP MADIS observations
       ru: NOAA/NCEP MADIS — оперативные наблюдения
     summary:
-      en: Multi-network observation ingest, integration and quality-control system covering surface, mesonet, maritime, radiosonde, profiler, aircraft and other datasets, primarily in netCDF.
-      ru: Система интеграции и контроля качества наблюдений из множества сетей: METAR, mesonet, maritime, радиозонды, профайлеры, самолётные и другие данные, преимущественно в netCDF.
+      en: "Multi-network observation ingest, integration and quality-control system covering surface, mesonet, maritime, radiosonde, profiler, aircraft and other datasets, primarily in netCDF."
+      ru: "Система интеграции и контроля качества наблюдений из множества сетей: METAR, mesonet, maritime, радиозонды, профайлеры, самолётные и другие данные, преимущественно в netCDF."
     official: true
     tier: primary
     categories: [surface, upper-air, aircraft, marine, profilers]
@@ -67,8 +67,8 @@ sources:
     archive: saved real-time archive available by dataset and date; access conditions vary
     access:
       level: registration
-      auth: public sample/current files exist, while sustained real-time, archive, FTP, OPeNDAP or viewer access may require a MADIS account/request
-      terms: NOAA/NCEP MADIS terms and per-dataset restrictions
+      auth: "public sample/current files exist, while sustained real-time, archive, FTP, OPeNDAP or viewer access may require a MADIS account/request"
+      terms: "NOAA/NCEP MADIS terms and per-dataset restrictions"
     protocols: [https, ftp, opendap, ldm]
     formats: [NetCDF, CSV, XML, text]
     endpoints:
@@ -102,8 +102,8 @@ sources:
     automation: high
     last_verified: '2026-10-19'
     notes:
-      en: MADIS is especially valuable when a normalized multi-network feed with provider and QC flags is needed. Do not assume every MADIS dataset is unrestricted; check dataset-specific rights before redistribution.
-      ru: MADIS особенно полезен как нормализованный многосетевой источник с флагами поставщика и QC. Нельзя считать все наборы MADIS автоматически неограниченными — права на конкретный dataset необходимо проверять до перераспространения.
+      en: "MADIS is especially valuable when a normalized multi-network feed with provider and QC flags is needed. Do not assume every MADIS dataset is unrestricted; check dataset-specific rights before redistribution."
+      ru: "MADIS особенно полезен как нормализованный многосетевой источник с флагами поставщика и QC. Нельзя считать все наборы MADIS автоматически неограниченными — права на конкретный dataset необходимо проверять до перераспространения."
 
   - id: noaa-ncep-prepbufr
     provider: NOAA/NWS/NCEP
@@ -111,8 +111,8 @@ sources:
       en: NCEP GDAS/GFS observation dumps and PREPBUFR
       ru: NCEP GDAS/GFS — observation dumps и PREPBUFR
     summary:
-      en: NCEP observation-space files used around GDAS/GFS data assimilation, including raw BUFR dumps and quality-controlled PREPBUFR products.
-      ru: Файлы пространства наблюдений NCEP, используемые в контуре ассимиляции GDAS/GFS: исходные BUFR dumps и подготовленные quality-controlled PREPBUFR.
+      en: "NCEP observation-space files used around GDAS/GFS data assimilation, including raw BUFR dumps and quality-controlled PREPBUFR products."
+      ru: "Файлы пространства наблюдений NCEP, используемые в контуре ассимиляции GDAS/GFS: исходные BUFR dumps и подготовленные quality-controlled PREPBUFR."
     official: true
     tier: specialized
     categories: [surface, upper-air, aircraft, marine, gnss-ro, assimilation]
@@ -123,8 +123,8 @@ sources:
     archive: rolling NOMADS/NCEP operational product tree; longer retention varies by product
     access:
       level: restricted
-      auth: public server paths exist for many files, but some constituent observations in dumps/PREPBUFR have redistribution restrictions
-      terms: NCEP product terms plus restricted-data rules for constituent observations; inspect restrictions before use or redistribution
+      auth: "public server paths exist for many files, but some constituent observations in dumps/PREPBUFR have redistribution restrictions"
+      terms: "NCEP product terms plus restricted-data rules for constituent observations; inspect restrictions before use or redistribution"
     protocols: [https, ftp]
     formats: [BUFR, PREPBUFR]
     endpoints:
@@ -154,8 +154,8 @@ sources:
     automation: medium
     last_verified: '2026-10-19'
     notes:
-      en: Use this source for assimilation-space research, observation-impact studies and reproducing NCEP ingest/QC logic, not as a casual substitute for unrestricted station archives. PREPBUFR can contain restricted constituent observations; automated downloaders should require an explicit acknowledgement of those conditions.
-      ru: Использовать этот источник для исследований observation-space, влияния наблюдений и воспроизведения ingest/QC NCEP, а не как обычную замену открытым станционным архивам. PREPBUFR может содержать ограниченные исходные наблюдения; автоматический downloader должен требовать явного подтверждения условий доступа.
+      en: "Use this source for assimilation-space research, observation-impact studies and reproducing NCEP ingest/QC logic, not as a casual substitute for unrestricted station archives. PREPBUFR can contain restricted constituent observations; automated downloaders should require an explicit acknowledgement of those conditions."
+      ru: "Использовать этот источник для исследований observation-space, влияния наблюдений и воспроизведения ingest/QC NCEP, а не как обычную замену открытым станционным архивам. PREPBUFR может содержать ограниченные исходные наблюдения; автоматический downloader должен требовать явного подтверждения условий доступа."
 
   - id: noaa-nws-observations-api
     provider: NOAA/National Weather Service
@@ -163,8 +163,8 @@ sources:
       en: NWS API station observations
       ru: NWS API — станционные наблюдения
     summary:
-      en: Official JSON-LD API for current and recent station observations, station metadata and station discovery across the United States and territories.
-      ru: Официальный JSON-LD API для текущих и недавних станционных наблюдений, метаданных станций и поиска станций по территории США и зависимым территориям.
+      en: "Official JSON-LD API for current and recent station observations, station metadata and station discovery across the United States and territories."
+      ru: "Официальный JSON-LD API для текущих и недавних станционных наблюдений, метаданных станций и поиска станций по территории США и зависимым территориям."
     official: true
     tier: primary
     categories: [surface, aviation, api]
@@ -175,8 +175,8 @@ sources:
     archive: recent operational API history; not a long-term climate archive
     access:
       level: open
-      auth: no API key; descriptive User-Agent requested and reasonable rate limits apply
-      terms: NOAA/NWS open-data terms
+      auth: "no API key; descriptive User-Agent requested and reasonable rate limits apply"
+      terms: "NOAA/NWS open-data terms"
     protocols: [https, rest]
     formats: [JSON, JSON-LD, GeoJSON]
     endpoints:
@@ -200,8 +200,8 @@ sources:
     automation: high
     last_verified: '2026-10-19'
     notes:
-      en: Excellent low-friction operational fallback for point/station observations in the NWS domain. It is not designed as a global bulk station archive; use GHCNh/GHCNd for historical bulk workflows and WIS2/MADIS for broader operational ingest.
-      ru: Удобный оперативный fallback для точечных/станционных наблюдений в зоне NWS. Это не глобальный bulk-архив: для истории использовать GHCNh/GHCNd, а для более широкого оперативного ingest — WIS2/MADIS.
+      en: "Excellent low-friction operational fallback for point/station observations in the NWS domain. It is not designed as a global bulk station archive; use GHCNh/GHCNd for historical bulk workflows and WIS2/MADIS for broader operational ingest."
+      ru: "Удобный оперативный fallback для точечных/станционных наблюдений в зоне NWS. Это не глобальный bulk-архив: для истории использовать GHCNh/GHCNd, а для более широкого оперативного ingest — WIS2/MADIS."
 
   - id: noaa-uscrn
     provider: NOAA/NCEI U.S. Climate Reference Network
@@ -209,8 +209,8 @@ sources:
       en: NOAA U.S. Climate Reference Network (USCRN)
       ru: NOAA U.S. Climate Reference Network (USCRN)
     summary:
-      en: Reference-quality U.S. climate observing network with 5-minute, hourly and daily products, quality flags and variables including temperature, precipitation, radiation, humidity and soil measurements.
-      ru: Эталонная климатическая сеть США с 5-минутными, часовыми и суточными продуктами, QC-флагами и параметрами температуры, осадков, радиации, влажности и состояния почвы.
+      en: "Reference-quality U.S. climate observing network with 5-minute, hourly and daily products, quality flags and variables including temperature, precipitation, radiation, humidity and soil measurements."
+      ru: "Эталонная климатическая сеть США с 5-минутными, часовыми и суточными продуктами, QC-флагами и параметрами температуры, осадков, радиации, влажности и состояния почвы."
     official: true
     tier: specialized
     categories: [surface, climate, reference]
@@ -222,7 +222,7 @@ sources:
     access:
       level: open
       auth: none
-      terms: NOAA/NCEI public-data terms; cite dataset documentation where requested
+      terms: "NOAA/NCEI public-data terms; cite dataset documentation where requested"
     protocols: [https, ftp]
     formats: [text]
     endpoints:
@@ -246,8 +246,8 @@ sources:
     automation: high
     last_verified: '2026-10-19'
     notes:
-      en: Prefer USCRN as a reference-quality truth set for U.S. validation, bias diagnostics and sensor/QC experiments rather than for dense spatial coverage.
-      ru: USCRN особенно полезен как reference-quality факт для валидации в США, диагностики смещений и экспериментов с QC/датчиками; сеть не предназначена для максимальной пространственной плотности.
+      en: "Prefer USCRN as a reference-quality truth set for U.S. validation, bias diagnostics and sensor/QC experiments rather than for dense spatial coverage."
+      ru: "USCRN особенно полезен как reference-quality факт для валидации в США, диагностики смещений и экспериментов с QC/датчиками; сеть не предназначена для максимальной пространственной плотности."
 
   - id: noaa-ncei-ghcnd
     provider: NOAA National Centers for Environmental Information (NCEI)
@@ -255,8 +255,8 @@ sources:
       en: NOAA/NCEI Global Historical Climatology Network daily (GHCNd)
       ru: NOAA/NCEI Global Historical Climatology Network daily (GHCNd)
     summary:
-      en: Global quality-controlled daily land-station climate archive with temperature, precipitation, snowfall and other daily elements, available as station files and yearly bulk CSV archives.
-      ru: Глобальный контролируемый архив суточных наземных наблюдений с температурой, осадками, снегом и другими элементами; доступен по станциям и годовыми bulk CSV-архивами.
+      en: "Global quality-controlled daily land-station climate archive with temperature, precipitation, snowfall and other daily elements, available as station files and yearly bulk CSV archives."
+      ru: "Глобальный контролируемый архив суточных наземных наблюдений с температурой, осадками, снегом и другими элементами; доступен по станциям и годовыми bulk CSV-архивами."
     official: true
     tier: primary
     categories: [surface, climate, archive]
@@ -268,7 +268,7 @@ sources:
     access:
       level: open
       auth: none for HTTPS bulk files
-      terms: NOAA/NCEI public-data terms and dataset documentation
+      terms: "NOAA/NCEI public-data terms and dataset documentation"
     protocols: [https]
     formats: [CSV, gzip, fixed-width text]
     endpoints:
@@ -296,5 +296,5 @@ sources:
     automation: high
     last_verified: '2026-10-19'
     notes:
-      en: Use GHCNd for daily verification, climate baselines and ML targets where daily extrema/precipitation are appropriate. Do not use it as a substitute for sub-daily operational observations.
-      ru: Использовать GHCNd для суточной верификации, климатических базовых рядов и ML-targets, когда нужны суточные экстремумы/осадки. Он не заменяет субсуточные оперативные наблюдения.
+      en: "Use GHCNd for daily verification, climate baselines and ML targets where daily extrema/precipitation are appropriate. Do not use it as a substitute for sub-daily operational observations."
+      ru: "Использовать GHCNd для суточной верификации, климатических базовых рядов и ML-targets, когда нужны суточные экстремумы/осадки. Он не заменяет субсуточные оперативные наблюдения."
