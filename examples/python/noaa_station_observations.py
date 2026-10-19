@@ -11,7 +11,7 @@ import argparse
 import csv
 import json
 from itertools import islice
-from typing import Any, Iterable
+from typing import Any, Iterable, Iterator
 
 import requests
 
@@ -66,12 +66,20 @@ def _get(url: str, *, timeout: float = 30.0, accept: str | None = None) -> reque
     return response
 
 
+def _decoded_lines(response: requests.Response) -> Iterator[str]:
+    encoding = response.encoding or "utf-8"
+    for line in response.iter_lines():
+        if line:
+            yield line.decode(encoding, errors="replace")
+
+
 def read_ghcnh_psv(url: str, *, limit: int = 5, timeout: float = 30.0) -> list[dict[str, str]]:
-    """Read the first records from a GHCNh PSV file without altering QC/source columns."""
-    response = _get(url, timeout=timeout)
-    response.encoding = response.encoding or "utf-8"
-    reader = csv.DictReader(response.text.splitlines(), delimiter="|")
-    return list(islice(reader, max(0, limit)))
+    """Stream the first GHCNh PSV records without altering QC/source columns."""
+    headers = {"User-Agent": USER_AGENT}
+    with requests.get(url, stream=True, timeout=timeout, headers=headers) as response:
+        response.raise_for_status()
+        reader = csv.DictReader(_decoded_lines(response), delimiter="|")
+        return list(islice(reader, max(0, limit)))
 
 
 def nws_latest_observation(station: str, *, timeout: float = 30.0) -> dict[str, Any]:
@@ -114,7 +122,7 @@ def main() -> int:
     p_ghcnh_url.add_argument("--year", type=int)
     p_ghcnh_url.add_argument("--format", choices=["psv", "parquet"], default="psv")
 
-    p_ghcnh_head = sub.add_parser("ghcnh-head", help="fetch the first PSV records from GHCNh")
+    p_ghcnh_head = sub.add_parser("ghcnh-head", help="stream the first PSV records from GHCNh")
     p_ghcnh_head.add_argument("station")
     p_ghcnh_head.add_argument("--year", type=int)
     p_ghcnh_head.add_argument("--limit", type=int, default=5)
