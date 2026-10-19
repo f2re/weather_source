@@ -37,6 +37,7 @@ nav:
   - Guides / Руководства:
       - WMO WIS2: sources/wmo-wis2.md
       - Аэрология / Aerology: sources/aerology.md
+      - NOAA observations: sources/noaa-observations.md
       - Для ИИ-агентов / AI agents: agent-guide.md
       - Protocols / Протоколы: protocols.md
       - Formats / Форматы: formats.md
